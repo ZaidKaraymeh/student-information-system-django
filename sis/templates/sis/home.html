@@ -1,0 +1,13 @@
+{% extends 'sis/base.html' %}
+
+{% block content %}
+
+rakka
+{% endblock content %}
+
+{% block logged_user_type %}
+
+    {% if user.user_type == "STU" %}Student View {% elif user.user_type == "ADM" %} Admin View {% else %} Staff View {% endif %}
+
+{% endblock logged_user_type %}
+
