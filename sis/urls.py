@@ -11,6 +11,7 @@ urlpatterns = [
     # STUDENT URLS
     path("add_student/", admin_views.add_student, name="add_student" ),
     path("view_students/", admin_views.view_students, name="view_students"),
-    path("view_students_enrolled_course/<int:id>", admin_views.view_student_enrolled_courses, name="view_student_enrolled_courses"),
+    path("view_student_enrolled_courses/<int:id>", admin_views.view_student_enrolled_courses, name="view_student_enrolled_courses"),
+    path("delete_student_enrolled/<slug:course_id>/<int:id>/", admin_views.delete_course_enrolled, name="delete_student_enrolled"),
 
 ]

@@ -1,7 +1,27 @@
 {% extends 'sis/admin_templates/admin_base.html' %}
 
+{% load crispy_forms_tags %}
 {% block content %}
+    <div class="col" >
+        <form method="POST" class="p-4">
+            {% csrf_token %}
 
+            <fieldset class="form-group" > 
+                <legend> Enroll New Course </legend>
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button type="submit" class="btn btn-dark"> Enroll </button>
+            </div>
+        </form>
+    </div>
+    <div class="col p-4  d-flex justify-content-end align-items-start" >
+        <a 
+            class="btn btn-primary" 
+            href="{% url 'view_students' %}" 
+            > Back
+        </a>
+    </div>
 
 <div class="table-responsive p-0 overflow-auto" style="height:100vh;" >
     <h2 class="p-2" > {% if student.first_name %} 
@@ -13,7 +33,7 @@
     <table id="view_courses" class="table table-striped table-hover table-bordered text-center ">
         <thead>
             <tr>
-            <th  scope="col">#</th>
+            <th scope="col">#</th>
             <th scope="col">Course</th>
             <th scope="col">Instructor</th>
             <th scope="col">Code</th>
@@ -30,7 +50,7 @@
                     <td> {{course.instructor.first_name}} {{course.instructor.last_name}} </td>
                     <td> {{course.code}} </td>
                     <td> {{course.section}} </td>
-                    <td class="" ><a class="btn btn-dark btn-block" href="{% url 'edit_course' id=course.id %}" >X </a></td>
+                    <td class="" ><a class="btn btn-dark btn-block" href="{% url 'delete_student_enrolled' course_id=course.id id=student.id  %}" >X </a></td>
                     <td class="" > <a class="btn btn-primary btn-block" href="#{{course.id}}_dashboard" > View Analysis </a> </td>
                     
                 </tr>
@@ -43,7 +63,7 @@
             <th scope="col">Instructor</th>
             <th scope="col">Code</th>
             <th scope="col">Section</th>
-            <th scope="col">Edit Course</th>
+            <th scope="col">Drop Course</th>
             <th scope="col">Personal Analysis</th>
             </tr>
         </head>
