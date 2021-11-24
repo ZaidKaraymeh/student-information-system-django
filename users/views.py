@@ -16,11 +16,6 @@ def register(request):
         if form.is_valid():
             f = form.save(commit=False)
             f.username = f"{form.cleaned_data.get('first_name')}{form.cleaned_data.get('last_name')}"
-            if f.user_type == "ADM":
-                f.is_superuser = True
-            elif f.user_type == "STU":
-                f.is_staff = True
-
 
             f.save()
             messages.success(request, f"Your account has been created! You are now able to log in ")

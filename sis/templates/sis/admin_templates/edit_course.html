@@ -11,9 +11,35 @@
             {{ form|crispy }}
         </fieldset>
         <div class="form-group">
-            <button type="submit" class="btn btn-dark" > Edit Course </button>
+            <button type="submit" class="btn btn-dark" data-toggle="modal" data-target="#deletePaperModal"> Edit Course </button>
+            <button data-toggle="modal" data-target="#deletePaperModal" type="button" class="btn btn-danger" > Delete Course </button>
         </div>
     </form>
+
+    <div class="modal fade" id="deletePaperModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3> Delete Course </h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>are you sure you want to delete "{{course.code}} Section {{course.section}}" </p> 
+                </div>
+                <div class="modal-footer">
+                    <form action="{% url 'delete_course' id=course.id %}" method="POST" >
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                            <button id="{{paper.id}}" type="submit" class="btn btn-danger " > Delete Course </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {% comment %} <div class="border-top pt-3" >
         <small class="text-muted" > Already have an account? <a class="ml-2" href="{% url 'login'  %}" >Sign In </a>  </small>
