@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render
-from ..forms import AddCourseForm, AddStudentForm, AddStudentToCourseForm
+from ..forms import AddCourseForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm
 from users.models import Course, CustomUser
 from django.contrib import messages
 
@@ -96,3 +96,47 @@ def delete_course_enrolled(request, id, course_id, *args, **kwargs):
     course.students.remove(user)
     messages.success(request, f"{course.code} Sec {course.section} has been dropped successfully from {user.first_name} {user.last_name} ")
     return redirect("view_student_enrolled_courses", id=id)
+
+
+
+def add_staff(request):
+    if request.method == "POST":
+        form = AddStaffForm(request.POST)
+        if form.is_valid():
+            f = form.save(commit = False)
+            f.username = f"{form.cleaned_data.get('first_name')} {form.cleaned_data.get('last_name')}"
+            f.user_type = "STA"
+            f.save()
+            messages.success(request, f"{form.cleaned_data.get('first_name')} {form.cleaned_data.get('last_name')} has been added successfully!")
+            return redirect("view_staff")
+    else:
+        form = AddStaffForm()
+          
+    context = {"form":form}
+    return render(request, "sis/admin_templates/add_staff.html", context)
+
+
+def view_staff(request):
+    staffs = CustomUser.objects.filter(user_type = "STA")
+    context = {"staffs": staffs}
+    return render(request, "sis/admin_templates/view_staff.html", context)
+
+def view_instructor_enrolled_courses(request, id):
+    courses_enrolled = Course.objects.filter(instructor__id = id)
+    instructor = CustomUser.objects.get(id=id)
+    # if request.method == "POST":
+    #     form = AddStudentToCourseForm(request.POST)
+    #     if form.is_valid():
+    #         f = form
+    #         course_form = f.cleaned_data["courses"]
+    #         course = Course.objects.get(id = course_form)
+    #         user = CustomUser.objects.get(id=id)
+    #         course.students.add(user)
+    #         course.save()
+    #         messages.success(request, f" {user.first_name} {user.last_name} has sucessfully enrolled in {course.code} Sec {course.section}!")
+    #         return redirect("view_student_enrolled_courses", id=id)
+    # else:
+    #     form = AddStudentToCourseForm()
+        
+    context = {"courses": courses_enrolled, "instructor":instructor}
+    return render(request, "sis/admin_templates/view_instructor_enrolled_courses.html", context)

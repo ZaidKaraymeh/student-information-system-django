@@ -1,0 +1,53 @@
+{% extends 'sis/admin_templates/admin_base.html' %}
+
+{% block content %}
+
+
+<div class="table-responsive p-0 overflow-auto" style="height:100vh;" >
+    <table id="view_courses" class="table table-striped table-hover table-bordered text-center">
+        <thead>
+            <tr>
+            <th  scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Year</th>
+            <th scope="col">Address</th>
+            <th scope="col">Intructor</th>
+            <th scope="col">Analysis</th>
+            <th scope="col">Grades</th>
+            </tr>
+        </head>
+        <tbody>
+            {% for staff in staffs %}
+                <tr>
+                    <th  scope="row"> {{staff.id}} </th>
+                    <td> {% if staff.first_name %} 
+                                {{staff.first_name}} {{staff.last_name}} 
+                        {% else %} 
+                                {{staff.username}} 
+                        {% endif %}  
+                    </td>
+                    <td> {{staff.year}} </td>
+                    <td> {{staff.address}} </td>
+                    <td class="" ><a class="btn btn-dark btn-block" href="{% url 'view_instructor_enrolled_courses' id=staff.id %}" >View Courses </a></td>
+                    <td class="" > <a class="btn btn-primary btn-block" href="#{{staff.id}}_dashboard" > View Analysis </a> </td>
+                    <td class="" > <a class="btn btn-dark btn-block" href="#{{course.id}}_dashboard" > View Grades </a> </td>
+
+                    
+                </tr>
+            {% endfor %}
+        </tbody>
+        <thead>
+            <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Year</th>
+            <th scope="col">Address</th>
+            <th scope="col">Enrolled Courses</th>
+            <th scope="col">Analysis</th>
+            <th scope="col">Grades</th>
+            </tr>
+        </head>
+    </table>
+</div>
+
+{% endblock content %}

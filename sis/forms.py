@@ -37,3 +37,12 @@ class AddStudentForm(UserCreationForm):
         model = CustomUser
         # What fields to show and in which order
         fields = ["first_name", "last_name", "email", "password1", "password2", "year", "address"]
+        
+class AddStaffForm(UserCreationForm):
+    email = forms.EmailField()
+
+    class Meta:
+        # Interacts with User model
+        model = CustomUser
+        # What fields to show and in which order
+        fields = ["first_name", "last_name", "email", "password1", "password2", "year", "address"]

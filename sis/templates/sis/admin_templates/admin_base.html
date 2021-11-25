@@ -80,10 +80,10 @@
               <a class="text-decoration-none text-light p-4" href="{% url 'view_students' %}"
                 >Manage Students</a
               >
-              <a class="text-decoration-none text-light p-4" href="Login"
+              <a class="text-decoration-none text-light p-4" href="{% url 'add_staff' %}"
                 >Add Staff</a
               >
-              <a class="text-decoration-none text-light p-4" href="Login"
+              <a class="text-decoration-none text-light p-4" href="{% url 'view_staff' %}"
                 >Manage Staff</a
               >
               <a class="text-decoration-none text-light p-4" href="{% url 'add_course' %}"
@@ -120,7 +120,15 @@
         </div>
         <div class="col-10 p-0 bg-light  overflow-hidden">
           {% if messages %} {% for message in messages %}
-          <div class="alert alert-{{ message.tags }}">{{message}}</div>
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show ">{{message}}  
+           <a 
+              href="#" 
+              class="close" 
+              data-dismiss="alert" 
+              aria-label="close"
+              >&times;
+            </a>
+          </div>
           {% endfor %} {% endif %}
           <div class="row p-0 m-0 "> 
              {% block content %}{% endblock content %}

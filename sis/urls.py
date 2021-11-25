@@ -14,4 +14,10 @@ urlpatterns = [
     path("view_student_enrolled_courses/<int:id>", admin_views.view_student_enrolled_courses, name="view_student_enrolled_courses"),
     path("delete_student_enrolled/<slug:course_id>/<int:id>/", admin_views.delete_course_enrolled, name="delete_student_enrolled"),
 
+    # STAFF URLS
+
+    path("add_staff", admin_views.add_staff, name="add_staff" ),
+    path("view_staff/", admin_views.view_staff, name="view_staff"),
+    path("view_instructor_enrolled_courses/<int:id>", admin_views.view_instructor_enrolled_courses, name="view_instructor_enrolled_courses"),
+
 ]
