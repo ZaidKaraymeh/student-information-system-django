@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.fields.related import ManyToManyField
 
 # Create your models here.
 
@@ -59,12 +60,20 @@ class Course(models.Model):
     instructor = models.ForeignKey(CustomUser, related_name="instructor", on_delete=models.CASCADE)
     students = models.ManyToManyField(CustomUser)
 
-# class Student(models.Model):
-#     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+class Attendance(models.Model):
+    attendance_date = models.DateField(auto_now=False, auto_now_add=True)
 
-#     class Meta:
-#         permissions = [("can_post_assignments", "Can post assignments")]
 
-# class Instructor(Profile):
-#     class Meta:
-#         permissions = [("can_create_assignments", "Can create assignments")]
+
+class Post(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+    title = models.CharField( max_length=200)
+    date_posted = models.DateTimeField( auto_now=False, auto_now_add=True)
+    content = models.TextField(max_length=5000)
+    docfile = models.FileField(upload_to='documents')
+    # replies = models.ManyToManyField(CustomUser)
+
+    def __str__(self):
+        return f"{self.user.username} {self.course.name} {self.title}"
+    

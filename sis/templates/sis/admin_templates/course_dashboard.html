@@ -1,0 +1,43 @@
+{% extends 'sis/admin_templates/admin_base.html' %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="p-0" >  
+    <div class="row p-0" >
+        <div class="card mb-3 p-0">
+            <img class="card-img-top img-fluid course-wp " src="https://images.unsplash.com/photo-1434725039720-aaad6dd32dfe?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1342&q=80" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+            </div>
+        </div>
+    </div>
+    <div class="row">  
+        <form method="POST" class="p-4">
+            {% csrf_token %}
+
+            <fieldset class="form-group" > 
+                <legend> New Post </legend>
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button type="submit" class="btn btn-dark" > Post </button>
+            </div>
+        </form>
+    </div>
+    <div class="row" >
+        {% for post in posts %}
+
+            <li>{{post.title}}</li>
+        {% endfor %}
+    </div>
+
+
+</div>
+
+
+    
+
+{%endblock content %}

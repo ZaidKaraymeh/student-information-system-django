@@ -1,7 +1,16 @@
 {% extends 'sis/admin_templates/admin_base.html' %}
 
 {% block content %}
-
+<div class="col p-4 " >
+      <h2> Manage Courses </h2>  
+</div>
+<div class="col p-4 d-flex justify-content-end align-items-start" >
+    <a 
+        class="btn btn-primary" 
+        href="{% url 'export_courses' %}" 
+        > Export
+    </a>
+</div>
 
 <div class="table-responsive p-0 overflow-auto" style="height:100vh;" >
     <table id="view_courses" class="table table-striped table-hover table-bordered text-center">
@@ -25,7 +34,7 @@
                     <td> {{course.code}} </td>
                     <td> {{course.section}} </td>
                     <td class="" ><a class="btn btn-dark btn-block" href="{% url 'edit_course' id=course.id %}" >Edit </a></td>
-                    <td class="" > <a class="btn btn-primary btn-block" href="#{{course.id}}_dashboard" > View Analysis </a> </td>
+                    <td class="" > <a class="btn btn-primary btn-block" href="{% url 'course_dashboard' id=course.id instructor_id=course.instructor.id  %}" > View Analysis </a> </td>
                     
                 </tr>
             {% endfor %}

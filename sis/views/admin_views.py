@@ -1,8 +1,9 @@
-from django.shortcuts import redirect, render
-from ..forms import AddCourseForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm
-from users.models import Course, CustomUser
+from django.shortcuts import redirect, render, HttpResponse
+from ..forms import AddCourseForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, PostForm
+from users.models import Course, CustomUser, Post
 from django.contrib import messages
 
+import xlwt
 
 def add_course(request):
     if request.method == "POST":
@@ -20,10 +21,47 @@ def add_course(request):
 def manage_course(request):
     pass
 
+def delete_course_enrolled(request, id, course_id, *args, **kwargs):
+    course = Course.objects.get(id=course_id)
+    user = CustomUser.objects.get(id=id)
+    course.students.remove(user)
+    messages.success(request, f"{course.code} Sec {course.section} has been dropped successfully from {user.first_name} {user.last_name} ")
+    return redirect("view_student_enrolled_courses", id=id)
+
 def view_courses(request):
-    courses = Course.objects.all()
+    courses = Course.objects.all().order_by('code')
     context = {"courses": courses}
     return render(request, "sis/admin_templates/view_courses.html", context)
+
+def export_courses(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="courses.xls"'   
+    
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Courses Data') # this will make a sheet named Users Data
+    
+    # Sheet header, first row   
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ['Code', 'Course Name', 'Section', 'Instructor', ]
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style) # at 0 row 0 column 
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    rows = Course.objects.all().values_list('code', 'name', 'section', 'instructor')
+    for row in rows:
+            row_num += 1
+            for col_num in range(len(row)):
+                ws.write(row_num, col_num, row[col_num], font_style)
+
+    wb.save(response)
+    return response
+
 def edit_course(request, id):
     course = Course.objects.get(id=id)
     if request.method == "POST":
@@ -44,6 +82,34 @@ def delete_course(request, id):
     messages.warning(request, f"{course.code} Section {course.section} has been deleted successfully!")
     return redirect("view_courses")
 
+
+
+def course_dashboard(request, id, instructor_id):
+    course = Course.objects.get(id=id)
+    if request.method == "POST":
+        print(request.FILES)
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            print("form is valid")
+            f = form.save(commit= False)
+            f.course = course
+            print("form course",  f.course)
+            f.user = CustomUser.objects.get(id=instructor_id)
+            print("form user",  f.user)
+            f.save()
+            messages.success(
+                request,
+                f"Post Successful!"
+            )
+            return redirect("view_courses")
+    else:
+        form = PostForm()
+    user = CustomUser.objects.get(id=instructor_id)
+    print("user ", user)
+    posts = Post.objects.filter(user__id = instructor_id)
+    print(posts)
+    context = {'form':form, "posts":posts, "course": course}
+    return render(request, "sis/admin_templates/course_dashboard.html", context)
 
 
 
@@ -69,6 +135,35 @@ def view_students(request):
     context = {"students": students}
     return render(request, "sis/admin_templates/view_students.html", context)
 
+def export_students(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="students.xls"'   
+    
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Student Data') # this will make a sheet named Users Data
+    
+    # Sheet header, first row   
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ['ID', 'First Name', 'Second Name', "Year", 'Email', 'Address', ]
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style) # at 0 row 0 column 
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    rows = CustomUser.objects.filter(user_type="STU").values_list('id', 'first_name', 'last_name', 'year', 'email', 'address', )
+    for row in rows:
+            row_num += 1
+            for col_num in range(len(row)):
+                ws.write(row_num, col_num, row[col_num], font_style)
+
+    wb.save(response)
+    return response
+
 def view_student_enrolled_courses(request, id):
     courses_enrolled = Course.objects.filter(students__id = id)
     student = CustomUser.objects.get(id=id)
@@ -90,12 +185,7 @@ def view_student_enrolled_courses(request, id):
     context = {"courses": courses_enrolled, "student":student, "form":form}
     return render(request, "sis/admin_templates/view_student_enrolled_courses.html", context)
 
-def delete_course_enrolled(request, id, course_id, *args, **kwargs):
-    course = Course.objects.get(id=course_id)
-    user = CustomUser.objects.get(id=id)
-    course.students.remove(user)
-    messages.success(request, f"{course.code} Sec {course.section} has been dropped successfully from {user.first_name} {user.last_name} ")
-    return redirect("view_student_enrolled_courses", id=id)
+
 
 
 
@@ -124,19 +214,70 @@ def view_staff(request):
 def view_instructor_enrolled_courses(request, id):
     courses_enrolled = Course.objects.filter(instructor__id = id)
     instructor = CustomUser.objects.get(id=id)
-    # if request.method == "POST":
-    #     form = AddStudentToCourseForm(request.POST)
-    #     if form.is_valid():
-    #         f = form
-    #         course_form = f.cleaned_data["courses"]
-    #         course = Course.objects.get(id = course_form)
-    #         user = CustomUser.objects.get(id=id)
-    #         course.students.add(user)
-    #         course.save()
-    #         messages.success(request, f" {user.first_name} {user.last_name} has sucessfully enrolled in {course.code} Sec {course.section}!")
-    #         return redirect("view_student_enrolled_courses", id=id)
-    # else:
-    #     form = AddStudentToCourseForm()
+
         
     context = {"courses": courses_enrolled, "instructor":instructor}
     return render(request, "sis/admin_templates/view_instructor_enrolled_courses.html", context)
+
+def export_staff(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="staff.xls"'   
+    
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Staff Data') # this will make a sheet named Users Data
+    
+    # Sheet header, first row   
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ['ID', 'First Name', 'Second Name', 'Email', 'Address', ]
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style) # at 0 row 0 column 
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    rows = CustomUser.objects.filter(user_type="STA").values_list('id', 'first_name', 'last_name', 'email', 'address', )
+    for row in rows:
+            row_num += 1
+            for col_num in range(len(row)):
+                ws.write(row_num, col_num, row[col_num], font_style)
+
+    wb.save(response)
+    return response
+
+def export_staff_enrolled_course(request, id):
+    instructor = CustomUser.objects.get(id=id)
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = f"attachment; filename={instructor.username}'s_enrolled_courses.xls"   
+    
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Courses Teaching Data') # this will make a sheet named Users Data
+    
+    # Sheet header, first row   
+    row_num = 1
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    ws.write(0, 0, f"{instructor.username}'s Classes")
+    columns = ['Code', 'Course Name', 'Section', 'Instructor', ]
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style) # at 0 row 0 column 
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    # courses_enrolled = Course.objects.filter(instructor__id = id)
+    rows = Course.objects.filter(instructor__id=id).values_list('code', 'name', 'section', 'instructor')
+    for row in rows:
+            row_num += 1
+            for col_num in range(len(row)):
+                ws.write(row_num, col_num, row[col_num], font_style)
+
+    wb.save(response)
+    return response
+
+
+

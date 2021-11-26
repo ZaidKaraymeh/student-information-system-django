@@ -2,7 +2,16 @@
 
 {% block content %}
 
-
+<div class="col p-4 " >
+      <h2> Manage Students </h2>  
+</div>
+<div class="col p-4 d-flex justify-content-end align-items-start" >
+    <a 
+        class="btn btn-primary" 
+        href="{% url 'export_students' %}" 
+        > Export
+    </a>
+</div>
 <div class="table-responsive p-0 overflow-auto" style="height:100vh;" >
     <table id="view_courses" class="table table-striped table-hover table-bordered text-center">
         <thead>

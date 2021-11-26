@@ -1,7 +1,7 @@
 from django import forms
 # from django.forms import ChoiceWidget
 
-from users.models import CustomUser, Course
+from users.models import CustomUser, Course, Post
 from django.contrib.auth.forms import UserCreationForm
 
 # from .models import Profile
@@ -46,3 +46,15 @@ class AddStaffForm(UserCreationForm):
         model = CustomUser
         # What fields to show and in which order
         fields = ["first_name", "last_name", "email", "password1", "password2", "year", "address"]
+
+# For course posts
+class PostForm(forms.ModelForm):
+    # docfile = forms.FileField(
+    #     label='Select a file',
+    #     help_text='max. 42 megabytes'
+    # )
+
+    class Meta:
+        model = Post
+
+        fields = ['title', 'content',]
