@@ -1,6 +1,7 @@
 from django.shortcuts import redirect, render, HttpResponse
+
 from ..forms import AddCourseForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, PostForm
-from users.models import Course, CustomUser, Post
+from users.models import Course, CustomUser, Post, Assignment
 from django.contrib import messages
 
 import xlwt
@@ -107,8 +108,14 @@ def course_dashboard(request, id, instructor_id):
     user = CustomUser.objects.get(id=instructor_id)
     print("user ", user)
     posts = Post.objects.filter(course__id = id)
+    assignments = Assignment.objects.filter(course__id = id)
     print(posts)
-    context = {'form':form, "posts":posts, "course": course}
+    context = {
+        'form':form, 
+        "posts":posts, 
+        "course": course, 
+        "assignments":assignments
+    }
     return render(request, "sis/admin_templates/course_dashboard.html", context)
 
 
@@ -121,9 +128,10 @@ def add_student(request):
         if form.is_valid():
             f = form.save(commit = False)
             f.user_type = "STU"
+            f.username = f"{form.cleaned_data.get('first_name')} {form.cleaned_data.get('last_name')}"
             f.save()
             messages.success(request, f"{form.cleaned_data.get('first_name')} {form.cleaned_data.get('last_name')} has been added successfully!")
-            return redirect("view_courses")
+            return redirect("view_students")
     else:
         form = AddStudentForm()
           
@@ -219,6 +227,8 @@ def view_instructor_enrolled_courses(request, id):
     context = {"courses": courses_enrolled, "instructor":instructor}
     return render(request, "sis/admin_templates/view_instructor_enrolled_courses.html", context)
 
+# def edit_instructor_enrolled_courses(request, course_id, )
+
 def export_staff(request):
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = 'attachment; filename="staff.xls"'   
@@ -271,6 +281,36 @@ def export_staff_enrolled_course(request, id):
 
     # courses_enrolled = Course.objects.filter(instructor__id = id)
     rows = Course.objects.filter(instructor__id=id).values_list('code', 'name', 'section', 'instructor')
+    for row in rows:
+            row_num += 1
+            for col_num in range(len(row)):
+                ws.write(row_num, col_num, row[col_num], font_style)
+
+    wb.save(response)
+    return response
+def export_student_enrolled_course(request, id):
+    student = CustomUser.objects.get(id=id)
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = f"attachment; filename={student.username}'s_enrolled_courses.xls"   
+    
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Courses Teaching Data') # this will make a sheet named Users Data
+    
+    # Sheet header, first row   
+    row_num = 1
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    ws.write(0, 0, f"{student.username}'s Classes")
+    columns = ['Code', 'Course Name', 'Section' ]
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style) # at 0 row 0 column 
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    # courses_enrolled = Course.objects.filter(student__id = id)
+    rows = Course.objects.filter(students__id=id).values_list('code', 'name', 'section')
     for row in rows:
             row_num += 1
             for col_num in range(len(row)):

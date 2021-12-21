@@ -115,6 +115,7 @@
             <th  scope="col">#</th>
             <th scope="col">Name</th>
             <th scope="col">Year</th>
+            <th scope="col">Phone Number</th>
             <th scope="col">Address</th>
             <th scope="col">Enrolled Courses</th>
             <th scope="col">Analysis</th>
@@ -132,6 +133,11 @@
                         {% endif %}  
                     </td>
                     <td> {{student.year}} </td>
+                    {% if not student.phone_number %}
+                        <td> N/A </td>
+                    {% else %}
+                        <td> {{student.phone_number}} </td>
+                    {% endif %}
                     <td> {{student.address}} </td>
                     <td class="" ><a class="btn btn-dark btn-block" href="{% url 'view_student_enrolled_courses' id=student.id %}" >View Courses </a></td>
                     <td class="" > <a class="btn btn-primary btn-block" href="#{{student.id}}_dashboard" > View Analysis </a> </td>
@@ -146,6 +152,7 @@
             <th scope="col">#</th>
             <th scope="col">Name</th>
             <th scope="col">Year</th>
+            <th scope="col">Phone Number</th>
             <th scope="col">Address</th>
             <th scope="col">Enrolled Courses</th>
             <th scope="col">Analysis</th>

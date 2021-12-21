@@ -1,5 +1,6 @@
 {% extends 'sis/admin_templates/base_new.html' %}
  {% load crispy_forms_tags %}
+ {% load static %}
  {% block sidebar %}
 <!-- Sidebar -->
 			<nav class="sidebar mCustomScrollbar _mCS_1 mCS-autoHide mCS_no_scrollbar" style="overflow: visible;"><div id="mCSB_1" class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside" style="max-height: none;" tabindex="0"><div id="mCSB_1_container" class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y" style="position:relative; top:0; left:0;" dir="ltr">
@@ -94,29 +95,85 @@
 {% endblock sidebar %}
 {% block content %}
 <!-- open sidebar menu -->
-<a class="btn btn-primary btn-customized open-menu" href="#" role="button">
-    <i class="fas fa-align-left"></i> <span>Menu</span>
-</a>
-<div class="p-0">
-  <div class="row p-0">
-    <div class="card mb-3 p-0 bg-transparent">
-      <img
-        class="card-img-top img-fluid course-wp"
-        src="https://images.unsplash.com/photo-1434725039720-aaad6dd32dfe?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1342&q=80"
-        alt="Card image cap"
-      />
-      <div class="card-body">
-        <h5 class="card-title">{{course.name}}</h5>
-        <p class="card-text">
-          {{course.code}} Section {{course.section}} - {{course.instructor}}
-        </p>
-      </div>
-    </div>
-  </div>
+  <a class="btn btn-primary btn-customized open-menu" href="#" role="button">
+      <i class="fas fa-align-left"></i> <span>Menu</span>
+  </a>
+  <ul class="nav nav-tabs mb-3 justify-content-center" id="pills-tab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="pills-stream-tab" data-toggle="pill" href="#pills-stream" role="tab" aria-controls="pills-stream" aria-selected="true">Stream</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="pills-classwork-tab" data-toggle="pill" href="#pills-classwork" role="tab" aria-controls="pills-classwork" aria-selected="false">Classwork</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="pills-people-tab" data-toggle="pill" href="#pills-people" role="tab" aria-controls="pills-people" aria-selected="false">People</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="pills-marks-tab" data-toggle="pill" href="#pills-marks" role="tab" aria-controls="pills-marks" aria-selected="false">Marks</a>
+    </li>
+  </ul>
+  <div class="tab-content" id="pills-tabContent">
 
-  <div class="row">
+    {% comment %} Stream Tab {% endcomment %}
+    <div class="tab-pane fade show active" id="pills-stream" role="tabpanel" aria-labelledby="pills-stream-tab">
+        <div class="container">
+          <div class="card shadow-md rounded text-left bg-dark text-white" style="height:200px;">
+            <img class="card-img" style="min-width:100%;min-height:100%;" src="{% static 'sis/img/backgrounds/waves2.png' %}" alt="Card image">
+            <div class="card-img-overlay d-flex justify-content-end flex-column">
+              <h5 class="card-title">{{course.code}} Section {{course.section}}</h5>
+              <p class="card-text">{{course.name}} | {{course.instructor.username}}</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-2 py-2" >
+                <div class="card rounded shadow-md" style="">
+                  <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted border-bottom">Upcoming Tasks and Due Dates</h6>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    <a href="#" class="card-link">View All</a>
+                  </div>
+                </div>
+            </div>
+            <div class="col-10" >
+              <div class="row">
+                {% for post in posts %}
+                  <div class="col-12 py-2" >
+                    <div class="card rounded shadow-md">
+                      <div class="card-body">
+                        <h5 class="card-title border-bottom"> {{post.title}} | {{post.user.username}} <small>at {{post.date_posted}}</small>  </h5>
+                        <p class="card-text">{{post.content}}</p>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    {% comment %} Classwork Tab {% endcomment %}
+    <div class="tab-pane fade" id="pills-classwork" role="tabpanel" aria-labelledby="pills-classwork-tab">
+      
+      <div class="container">
+          <div class="row">
+            <a class="btn btn-dark text-light" >
+             <i class="fas fa-plus"></i> Create
+            </a>
+          </div>
+          <div class="row">
+          </div>
+      </div>
+
+    </div>
+
+    {% comment %} People Tab {% endcomment %}
+    <div class="tab-pane fade" id="pills-people" role="tabpanel" aria-labelledby="pills-people-tab">...</div>
+
+    {% comment %} Marks Tab {% endcomment %}
+    <div class="tab-pane fade" id="pills-marks" role="tabpanel" aria-labelledby="pills-marks-tab">...</div>
+  </div>
     <!-- Button trigger modal -->
-    <button
+    {% comment %} <button
       type="button"
       class="btn btn-primary"
       data-toggle="modal"
@@ -124,6 +181,7 @@
     >
       Add Post
     </button>
+
 
     <!-- Modal -->
     <div
@@ -174,22 +232,21 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> {% endcomment %}
 
-  <div class="row" style="width: 100%;" >
-    <div class=" p-5">
-      {% for post in posts %}
-      <div class="card my-4">
-        <div class="card-body">
-          <h5 class="card-title border-bottom"> {{post.user.username}} | {{post.title}} <small>{{post.date_posted}}</small> </h5>
-          <p class="card-text">
-            {{post.content}}
-          </p>
+  {% comment %} {% for post in posts %}
+    <div class="row" style="" >
+      <div class="col">
+        <div class="card my-4">
+          <div class="card-body">
+            <h5 class="card-title border-bottom"> {{post.user.username}} | {{post.title}} <small>{{post.date_posted}}</small> </h5>
+            <p class="card-text">
+              {{post.content}}
+            </p>
+          </div>
         </div>
       </div>
-      {% endfor %}
     </div>
-  </div>
-</div>
+  {% endfor %} {% endcomment %}
 
 {%endblock content %}

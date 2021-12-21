@@ -124,3 +124,11 @@ footer {
   max-height: 300px;
   object-fit: none ;
 }
+
+/* .card-m-b{
+  margin-bottom: 100px !important;
+} */
+
+.card-rounded-cstm {
+  border-radius: 35% !important;
+}

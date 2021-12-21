@@ -114,6 +114,11 @@
     <div class="col p-4  d-flex justify-content-end align-items-start" >
         <a 
             class="btn btn-primary" 
+            href="{% url 'export_student_enrolled_course' student.id %}" 
+            > Export
+        </a>
+        <a 
+            class="btn btn-primary" 
             href="{% url 'view_students' %}" 
             > Back
         </a>
@@ -146,7 +151,7 @@
                     <td> {{course.instructor.first_name}} {{course.instructor.last_name}} </td>
                     <td> {{course.code}} </td>
                     <td> {{course.section}} </td>
-                    <td class="" ><a class="btn btn-dark btn-block" href="{% url 'delete_student_enrolled' course_id=course.id id=student.id  %}" >X </a></td>
+                    <td class="" ><a class="btn btn-dark btn-block" href="{% url 'delete_student_enrolled' course_id=course.id id=student.id  %}" >Drop </a></td>
                     <td class="" > <a class="btn btn-primary btn-block" href="#{{course.id}}_dashboard" > View Analysis </a> </td>
                     
                 </tr>

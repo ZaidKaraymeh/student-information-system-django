@@ -18,7 +18,7 @@ class AddStudentToCourseForm(forms.Form):
         (
             course.id ,
             f"{course.code} {course.name} Sec {course.section}"
-            ) for course in Course.objects.all()
+            ) for course in Course.objects.all().order_by('code')
     ]
     courses = forms.ChoiceField(choices=COURSE_CHOICES)
     # class Meta:
@@ -36,7 +36,7 @@ class AddStudentForm(UserCreationForm):
         # Interacts with User model
         model = CustomUser
         # What fields to show and in which order
-        fields = ["first_name", "last_name", "email", "password1", "password2", "year", "address"]
+        fields = ["first_name", "last_name", "email", "phone_number",  "password1", "password2", "year", "address"]
         
 class AddStaffForm(UserCreationForm):
     email = forms.EmailField()
@@ -45,7 +45,7 @@ class AddStaffForm(UserCreationForm):
         # Interacts with User model
         model = CustomUser
         # What fields to show and in which order
-        fields = ["first_name", "last_name", "email", "password1", "password2", "year", "address"]
+        fields = ["first_name", "last_name", "email", "phone_number",  "password1", "password2", "year", "address"]
 
 # For course posts
 class PostForm(forms.ModelForm):

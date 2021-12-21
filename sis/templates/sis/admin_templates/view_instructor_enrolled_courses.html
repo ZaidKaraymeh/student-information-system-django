@@ -151,7 +151,7 @@
                     <td> {{course.instructor.first_name}} {{course.instructor.last_name}} </td>
                     <td> {{course.code}} </td>
                     <td> {{course.section}} </td>
-                    <td class="" ><a class="btn btn-dark btn-block" href="#" >X </a></td>
+                    <td class="" ><a class="btn btn-dark btn-block" href="{% url 'edit_course' course.id %}" >Change </a></td>
                     <td class="" > <a class="btn btn-primary btn-block" href="#{{course.id}}_dashboard" > View Analysis </a> </td>
                     
                 </tr>
