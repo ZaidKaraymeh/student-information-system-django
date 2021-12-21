@@ -62,6 +62,9 @@ class Course(models.Model):
 
 class Attendance(models.Model):
     attendance_date = models.DateField(auto_now=False, auto_now_add=True)
+    note = models.TextField(null = True, max_length=500)
+    instructor = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE)
+    student = models.OneToOneField(CustomUser, null=True, related_name="student", on_delete=models.CASCADE)
 
 
 

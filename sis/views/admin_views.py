@@ -101,12 +101,12 @@ def course_dashboard(request, id, instructor_id):
                 request,
                 f"Post Successful!"
             )
-            return redirect("view_courses")
+            return redirect("course_dashboard", id=id, instructor_id=instructor_id)
     else:
         form = PostForm()
     user = CustomUser.objects.get(id=instructor_id)
     print("user ", user)
-    posts = Post.objects.filter(user__id = instructor_id)
+    posts = Post.objects.filter(course__id = id)
     print(posts)
     context = {'form':form, "posts":posts, "course": course}
     return render(request, "sis/admin_templates/course_dashboard.html", context)

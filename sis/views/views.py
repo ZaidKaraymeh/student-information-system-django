@@ -11,7 +11,7 @@ def home(request):
     if (user.user_type == "STA"):
         x = "sis/staff_templates/staff_home.html"
     elif user.user_type == "ADM":
-        x = "sis/admin_templates/admin_home.html"
+        x = "sis/admin_templates/base_new.html"
     else:
         x = "sis/home.html"
 

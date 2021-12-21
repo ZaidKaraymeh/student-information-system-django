@@ -1,7 +1,7 @@
 from django import forms
 # from django.forms import ChoiceWidget
 
-from users.models import CustomUser, Course, Post
+from users.models import CustomUser, Course, Post, Attendance
 from django.contrib.auth.forms import UserCreationForm
 
 # from .models import Profile
@@ -58,3 +58,8 @@ class PostForm(forms.ModelForm):
         model = Post
 
         fields = ['title', 'content',]
+
+class AttendanceForm(forms.ModelForm):
+    class Meta:
+        model = Attendance
+        fields = ["note"]

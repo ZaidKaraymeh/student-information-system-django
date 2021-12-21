@@ -22,7 +22,6 @@
             <th scope="col">Address</th>
             <th scope="col">Intructor</th>
             <th scope="col">Analysis</th>
-            <th scope="col">Grades</th>
             </tr>
         </head>
         <tbody>
@@ -39,7 +38,6 @@
                     <td> {{staff.address}} </td>
                     <td class="" ><a class="btn btn-dark btn-block" href="{% url 'view_instructor_enrolled_courses' id=staff.id %}" >View Courses </a></td>
                     <td class="" > <a class="btn btn-primary btn-block" href="#{{staff.id}}_dashboard" > View Analysis </a> </td>
-                    <td class="" > <a class="btn btn-dark btn-block" href="#{{course.id}}_dashboard" > View Grades </a> </td>
 
                     
                 </tr>
@@ -53,7 +51,6 @@
             <th scope="col">Address</th>
             <th scope="col">Instructor</th>
             <th scope="col">Analysis</th>
-            <th scope="col">Grades</th>
             </tr>
         </head>
     </table>
