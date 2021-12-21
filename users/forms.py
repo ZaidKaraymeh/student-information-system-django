@@ -13,7 +13,13 @@ class RegisterForm(UserCreationForm):
         # Interacts with User model
         model = CustomUser
         # What fields to show and in which order
-        fields = ["user_type", "first_name", "last_name", "email", "password1", "password2", "year", "address"]
+        fields = ["user_type", "first_name", "last_name", "email", "password1", "password2", "year", "address", "phone_number"]
+
+    def __init__(self, *args, **kwargs):
+        super(RegisterForm, self).__init__(*args, **kwargs)
+
+        for fieldname in ['password1', 'password2']:
+            self.fields[fieldname].help_text = None
 
 class UserUpdateForm(forms.ModelForm):
     email = forms.EmailField()

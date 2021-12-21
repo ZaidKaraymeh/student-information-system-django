@@ -27,8 +27,8 @@ class CustomUser(User):
         (ADMIN, "Admin"),
     ]
 
-
-    address = models.TextField(null=True, max_length=500)
+    phone_number = models.CharField(max_length=20, null=True)
+    address = models.CharField(null=True, max_length=500)
     year = models.CharField(
         max_length=10,
         choices=YEAR_CHOICES,

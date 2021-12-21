@@ -1,6 +1,7 @@
 {% extends 'sis/admin_templates/base_new.html' %}
+{% load static %}
 
-{% load crispy_forms_tags %}
+
 {% block sidebar %}
 <!-- Sidebar -->
 			<nav class="sidebar mCustomScrollbar _mCS_1 mCS-autoHide mCS_no_scrollbar" style="overflow: visible;"><div id="mCSB_1" class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside" style="max-height: none;" tabindex="0"><div id="mCSB_1_container" class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y" style="position:relative; top:0; left:0;" dir="ltr">
@@ -93,27 +94,41 @@
 			<!-- End sidebar -->
 
 {% endblock sidebar %}
+
 {% block content %}
-<!-- open sidebar menu -->
-<a class="btn btn-primary btn-customized open-menu" href="#" role="button">
-    <i class="fas fa-align-left"></i> <span>Menu</span>
-</a>
-    <form method="POST" class="p-4">
-        {% csrf_token %}
+			
+			<!-- Dark overlay -->
+    		<div class="overlay"></div>
 
-        <fieldset class="form-group" > 
-            <legend> Add Student </legend>
-            {{ form|crispy }}
-        </fieldset>
-        <div class="form-group">
-            <button type="submit" class="btn btn-dark" > Add Student </button>
-        </div>
-    </form>
+			<!-- Content -->
+			<div class="content">
+			
+				<!-- open sidebar menu -->
+				<a class="btn btn-primary btn-customized open-menu" href="#" role="button">
+                    <i class="fas fa-align-left"></i> <span>Menu</span>
+                </a>
+                <div class="section-container">
+                    Admin View
+                </div>
+		       
+		        
+		        <!-- Footer -->
+		        <footer class="footer-container">
+		
+			        <div class="container">
+			        	<div class="row">
+		
+		                    <div class="col">
+		                    	©Student Information System
+		                    </div>
+		
+		                </div>
+			        </div>
+		
+		        </footer>
+	        
+	        </div>
+	        <!-- End content -->
+        
 
-    {% comment %} <div class="border-top pt-3" >
-        <small class="text-muted" > Already have an account? <a class="ml-2" href="{% url 'login'  %}" >Sign In </a>  </small>
-    <div> {% endcomment %}
-
-    
-
-{%endblock content %}
+{% endblock content %}
