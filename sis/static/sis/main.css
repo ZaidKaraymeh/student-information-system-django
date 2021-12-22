@@ -97,7 +97,6 @@ footer {
 
 
 
-/* Scrollbar */
 /* width */
 ::-webkit-scrollbar {
   width: 10px;
@@ -119,7 +118,6 @@ footer {
 }
 
 
-
 .course-wp{
   max-height: 300px;
   object-fit: none ;
@@ -131,4 +129,8 @@ footer {
 
 .card-rounded-cstm {
   border-radius: 35% !important;
+}
+
+a:hover{
+  pointer-events: none;
 }

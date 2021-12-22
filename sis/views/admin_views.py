@@ -110,11 +110,15 @@ def course_dashboard(request, id, instructor_id):
     posts = Post.objects.filter(course__id = id)
     assignments = Assignment.objects.filter(course__id = id)
     print(posts)
+    students = CustomUser.objects.filter(course__id = id)
+
     context = {
         'form':form, 
         "posts":posts, 
         "course": course, 
-        "assignments":assignments
+        "assignments":assignments,
+        "instructor":user,
+        "students":students,
     }
     return render(request, "sis/admin_templates/course_dashboard.html", context)
 
