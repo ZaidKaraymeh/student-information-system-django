@@ -136,6 +136,35 @@
             </div>
             <div class="col-10" >
               <div class="row">
+                  <div class="col-12 py-2" >
+                    <button 
+                        class="btn btn-info col-12" 
+                        type="button" data-toggle="collapse"
+                        data-target="#collapseExample" 
+                        aria-expanded="false" 
+                        aria-controls="collapseExample"
+                        onClick="d-none">
+                        Announce something to the class...
+                    </button>
+                    <div class="collapse" id="collapseExample">
+                      <div class="card card-body">
+                          <form method="POST" class="">
+                            {% csrf_token %}
+
+                            <fieldset class="form-group" > 
+                                {% comment %} <legend> Enroll New Course </legend> {% endcomment %}
+                                <div class="d-flex align-items-start" >
+                                    {{form.title|as_crispy_field}}
+                                    {{form.content|as_crispy_field}}
+                                </div>
+                            </fieldset>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-dark"> Enroll </button>
+                            </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
                 {% for post in posts %}
                   <div class="col-12 py-2" >
                     <div class="card rounded shadow-md">

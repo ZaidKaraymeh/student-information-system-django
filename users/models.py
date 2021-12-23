@@ -60,10 +60,43 @@ class Course(models.Model):
     instructor = models.ForeignKey(CustomUser, related_name="instructor", on_delete=models.CASCADE)
     students = models.ManyToManyField(CustomUser)
 
+class Grade(models.Model):
 
+    A = 'A'
+    A_MINUS = 'A-'
+    B = 'B'
+    B_MINUS = 'B-'
+    C = 'C'
+    C_MINUS = 'C-'
+    D = 'D'
+    D_MINUS = 'D-'
+    F = 'F'
 
+    GRADE_TYPE_CHOICES = [
+        (A, "A"),
+        (A_MINUS, "A-"),
+        (B, "B"),
+        (B_MINUS, "B-"),
+        (C, "C"),
+        (C_MINUS, "C-"),
+        (D, "D"),
+        (D_MINUS, "D-"),
+        (F, "F"),
+    ]
+
+    student = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    letter_grade = models.CharField(
+        max_length=50,
+        choices=GRADE_TYPE_CHOICES,
+        default=A,
+        )
+    point_grade = models.IntegerField()
+    course = models.ForeignKey(
+        Course, 
+        on_delete=models.CASCADE,
+        null=True
+    )
 class Assignment(models.Model):
-
     TEST = "Test"
     QUIZ = "Quiz"
     HOMEWORK = "Homework"
@@ -96,39 +129,9 @@ class Assignment(models.Model):
         default= TASK
     )
     possible_points = models.IntegerField()
-    students_grades = models.ManyToManyField(CustomUser, related_name="grades")
+    students_grades = models.ManyToManyField(Grade, related_name="grades")
 
-class Grade(models.Model):
 
-    A = 'A'
-    A_MINUS = 'A-'
-    B = 'B'
-    B_MINUS = 'B-'
-    C = 'C'
-    C_MINUS = 'C-'
-    D = 'D'
-    D_MINUS = 'D-'
-    F = 'F'
-
-    GRADE_TYPE_CHOICES = [
-        (A, "A"),
-        (A_MINUS, "A-"),
-        (B, "B"),
-        (B_MINUS, "B-"),
-        (C, "C"),
-        (C_MINUS, "C-"),
-        (D, "D"),
-        (D_MINUS, "D-"),
-        (F, "F"),
-    ]
-
-    student = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    letter_grade = models.CharField(
-        max_length=50,
-        choices=GRADE_TYPE_CHOICES,
-        default=A,
-        )
-    point_grade = models.IntegerField()
 
 class Attendance(models.Model):
     attendance_date = models.DateField(auto_now=False, auto_now_add=True)

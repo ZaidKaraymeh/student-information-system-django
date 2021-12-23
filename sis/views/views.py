@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponseForbidden
 from django.shortcuts import redirect, render
-
 from users.models import CustomUser
+
 # Create your views here.
 
 

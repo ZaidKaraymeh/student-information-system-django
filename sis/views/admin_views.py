@@ -107,7 +107,7 @@ def course_dashboard(request, id, instructor_id):
         form = PostForm()
     user = CustomUser.objects.get(id=instructor_id)
     print("user ", user)
-    posts = Post.objects.filter(course__id = id)
+    posts = Post.objects.filter(course__id = id).order_by("-date_posted")
     assignments = Assignment.objects.filter(course__id = id)
     print(posts)
     students = CustomUser.objects.filter(course__id = id)
