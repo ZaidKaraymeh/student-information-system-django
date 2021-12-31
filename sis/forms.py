@@ -92,16 +92,23 @@ class AssignmentForm(forms.ModelForm):
             ) for course in Course.objects.all().order_by('code')
     ]
     courses = forms.ChoiceField(choices=COURSE_CHOICES, label='Course')
-
+    file = forms.FileField(
+        label='Select a file',
+        help_text='max. 42 megabytes',
+        required=False,
+        widget=forms.ClearableFileInput(attrs={'multiple': True})
+    )
     class Meta:
         model = Assignment
 
-        fields = ['name', 'description', 'category', 'possible_points', 'courses']
+        fields = ['name', 'description', 'category', 'possible_points', 'courses', 'file']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}) ,
             'description': forms.Textarea(attrs={'class': 'form-control'}),
         }
-
+class AssignmentFileForm(forms.Form):
+    pass
+    
 class AttendanceForm(forms.ModelForm):
     class Meta:
         model = Attendance

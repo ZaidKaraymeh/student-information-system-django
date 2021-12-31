@@ -96,7 +96,6 @@ def course_dashboard(request, id, instructor_id):
             f = form2.save(commit= False)
             f.course = course
             f.instructor = CustomUser.objects.get(id=instructor_id)
-
             f.save()
             messages.success(
                 request,
@@ -124,7 +123,7 @@ def course_dashboard(request, id, instructor_id):
     user = CustomUser.objects.get(id=instructor_id)
     print("user ", user)
     posts = Post.objects.filter(course__id = id).order_by("-date_posted")
-    assignments = Assignment.objects.filter(course__id = id)
+    assignments = Assignment.objects.filter(course__id = id).order_by("-date_posted")
     print(posts)
     students = CustomUser.objects.filter(course__id = id)
 
@@ -400,13 +399,17 @@ def course_assignment_builder(request):
 def course_assignment_build(request):
     user = CustomUser.objects.get(id=request.user.id)
     if request.method == "POST":
-        add_assignment_form = AssignmentForm(request.POST or None)
+        add_assignment_form = AssignmentForm(request.POST or None, request.FILES)
+        # file_form = AssignmentFileForm(request.POST, request.FILES)
+        
         if add_assignment_form.is_valid():
             f = add_assignment_form.save(commit=False)
             course = Course.objects.get(id=add_assignment_form.cleaned_data['courses'])
             f.instructor = course.instructor
             f.course = course
             f.save()
+            for file in request.FILES.getlist('file'):
+                print("plinker ", file.name)
             return redirect('course_dashboard', id=f.course.id, instructor_id=user.id)
     else:
         add_assignment_form = AssignmentForm()

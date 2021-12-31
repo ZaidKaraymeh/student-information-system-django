@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ManyToManyField
-
+import os
 # Create your models here.
 
 class CustomUser(User):
@@ -122,6 +122,8 @@ class Assignment(models.Model):
         related_name="course", 
         on_delete=models.CASCADE
     )
+    date_posted = models.DateTimeField( auto_now=False, auto_now_add=True, null=True)
+
     description = models.CharField(max_length=9000)
     due_date = models.DateTimeField(null=True, auto_now=False, auto_now_add=False)
     category = models.CharField(
@@ -131,7 +133,14 @@ class Assignment(models.Model):
     )
     possible_points = models.IntegerField()
     students_grades = models.ManyToManyField(Grade, related_name="grades")
+    file = models.FileField(upload_to='documents/%Y/%m/%d', null = True)
+    def filename(self):
+        return os.path.basename(self.file.name)
 
+# class AssignmentFile(models.Model):
+#     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, related_name='assignment')
+#     def filename(self):
+#         return os.path.basename(self.file.name)
 
 
 class Attendance(models.Model):
