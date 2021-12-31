@@ -1,6 +1,7 @@
+from django.forms.widgets import NullBooleanSelect
 from django.shortcuts import redirect, render, HttpResponse
 
-from ..forms import AddCourseForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, PostForm
+from ..forms import AddCourseForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, AssignmentForm, PostForm, AssignmentForm, AddMultipleChoiceQuestionForm, AddTestForm
 from users.models import Course, CustomUser, Post, Assignment
 from django.contrib import messages
 
@@ -90,6 +91,19 @@ def course_dashboard(request, id, instructor_id):
     if request.method == "POST":
         print(request.FILES)
         form = PostForm(request.POST, request.FILES)
+        form2 = AssignmentForm(request.POST, request.FILES)
+        if form2.is_valid():
+            f = form2.save(commit= False)
+            f.course = course
+            f.instructor = CustomUser.objects.get(id=instructor_id)
+
+            f.save()
+            messages.success(
+                request,
+                f"Assignment Posted Successful!"
+            )
+            return redirect("course_dashboard", id=id, instructor_id=instructor_id)
+
         if form.is_valid():
             print("form is valid")
             f = form.save(commit= False)
@@ -105,6 +119,8 @@ def course_dashboard(request, id, instructor_id):
             return redirect("course_dashboard", id=id, instructor_id=instructor_id)
     else:
         form = PostForm()
+        form2 = AssignmentForm()
+        
     user = CustomUser.objects.get(id=instructor_id)
     print("user ", user)
     posts = Post.objects.filter(course__id = id).order_by("-date_posted")
@@ -114,11 +130,14 @@ def course_dashboard(request, id, instructor_id):
 
     context = {
         'form':form, 
+        'form2':form2, 
         "posts":posts, 
         "course": course, 
         "assignments":assignments,
         "instructor":user,
         "students":students,
+        "quiz": 'quiz',
+        "test": "test",
     }
     return render(request, "sis/admin_templates/course_dashboard.html", context)
 
@@ -324,4 +343,76 @@ def export_student_enrolled_course(request, id):
     return response
 
 
+"""
 
+def course_test_builder(request, course_id, instructor_id, quiz_type, *args, **kwargs):
+    try:
+        user = CustomUser.objects.filter(request.user.id)
+        if user.user_type != "STA" or user.user_type != "ADM":
+            return redirect('course_dashboard', id=course_id, instructor_id=instructor_id)
+
+    except:
+        return redirect('course_dashboard', id=course_id, instructor_id=instructor_id)
+    course = Course.objects.filter(id=course_id)
+    instructor = CustomUser.objects.filter(id=instructor_id)
+
+
+    if request.method == "POST":
+        add_test_form = AddTestForm(request.POST or None)
+        if add_test_form.is_valid():
+            f = add_test_form.save(commit=False)
+            f.quiz_type = quiz_type
+            f.course = course
+            f.instructor = instructor
+            f.save()
+    else:
+        add_test_form = AddTestForm()
+
+    context = {
+        'form':add_test_form,
+        'course': course,
+        'instructor': instructor
+    }
+
+    return render(request, 'sis/admin_templates/course_test_builder', context)
+
+"""
+
+
+def course_assignment_builder(request):
+    assignments = Assignment.objects.all()
+    print("plinker", assignments)
+    if request.method == "POST":
+        add_test_form = AddTestForm(request.POST or None)
+        if add_test_form.is_valid():
+            f = add_test_form.save(commit=False)
+            f.save()
+    else:
+        add_test_form = AddTestForm()
+
+    context = {
+        'form':add_test_form,
+        'assignments': assignments,
+    }
+
+    return render(request, 'sis/admin_templates/course_assignment_builder.html', context)
+
+def course_assignment_build(request):
+    user = CustomUser.objects.get(id=request.user.id)
+    if request.method == "POST":
+        add_assignment_form = AssignmentForm(request.POST or None)
+        if add_assignment_form.is_valid():
+            f = add_assignment_form.save(commit=False)
+            course = Course.objects.get(id=add_assignment_form.cleaned_data['courses'])
+            f.instructor = course.instructor
+            f.course = course
+            f.save()
+            return redirect('course_dashboard', id=f.course.id, instructor_id=user.id)
+    else:
+        add_assignment_form = AssignmentForm()
+        add_assignment_form.fields["courses"].queryset = Course.objects.filter(instructor__id = user.id)
+
+    context = {
+        'form':add_assignment_form,
+    }
+    return render(request, 'sis/admin_templates/add_assignment.html', context)

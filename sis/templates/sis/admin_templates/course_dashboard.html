@@ -20,44 +20,17 @@
 					<li class="">
 						<a class="" href="#top-content"><i class="fas fa-home"></i> Dashboard</a>
 					</li>
+					<li class="">
+						<a class="" href="#top-content"><i class="fas fa-user "></i>Students</a>
+					</li>
+					<li class="">
+						<a class="" href="#top-content"><i class="fas fa-users-cog"></i>Staff</a>
+					</li>
+					<li class="">
+						<a class="" href="#top-content"><i class="fas fa-book"></i>Courses</a>
+					</li>
                     <li class="">
-						<a href="#Students" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" role="button" aria-controls="Students">
-							<i class="fas fa-user "></i>Students
-						</a>
-						<ul class="collapse list-unstyled" id="Students">
-							<li class="">
-								<a class="" href="{% url 'add_student' %}">Add Students</a>
-							</li>
-							<li class="">
-								<a class="" href="{% url 'view_students' %}">Manage Students</a>
-							</li>
-						</ul>
-					</li>
-					<li class="">
-						<a href="#Staff" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" role="button" aria-controls="Staff">
-							<i class="fas fa-users-cog"></i>Staff
-						</a>
-						<ul class="collapse list-unstyled" id="Staff">
-							<li class="">
-								<a class="" href="{% url 'add_staff' %}">Add Staff</a>
-							</li>
-							<li class="">
-								<a class="" href="{% url 'view_staff' %}">Manage Staff</a>
-							</li>
-						</ul>
-					</li>
-					<li class="">
-						<a href="#Courses" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" role="button" aria-controls="Courses">
-							<i class="fas fa-book"></i>Courses
-						</a>
-						<ul class="collapse list-unstyled" id="Courses">
-							<li class="">
-								<a class="" href="{% url 'add_course' %}">Add Courses</a>
-							</li>
-							<li class="">
-								<a class="" href="{% url 'view_courses' %}">Manage Courses</a>
-							</li>
-						</ul>
+                            <a class="" href="#section-1"><i class="fas fa-hammer"></i> Assignment Builder</a>
 					</li>
 					<li class="">
 						<a class="" href="#section-1"><i class="fas fa-cog"></i> Attendance</a>
@@ -91,6 +64,7 @@
 			
 			</div></div><div id="mCSB_1_scrollbar_vertical" class="mCSB_scrollTools mCSB_1_scrollbar mCS-minimal-dark mCSB_scrollTools_vertical" style="display: none;"><div class="mCSB_draggerContainer"><div id="mCSB_1_dragger_vertical" class="mCSB_dragger" style="position: absolute; min-height: 50px; height: 0px; top: 0px;"><div class="mCSB_dragger_bar" style="line-height: 50px;"></div></div><div class="mCSB_draggerRail"></div></div></div></nav>
 			<!-- End sidebar -->
+
 
 {% endblock sidebar %}
 {% block content %}
@@ -126,7 +100,7 @@
           </div>
           <div class="row">
             <div class="col-2 py-2" >
-                <div class="card rounded shadow-sm" style="">
+                <div class="card rounded shadow-sm">
                   <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted border-bottom">Upcoming Tasks and Due Dates</h6>
                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
@@ -154,12 +128,20 @@
                             <fieldset class="form-group" > 
                                 {% comment %} <legend> Enroll New Course </legend> {% endcomment %}
                                 <div class="d-flex align-items-start" >
+                                </div>
+                                <div class="row">
+                                  <div class="col-12 d-block" >
                                     {{form.title|as_crispy_field}}
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-12 d-block" >
                                     {{form.content|as_crispy_field}}
+                                  </div>
                                 </div>
                             </fieldset>
                             <div class="form-group">
-                                <button type="submit" class="btn btn-dark"> Enroll </button>
+                                <button type="submit" class="btn btn-dark"> Post </button>
                             </div>
                         </form>
                       </div>
@@ -168,8 +150,8 @@
                 {% for post in posts %}
                   <div class="col-12 py-2" >
                     <div class="card rounded shadow-md">
-                      <div class="card-body">
-                        <h5 class="card-title border-bottom"> {{post.title}} | {{post.user.username}} <small>at {{post.date_posted}}</small>  </h5>
+                      <div class="card-body text-left">
+                        <h5 class="card-title py-2 border-bottom"> {{post.title}} | {{post.user.username}} <small>at {{post.date_posted}}</small>  </h5>
                         <p class="card-text">{{post.content}}</p>
                       </div>
                     </div>
@@ -185,20 +167,65 @@
       
       <div class="container">
           <div class="row">
-            <div class="px-3 dropdown">
+            <a class="btn btn-dark text-light" href="{% url 'course_assignment_build' %}" role="button">
+             <i class="fas fa-plus"></i> Create
+            </a>
+            {% comment %} <div class="px-3 dropdown">
               <a class="btn btn-dark text-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                <i class="fas fa-plus"></i> Create
               </a>
 
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                 <a class="dropdown-item" href="#"><i class="fas fa-tasks pr-3"></i> Task</a>
-                <a class="dropdown-item" href="#"> <i class="fas fa-align-justify pr-3"></i> Quiz</a>
-                <a class="dropdown-item" href="#"><i class="fas fa-align-center pr-3"></i> Test</a>
+                <a class="dropdown-item" href="{% url 'course_assignment_builder' %}"> <i class="fas fa-align-justify pr-3"></i> Quiz</a>
+                <a class="dropdown-item" href="{% url 'course_assignment_builder' %}"><i class="fas fa-align-center pr-3"></i> Test</a>
                 <a class="dropdown-item" href="#"><i class="fas fa-pen pr-3"></i> Homework</a>
                 <a class="dropdown-item" href="#"><i class="fas fa-hammer pr-3"></i> Project</a>
               </div>
-            </div>
+            </div> {% endcomment %}
           </div>
+            <!-- <button 
+                class="btn btn-dark col-12" 
+                type="button" data-toggle="collapse"
+                data-target="#assignment_form" 
+                aria-expanded="false" 
+                aria-controls="assignment_form"
+                onClick="d-none">
+                <i class="fas fa-plus"></i> Create
+            </button>
+            <div class="collapse " id="assignment_form">
+                <div class="card">
+                  <div class="card-body">
+                      <form method="POST" class="">
+                        {% csrf_token %}
+
+                        <fieldset class="form-group" > 
+                            {% comment %} <legend> Enroll New Course </legend> {% endcomment %}
+                            <div class="row">
+                              <div class="col-6 d-block" >
+                                  {{form2.name|as_crispy_field}}
+                                </div>
+                                <div class="col-6 d-block">
+                                  {{form2.description|as_crispy_field}}
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-6 d-block" >
+                                  {{form2.possible_points|as_crispy_field}}
+                                </div>
+                                <div class="col-6 d-block">
+                                  {{form2.category|as_crispy_field}}
+                              </div>
+                            </div>
+                        </fieldset>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-dark"> Post </button>
+                        </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+          </div> -->
           <div class="row">
               {% for assignment in assignments %}
                 <div class="col-12 py-2" >
@@ -206,11 +233,12 @@
                     <div class="card rounded shadow-sm">
                       <div class="card-body d-flex">
                         <div class="col-11 d-flex align-items-start">
-                          <h5 class="card-title "><i class="pr-5 fas fa-thumbtack"></i> {{assignment.name}} posted by {{assignment.instructor.username}} <small>at {{assignment.date_posted}}</small></h5>
+                          
+                          <h5 class="card-title "><i class="pr-5 fas fa-thumbtack"> <strong>{{assignment.category}}</strong> </i> {{assignment.name}} posted by {{assignment.instructor.username}} <small>at {{assignment.date_posted}}</small></h5>
 
                         </div>
                         <div class="col-1">
-                          <span class+"align-items-end" > */{{assignment.possible_points}} </span>
+                          <span class="align-items-end" > */{{assignment.possible_points}} </span>
                         </div>
                       </div>
                     </div>
@@ -346,7 +374,7 @@
   </div> {% endcomment %}
 
   {% comment %} {% for post in posts %}
-    <div class="row" style="" >
+    <div class="row" >
       <div class="col">
         <div class="card my-4">
           <div class="card-body">

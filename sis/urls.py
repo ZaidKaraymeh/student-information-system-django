@@ -23,6 +23,8 @@ urlpatterns = [
     # STAFF URLS
 
     path("sis/add_staff", admin_views.add_staff, name="add_staff" ),
+    path("sis/course_assignment_builder/", admin_views.course_assignment_builder, name="course_assignment_builder" ),
+    path("sis/course_assignment_builder/add_assignment", admin_views.course_assignment_build, name="course_assignment_build" ),
     path("sis/view_staff/", admin_views.view_staff, name="view_staff"),
     path("sis/view_instructor_enrolled_courses/<int:id>", admin_views.view_instructor_enrolled_courses, name="view_instructor_enrolled_courses"),
     path("sis/export/staff", admin_views.export_staff, name="export_staff"),
