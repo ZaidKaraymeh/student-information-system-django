@@ -150,6 +150,9 @@ class AttendanceReport(models.Model):
     is_absent = models.BooleanField()
     course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.name} {self.attendance_date}"
+    
 class Attendance(models.Model):
     date_now = models.DateField(auto_now=True, auto_now_add=False)
     attendace_reports = models.ManyToManyField(AttendanceReport)

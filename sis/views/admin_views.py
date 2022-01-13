@@ -2,7 +2,7 @@ from django.forms.widgets import NullBooleanSelect
 from django.shortcuts import redirect, render, HttpResponse
 
 from ..forms import AddCourseForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, AssignmentForm, PostForm, AssignmentForm, AddMultipleChoiceQuestionForm, AddTestForm
-from users.models import Course, CustomUser, Post, Assignment
+from users.models import Course, CustomUser, Post, Assignment, Attendance, AttendanceReport
 from django.contrib import messages
 
 import xlwt
@@ -419,3 +419,35 @@ def course_assignment_build(request):
         'form':add_assignment_form,
     }
     return render(request, 'sis/admin_templates/add_assignment.html', context)
+
+
+# Attendance
+
+def view_attendance(request):
+    courses = Course.objects.all()
+    context = {"courses": courses}
+    # attendance = Attendance.objects.all()
+    # context = {"attendance": attendance}
+    return render(request, "sis/admin_templates/view_attendance.html", context)
+
+def view_attendance_course(request, course_id):
+
+    attendance = Attendance.objects.filter(course__id = course_id)
+    course = Course.objects.get(id=course_id)
+    print(attendance)
+    context = {"attendance": attendance, "course": course}
+    return render(request, "sis/admin_templates/view_attendance_course.html", context)
+
+def view_attendance_course_report(request, attendance_id):
+    attendance = AttendanceReport.objects.filter(attendance__id = attendance_id)
+    course = Course.objects.get(id=attendance[0].course.id)
+    date = attendance[0].attendance_date
+    context = {
+        "attendance": attendance,
+        "course": course,
+        "date":date,
+    
+    }
+    # attendance = Attendance.objects.all()
+    # context = {"attendance": attendance}
+    return render(request, "sis/admin_templates/view_attendance_course_report.html", context)
