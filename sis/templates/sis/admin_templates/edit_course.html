@@ -72,36 +72,59 @@
 <a class="btn btn-primary btn-customized open-menu" href="#" role="button">
     <i class="fas fa-align-left"></i> <span>Menu</span>
 </a>
-    <form method="POST" class="p-4">
-        {% csrf_token %}
+    <div class="d-flex flex-column justify-content-center align-items-center text-left" style="min-height:90vh;">
+        <form method="POST" class="p-4">
+            {% csrf_token %}
 
-        <fieldset class="form-group" > 
-            <legend> Edit Course </legend>
-            {{ form|crispy }}
-        </fieldset>
-        <div class="form-group">
-            <button type="submit" class="btn btn-dark" data-toggle="modal" data-target="#deletePaperModal"> Edit Course </button>
-            <button data-toggle="modal" data-target="#deletePaperModal" type="button" class="btn btn-danger" > Delete Course </button>
-        </div>
-    </form>
+            <fieldset class="form-group" > 
+                <legend> Add Course </legend>
+                <div class="row justify-content-center">
+                    <div class="col-6">
+                        {{ form.name|as_crispy_field }}
+                    </div>
+                    <div class="col-6">
+                        {{ form.section|as_crispy_field }}
+                    </div>
+                </div>
 
+                <div class="row justify-content-center">
+                    <div class="col-6">
+                        {{ form.code|as_crispy_field }}
+                    </div>
+                    <div class="col-6">
+                        {{ form.instructor|as_crispy_field }}
+                    </div>
+                </div>
+
+            </fieldset>
+            <div class="form-group">
+                <button type="submit" class="btn btn-dark" data-toggle="modal" data-target="#deletePaperModal"> Edit Course </button>
+                <button data-toggle="modal" data-target="#deletePaperModal" type="button" class="btn btn-danger" > Delete Course </button>
+                <a 
+                    class="btn btn-primary" 
+                    href="{% url 'view_courses' %}" 
+                    > Back
+                </a>
+            </div>
+        </form>
+    </div>
     <div class="modal fade" id="deletePaperModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
+            <div class="modal-content text-left">
                 <div class="modal-header">
                     <h3> Delete Course </h3>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>are you sure you want to delete "{{course.code}} Section {{course.section}}" </p> 
+                    <strong><p>Are you sure you want to delete "{{course.code}} Section {{course.section}}" </p> </strong>
                 </div>
                 <div class="modal-footer">
                     <form action="{% url 'delete_course' id=course.id %}" method="POST" >
                         {% csrf_token %}
                         <div class="form-group">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                            <button type="button" class="btn btn-dark mx-2" data-dismiss="modal">No</button>
                             <button id="{{paper.id}}" type="submit" class="btn btn-danger " > Delete Course </button>
                         </div>
                     </form>

@@ -142,12 +142,21 @@ class Assignment(models.Model):
 #     def filename(self):
 #         return os.path.basename(self.file.name)
 
-
-class Attendance(models.Model):
-    attendance_date = models.DateField(auto_now=False, auto_now_add=True)
+class AttendanceReport(models.Model):
+    attendance_date = models.DateField(auto_now=True)
     note = models.TextField(null = True, max_length=500)
     instructor = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE)
     student = models.OneToOneField(CustomUser, null=True, related_name="student", on_delete=models.CASCADE)
+    is_absent = models.BooleanField()
+    course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE)
+
+class Attendance(models.Model):
+    date_now = models.DateField(auto_now=True, auto_now_add=False)
+    attendace_reports = models.ManyToManyField(AttendanceReport)
+
+    course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE)
+
 
 
 

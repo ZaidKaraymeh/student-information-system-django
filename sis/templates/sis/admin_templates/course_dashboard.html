@@ -130,18 +130,22 @@
                                 <div class="d-flex align-items-start" >
                                 </div>
                                 <div class="row">
-                                  <div class="col-12 d-block" >
-                                    {{form.title|as_crispy_field}}
+                                  <div class="col-12 text-left" >
+                                      <label> <strong>Title:</strong> </label>
+                                      
+                                      {{form.title|as_crispy_field}}
+                                      
+                                    </div>
                                   </div>
-                                </div>
-                                <div class="row">
-                                  <div class="col-12 d-block" >
+                                  <div class="row py-3">
+                                    <div class="col-12 text-left" >
+                                    <label> <strong>Body:</strong> </label>
                                     {{form.content|as_crispy_field}}
                                   </div>
                                 </div>
                             </fieldset>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-dark"> Post </button>
+                            <div class="form-group d-flex justify-content-start">
+                                <button type="submit" class="btn btn-dark"> Submit </button>
                             </div>
                         </form>
                       </div>
