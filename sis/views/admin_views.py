@@ -4,6 +4,7 @@ from django.shortcuts import redirect, render, HttpResponse
 from ..forms import AddCourseForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, AssignmentForm, PostForm, AssignmentForm, AddMultipleChoiceQuestionForm, AddTestForm
 from users.models import Course, CustomUser, Post, Assignment, Attendance, AttendanceReport
 from django.contrib import messages
+from django.utils import timezone
 
 import xlwt
 
@@ -426,28 +427,58 @@ def course_assignment_build(request):
 def view_attendance(request):
     courses = Course.objects.all()
     context = {"courses": courses}
+    print("view attendance")
     # attendance = Attendance.objects.all()
     # context = {"attendance": attendance}
     return render(request, "sis/admin_templates/view_attendance.html", context)
 
 def view_attendance_course(request, course_id):
+    print("view_attendance_course")
 
     attendance = Attendance.objects.filter(course__id = course_id)
     course = Course.objects.get(id=course_id)
-    print(attendance)
     context = {"attendance": attendance, "course": course}
     return render(request, "sis/admin_templates/view_attendance_course.html", context)
 
-def view_attendance_course_report(request, attendance_id):
+def view_attendance_course_report(request, attendance_id, course_id):
     attendance = AttendanceReport.objects.filter(attendance__id = attendance_id)
-    course = Course.objects.get(id=attendance[0].course.id)
-    date = attendance[0].attendance_date
+    print(attendance)
+    course = Course.objects.get(id=course_id)
+    date = attendance.first().attendance_date
     context = {
         "attendance": attendance,
         "course": course,
-        "date":date,
+        'attendance_id':attendance_id,
+        "date":date
     
     }
     # attendance = Attendance.objects.all()
     # context = {"attendance": attendance}
     return render(request, "sis/admin_templates/view_attendance_course_report.html", context)
+
+def add_attendance_course_report(request, course_id):
+    course = Course.objects.get(id=course_id)
+    instructor = course.instructor
+    obj, created = Attendance.objects.get_or_create(
+            date_now = timezone.now().date(),
+            course=course, 
+            instructor = course.instructor
+    )
+
+    if created:
+        students = course.students.all()
+        for student in students:
+            report = AttendanceReport.objects.create(
+                attendance_date = timezone.now().date(), 
+                instructor = instructor, 
+                course=course, 
+                is_absent=False, 
+                student=student 
+            )
+            obj.attendance_reports.add(report)
+            obj.save()
+        messages.success(request, "Today's attendance has been added successfully!")
+        return redirect("view_attendance_course_report", attendance_id=obj.id, course_id=course_id )
+    else:
+        messages.add_message(request, 99,  "Today's attendance has already been created", "danger")
+        return redirect("view_attendance_course", course_id=course_id)

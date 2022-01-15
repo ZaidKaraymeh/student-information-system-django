@@ -29,7 +29,8 @@ urlpatterns = [
     path("sis/view_instructor_enrolled_courses/<int:id>", admin_views.view_instructor_enrolled_courses, name="view_instructor_enrolled_courses"),
     path("sis/view_attendance/", admin_views.view_attendance, name="view_attendance"),
     path("sis/view_attendance/<int:course_id>/", admin_views.view_attendance_course, name="view_attendance_course"),
-    path("sis/view_attendance_report/<int:attendance_id>/", admin_views.view_attendance_course_report, name="view_attendance_course_report"),
+    path("sis/view_attendance_report/<int:attendance_id>/<int:course_id>/", admin_views.view_attendance_course_report, name="view_attendance_course_report"),
+    path("sis/add_attendance_report/<int:course_id>/", admin_views.add_attendance_course_report, name="add_attendance_course_report"),
     path("sis/export/staff", admin_views.export_staff, name="export_staff"),
     path("sis/export/staff/classes/<int:id>", admin_views.export_staff_enrolled_course, name="export_staff_enrolled_course"),
 
