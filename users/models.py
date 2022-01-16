@@ -144,7 +144,7 @@ class Assignment(models.Model):
 
 class AttendanceReport(models.Model):
     attendance_date = models.DateField(auto_now=True)
-    note = models.TextField(null = True, max_length=500)
+    note = models.TextField(null = True, max_length=500, default="")
     instructor = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE)
     student = models.ForeignKey(CustomUser, null=True, related_name="student", on_delete=models.CASCADE)
     is_absent = models.BooleanField()

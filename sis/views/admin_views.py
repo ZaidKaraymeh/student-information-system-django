@@ -1,11 +1,10 @@
-from django.forms.widgets import NullBooleanSelect
 from django.shortcuts import redirect, render, HttpResponse
 
-from ..forms import AddCourseForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, AssignmentForm, PostForm, AssignmentForm, AddMultipleChoiceQuestionForm, AddTestForm
+from ..forms import AddCourseForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, AssignmentForm, AttendanceReportForm, PostForm, AssignmentForm, AddMultipleChoiceQuestionForm, AddTestForm
 from users.models import Course, CustomUser, Post, Assignment, Attendance, AttendanceReport
 from django.contrib import messages
 from django.utils import timezone
-
+from django.forms import modelformset_factory
 import xlwt
 
 def add_course(request):
@@ -482,3 +481,37 @@ def add_attendance_course_report(request, course_id):
     else:
         messages.add_message(request, 99,  "Today's attendance has already been created", "danger")
         return redirect("view_attendance_course", course_id=course_id)
+
+def edit_attendance_course_report(request, course_id, attendance_id):
+    attendance = AttendanceReport.objects.filter(attendance__id = attendance_id)
+    attendance_reports = AttendanceReport.objects.filter(attendance__id = attendance_id)
+
+    AttendenceReportFormSet = modelformset_factory(
+        AttendanceReport, 
+        form=AttendanceReportForm,
+        extra=0,
+        )
+
+    if request.method == "POST":
+        print("post")
+        formset = AttendenceReportFormSet(
+            request.POST, 
+            queryset = attendance_reports
+            )
+        if formset.is_valid():
+            formset.save()
+            print("form is valid")
+            messages.success(request, "Attendance updated successfully!")
+            return redirect("view_attendance_course_report", attendance_id=attendance_id, course_id=course_id )
+    else:
+        formset = AttendenceReportFormSet(queryset = attendance_reports)
+
+    course = Course.objects.get(id=course_id)
+
+    context = {
+        'formset':formset,
+        'course':course,
+        'attendance':attendance,
+        'attendance_id':attendance_id,
+    }
+    return render(request, 'sis/admin_templates/edit_attendance_course_report.html', context)

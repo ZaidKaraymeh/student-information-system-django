@@ -1,7 +1,7 @@
 from django import forms
 # from django.forms import ChoiceWidget
 
-from users.models import CustomUser, Course, Post, Assignment, Quiz, MultipleChoiceQuestion
+from users.models import CustomUser, Course, Post, Assignment, Quiz, MultipleChoiceQuestion, AttendanceReport
 from django.contrib.auth.forms import UserCreationForm
 
 # from .models import Profile
@@ -197,3 +197,32 @@ class AddTestForm(forms.ModelForm):
            'name': "Title",
            'description': 'Description'
        }
+
+class AttendanceReportForm(forms.ModelForm):
+    class Meta:
+        model = AttendanceReport
+        fields = ['student', 'is_absent', 'note', 'instructor']
+        exclude = ['course']
+        widgets = {
+            'note': forms.Textarea(attrs={'class': 'form-control'}),
+        }
+        labels = {
+           'is_absent': "",
+           'note': "",
+           'instructor': "",
+           'course': "",
+           'student': "",
+       }
+    def __init__(self, *args, **kwargs):
+        super(AttendanceReportForm  , self).__init__(*args, **kwargs)
+
+        self.fields['is_absent'].required = False
+        self.fields['note'].required = False
+
+        self.fields['student'].widget.attrs['style'] = 'width:100%; height:40px; border:none; background:transparent; pointer-events: none; -webkit-appearance: none;'
+        self.fields['instructor'].widget.attrs['style'] = 'width:100%; height:40px; border:none; background:transparent; pointer-events: none; -webkit-appearance: none;'
+        self.fields['note'].widget.attrs['style'] = 'width:100%; height:40px;'
+        self.fields['student'].widget.attrs['class'] = 'form-control text-center'
+        self.fields['instructor'].widget.attrs['class'] = 'form-control text-center'
+        self.fields['note'].widget.attrs['class'] = 'form-control'
+    field_order = ['student', 'is_absent', 'note']
