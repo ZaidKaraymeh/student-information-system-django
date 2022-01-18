@@ -130,3 +130,8 @@ footer {
 .card-rounded-cstm {
   border-radius: 35% !important;
 } 
+
+
+a:link {
+  text-decoration: none !important;
+}

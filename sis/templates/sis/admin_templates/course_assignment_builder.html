@@ -92,12 +92,12 @@
         <thead>
             <tr>
             <th  scope="col">#</th>
-            <th scope="col">Course</th>
-            <th scope="col">Code</th>
-            <th scope="col">Section</th>
             <th scope="col">Title</th>
             <th scope="col">Type</th>
             <th scope="col">Instructor</th>
+            <th scope="col">Course</th>
+            <th scope="col">Code</th>
+            <th scope="col">Section</th>
             <th scope="col">Edit Assignment</th>
             <th scope="col">Analysis</th>
             </tr>
@@ -106,13 +106,13 @@
             {% for assignment in assignments %}
                 <tr>
                     <th  scope="row"> {{forloop.counter}} </th>
-                    <td> {{assignment.course.name}} </td>
-                    <td> {{assignment.course.code}} </td>
-                    <td> {{assignment.course.section}} </td>
                     <td> {{assignment.name}} </td>
                     <td> {{assignment.category}} </td>
                     <td> {{assignment.instructor.first_name}} {{assignment.instructor.last_name}} </td>
-                    <td class="" ><a class="btn btn-dark btn-block" href="#" >Edit </a></td>
+                    <td> {{assignment.course.name}} </td>
+                    <td> {{assignment.course.code}} </td>
+                    <td> {{assignment.course.section}} </td>
+                    <td class="" ><a class="btn btn-dark btn-block" href="{% url 'course_assignment_edit' assignment.id %}" >Edit </a></td>
                     <td class="" > <a class="btn btn-primary btn-block" href="#" > View Analysis </a> </td>
                     
                 </tr>
@@ -121,12 +121,12 @@
         <thead>
             <tr>
             <th  scope="col">#</th>
-            <th scope="col">Course</th>
-            <th scope="col">Code</th>
-            <th scope="col">Section</th>
             <th scope="col">Title</th>
             <th scope="col">Type</th>
             <th scope="col">Instructor</th>
+            <th scope="col">Course</th>
+            <th scope="col">Code</th>
+            <th scope="col">Section</th>
             <th scope="col">Edit Assignment</th>
             <th scope="col">Analysis</th>
             </tr>

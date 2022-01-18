@@ -1,7 +1,7 @@
 from django import forms
 # from django.forms import ChoiceWidget
 
-from users.models import CustomUser, Course, Post, Assignment, Quiz, MultipleChoiceQuestion, AttendanceReport
+from users.models import CustomUser, Course, Post, Assignment, AssignmentSubmission, Quiz, MultipleChoiceQuestion, AttendanceReport
 from django.contrib.auth.forms import UserCreationForm
 
 # from .models import Profile
@@ -134,6 +134,7 @@ class PostForm(forms.ModelForm):
         self.fields['title'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['title'].label = ""
         self.fields['content'].label = ""
+
 class AssignmentForm(forms.ModelForm):
     # docfile = forms.FileField(
     #     label='Select a file',
@@ -173,8 +174,36 @@ class AssignmentForm(forms.ModelForm):
         self.fields['category'].widget.attrs['class'] = 'form-control'
         self.fields['courses'].widget.attrs['class'] = 'form-control'
         self.fields['possible_points'].widget.attrs['class'] = 'form-control'
-class AssignmentFileForm(forms.Form):
-    pass
+
+class AssignmentSubmissionForm(forms.ModelForm):
+    file = forms.FileField(
+        label='Select a file',
+        help_text='max. 42 megabytes',
+        required=False,
+        widget=forms.ClearableFileInput(attrs={'multiple': True})
+    )
+    class Meta:
+        model = AssignmentSubmission
+
+        fields = ['file']
+        # widgets = {
+        #     'name': forms.TextInput(attrs={'class': 'form-control'}) ,
+        #     'description': forms.Textarea(attrs={'class': 'form-control'}),
+        # }
+    # def __init__(self, *args, **kwargs):
+    #     super(AssignmentForm  , self).__init__(*args, **kwargs)
+
+    #     self.fields['name'].widget.attrs['style'] = 'width:100%; height:40px;'
+    #     self.fields['description'].widget.attrs['style'] = 'width:100%; height:300px;'
+    #     self.fields['category'].widget.attrs['style'] = 'width:100%; height:40px; font-weight: bold'
+    #     self.fields['courses'].widget.attrs['style'] = 'width:100%; height:40px;font-weight: bold'
+    #     self.fields['possible_points'].widget.attrs['style'] = 'width:100%; height:40px;'
+    #     self.fields['name'].widget.attrs['class'] = 'form-control'
+    #     self.fields['description'].widget.attrs['class'] = 'form-control'
+    #     self.fields['category'].widget.attrs['class'] = 'form-control'
+    #     self.fields['courses'].widget.attrs['class'] = 'form-control'
+    #     self.fields['possible_points'].widget.attrs['class'] = 'form-control'
+
     
 # class AttendanceForm(forms.ModelForm):
 #     class Meta:
@@ -226,3 +255,5 @@ class AttendanceReportForm(forms.ModelForm):
         self.fields['instructor'].widget.attrs['class'] = 'form-control text-center'
         self.fields['note'].widget.attrs['class'] = 'form-control'
     field_order = ['student', 'is_absent', 'note']
+
+

@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render, HttpResponse
 
-from ..forms import AddCourseForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, AssignmentForm, AttendanceReportForm, PostForm, AssignmentForm, AddMultipleChoiceQuestionForm, AddTestForm
-from users.models import Course, CustomUser, Post, Assignment, Attendance, AttendanceReport
+from ..forms import AddCourseForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, AssignmentForm, AttendanceReportForm, PostForm, AssignmentForm, AssignmentSubmissionForm,  AddMultipleChoiceQuestionForm, AddTestForm
+from users.models import Course, CustomUser, Post, Grade, Assignment, AssignmentSubmission, AssignmentSubmissionFile, Attendance, AttendanceReport, AssignmentFile
 from django.contrib import messages
 from django.utils import timezone
 from django.forms import modelformset_factory
@@ -86,59 +86,6 @@ def delete_course(request, id):
 
 
 
-def course_dashboard(request, id, instructor_id):
-    course = Course.objects.get(id=id)
-    if request.method == "POST":
-        print(request.FILES)
-        form = PostForm(request.POST, request.FILES)
-        form2 = AssignmentForm(request.POST, request.FILES)
-        if form2.is_valid():
-            f = form2.save(commit= False)
-            f.course = course
-            f.instructor = CustomUser.objects.get(id=instructor_id)
-            f.save()
-            messages.success(
-                request,
-                f"Assignment Posted Successful!"
-            )
-            return redirect("course_dashboard", id=id, instructor_id=instructor_id)
-
-        if form.is_valid():
-            print("form is valid")
-            f = form.save(commit= False)
-            f.course = course
-            print("form course",  f.course)
-            f.user = CustomUser.objects.get(id=instructor_id)
-            print("form user",  f.user)
-            f.save()
-            messages.success(
-                request,
-                f"Post Successful!"
-            )
-            return redirect("course_dashboard", id=id, instructor_id=instructor_id)
-    else:
-        form = PostForm()
-        form2 = AssignmentForm()
-        
-    user = CustomUser.objects.get(id=instructor_id)
-    print("user ", user)
-    posts = Post.objects.filter(course__id = id).order_by("-date_posted")
-    assignments = Assignment.objects.filter(course__id = id).order_by("-date_posted")
-    print(posts)
-    students = CustomUser.objects.filter(course__id = id)
-
-    context = {
-        'form':form, 
-        'form2':form2, 
-        "posts":posts, 
-        "course": course, 
-        "assignments":assignments,
-        "instructor":user,
-        "students":students,
-        "quiz": 'quiz',
-        "test": "test",
-    }
-    return render(request, "sis/admin_templates/course_dashboard.html", context)
 
 
 
@@ -378,8 +325,86 @@ def course_test_builder(request, course_id, instructor_id, quiz_type, *args, **k
 """
 
 
+def course_dashboard(request, id, instructor_id):
+    course = Course.objects.get(id=id)
+    if request.method == "POST":
+        form = PostForm(request.POST, request.FILES)
+        form2 = AssignmentForm(request.POST, request.FILES)
+        student_submission_form = AssignmentSubmissionForm(request.POST, request.FILES)
+        if student_submission_form.is_valid():
+            f = student_submission_form.save(commit=False)
+            f.student = CustomUser.objects.get(id=request.user.id)
+            f.instructor = CustomUser.objects.get(id=instructor_id)
+            f.submitted_at = timezone.now()
+            grade, created = Grade.objects.get_or_create(
+                course=course,
+                student = CustomUser.objects.get(id=request.user.id)
+            )
+            grade.save()
+            f.grade = grade
+            f.save()
+            for file in request.FILES.getlist('file'):
+                obj = AssignmentSubmissionFile.objects.create(
+                    file=file,
+                    student = CustomUser.objects.get(id=request.user.id),
+                )
+                obj.save()
+                f.files.add(obj)
+                f.save()
+            messages.success(request, "Assignment submitted successfully!")
+            return redirect("course_dashboard", id=course.id, instructor_id=instructor_id)
+
+        if form2.is_valid():
+            f = form2.save(commit= False)
+            f.course = course
+            f.instructor = CustomUser.objects.get(id=instructor_id)
+            f.save()
+            messages.success(
+                request,
+                f"Assignment Posted Successful!"
+            )
+            return redirect("course_dashboard", id=id, instructor_id=instructor_id)
+
+        if form.is_valid():
+            f = form.save(commit= False)
+            f.course = course
+            print("form course",  f.course)
+            f.user = CustomUser.objects.get(id=instructor_id)
+            print("form user",  f.user)
+            f.save()
+            messages.success(
+                request,
+                f"Post Successful!"
+            )
+            return redirect("course_dashboard", id=id, instructor_id=instructor_id)
+
+        # student_assignment_submission_form = 
+    else:
+        form = PostForm()
+        form2 = AssignmentForm()
+        student_submission_form = AssignmentSubmissionForm()
+        
+    user = CustomUser.objects.get(id=instructor_id)
+    print("user ", user)
+    posts = Post.objects.filter(course__id = id).order_by("-date_posted")
+    assignments = Assignment.objects.filter(course__id = id).order_by("-date_posted")
+    print(posts)
+    students = CustomUser.objects.filter(course__id = id)
+    context = {
+        'form':form, 
+        'form2':form2, 
+        "posts":posts, 
+        "course": course, 
+        "assignments":assignments,
+        "instructor":user,
+        "students":students,
+        "student_submission_form":student_submission_form,
+    }
+    return render(request, "sis/admin_templates/course_dashboard.html", context)
+
+
 def course_assignment_builder(request):
-    assignments = Assignment.objects.all()
+    assignments = Assignment.objects.all().order_by('-date_posted')
     print("plinker", assignments)
     if request.method == "POST":
         add_test_form = AddTestForm(request.POST or None)
@@ -409,8 +434,14 @@ def course_assignment_build(request):
             f.course = course
             f.save()
             for file in request.FILES.getlist('file'):
-                print("plinker ", file.name)
-            return redirect('course_dashboard', id=f.course.id, instructor_id=user.id)
+                obj = AssignmentFile.objects.create(
+                    file=file,
+                    instructor = f.instructor,
+                )
+                obj.save()
+                f.files.add(obj)
+                f.save()
+            return redirect('course_assignment_builder')
     else:
         add_assignment_form = AssignmentForm()
         add_assignment_form.fields["courses"].queryset = Course.objects.filter(instructor__id = user.id)
@@ -419,6 +450,65 @@ def course_assignment_build(request):
         'form':add_assignment_form,
     }
     return render(request, 'sis/admin_templates/add_assignment.html', context)
+
+def course_assignment_edit(request, assignment_id):
+    user = CustomUser.objects.get(id=request.user.id)
+    instance = Assignment.objects.get(id=assignment_id)
+    if request.method == "POST":
+        assignment_form = AssignmentForm(request.POST or None, request.FILES, instance=instance)
+        # file_form = AssignmentFileForm(request.POST, request.FILES)
+        
+        if assignment_form.is_valid():
+            f = assignment_form.save(commit=False)
+            f.save()
+            for file in request.FILES.getlist('file'):
+                obj = AssignmentFile.objects.create(
+                    file=file,
+                    instructor = f.instructor,
+                )
+                obj.save()
+                f.files.add(obj)
+                f.save()
+            messages.success(request, "Assignment editted successfully!")
+            return redirect('course_assignment_builder')
+    else:
+        assignment_form = AssignmentForm(instance = instance)
+        assignment_form.fields["courses"].queryset = Course.objects.filter(instructor__id = user.id)
+    files = instance.files.all()
+    context = {
+        'form':assignment_form,
+        'files':files,
+    }
+    return render(request, 'sis/admin_templates/edit_assignment.html', context)
+
+"""
+def course_assignment_submit(request, course_id, student_id):
+    student = CustomUser.objects.get(id=student_id)
+    course = Course.object.get(id=course_id)
+    instructor_id = course.instructor.id
+    form = AssignmentSubmissionForm(request, request.POST, request.FILES)
+
+    if request.method == "POST" and form.is_valid():
+        f = form.save(commit=False)
+        f.student = student
+        f.save()
+        for file in request.FILES.getlist('file'):
+            obj = AssignmentSubmissionFile.objects.create(
+                file=file,
+                instructor = f.instructor,
+            )
+            obj.save()
+            f.files.add(obj)
+            f.save()
+            messages.success(request, "Assignment submitted successfully!")
+            return redirect("course_dashboard", id=course.id, instructor_id=instructor_id)
+    else:
+        form = AssignmentSubmission()
+    context = {
+        'form':form
+    }
+    return render(request, "sis/admin_templates/course_assignmet_student_submit.html", context)
+"""
 
 
 # Attendance

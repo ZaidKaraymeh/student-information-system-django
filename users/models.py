@@ -90,13 +90,59 @@ class Grade(models.Model):
         max_length=50,
         choices=GRADE_TYPE_CHOICES,
         default=A,
+        null=True,
         )
-    point_grade = models.IntegerField()
+    point_grade = models.IntegerField(default=0)
     course = models.ForeignKey(
         Course, 
         on_delete=models.CASCADE,
         null=True
     )
+
+class AssignmentSubmissionFile(models.Model):
+    files = models.FileField(upload_to='documents/%Y/%m/%d', null = True)
+    student = models.ForeignKey(
+        CustomUser, 
+        on_delete=models.CASCADE,
+        related_name='student_submission_files'
+    )
+class AssignmentFile(models.Model):
+    file = models.FileField(upload_to='documents/%Y/%m/%d', null = True)
+    instructor = models.ForeignKey(
+        CustomUser, 
+        on_delete=models.CASCADE,
+        related_name='instructor_submission_files'
+    )
+
+    def __str__(self):
+        return os.path.basename(self.file.name)
+    
+    def filename(self):
+        return os.path.basename(self.file.name)
+
+
+
+class AssignmentSubmission(models.Model):
+    submitted_at = models.DateField(auto_now=False, auto_now_add=False)
+
+    instructor = models.ForeignKey(
+        CustomUser, 
+        on_delete=models.CASCADE
+    )
+    student = models.ForeignKey(
+        CustomUser, 
+        on_delete=models.CASCADE,
+        related_name='student_submission'
+    )
+
+    files = models.ManyToManyField(AssignmentSubmissionFile)
+    description = models.CharField(max_length=9000)
+
+    grade = models.ForeignKey(
+        Grade, 
+        on_delete=models.CASCADE,
+    )
+
 class Assignment(models.Model):
     TEST = "Test"
     QUIZ = "Quiz"
@@ -131,11 +177,13 @@ class Assignment(models.Model):
         max_length=50,
         default= TASK
     )
+
+    student_submissions = models.ManyToManyField(AssignmentSubmission)
+
     possible_points = models.IntegerField()
     students_grades = models.ManyToManyField(Grade, related_name="grades")
-    file = models.FileField(upload_to='documents/%Y/%m/%d', null = True)
-    def filename(self):
-        return os.path.basename(self.file.name)
+    files = models.ManyToManyField(AssignmentFile)
+
 
 # class AssignmentFile(models.Model):
 #     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, related_name='assignment')
