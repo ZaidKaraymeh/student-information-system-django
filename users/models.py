@@ -124,7 +124,7 @@ class AssignmentFile(models.Model):
 
 class AssignmentSubmission(models.Model):
     submitted_at = models.DateField(auto_now=False, auto_now_add=False)
-
+    submitted = models.BooleanField(default=False)
     instructor = models.ForeignKey(
         CustomUser, 
         on_delete=models.CASCADE
@@ -137,7 +137,7 @@ class AssignmentSubmission(models.Model):
 
     files = models.ManyToManyField(AssignmentSubmissionFile)
     description = models.CharField(max_length=9000)
-
+    
     grade = models.ForeignKey(
         Grade, 
         on_delete=models.CASCADE,

@@ -1,6 +1,7 @@
 {% extends 'sis/admin_templates/base_new.html' %}
  {% load crispy_forms_tags %}
  {% load static %}
+ {% load tags %}
  {% block sidebar %}
 <!-- Sidebar -->
 			<nav class="sidebar mCustomScrollbar _mCS_1 mCS-autoHide mCS_no_scrollbar" style="overflow: visible;"><div id="mCSB_1" class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside" style="max-height: none;" tabindex="0"><div id="mCSB_1_container" class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y" style="position:relative; top:0; left:0;" dir="ltr">
@@ -14,7 +15,6 @@
 				</div>
 				
 				<ul class="list-unstyled menu-elements">
-
 
 
 					<li class="">
@@ -280,13 +280,19 @@
                                 </ul>
                               </section>
                               <section class="text-left border-top">
+
+                                {% if assignment|is_submitted:user %}
+                                  <h3> Assignment Submitted </h3>
+                                {% else %}
                                 <h3 class="my-3"> Submission </h3>
-                                <form method="post">
+                                <form method="post" >
                                   {% csrf_token %}
                                   {{student_submission_form|crispy}}
-                                  <button type="submit" class="btn btn-dark">Attempt Submission</button>
+                                  <input type="hidden" name="assignment_id" value="{{assignment.id}}" />
+                                  <button type="submit" class="btn btn-dark my-2">Attempt Submission</button>
                                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                 </form>
+                                {% endif %}
                               </section>
                             </div>
                             <div class="col-1">

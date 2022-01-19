@@ -336,6 +336,7 @@ def course_dashboard(request, id, instructor_id):
             f.student = CustomUser.objects.get(id=request.user.id)
             f.instructor = CustomUser.objects.get(id=instructor_id)
             f.submitted_at = timezone.now()
+            f.submitted = True
             grade, created = Grade.objects.get_or_create(
                 course=course,
                 student = CustomUser.objects.get(id=request.user.id)
@@ -351,6 +352,10 @@ def course_dashboard(request, id, instructor_id):
                 obj.save()
                 f.files.add(obj)
                 f.save()
+
+            assignment = Assignment.objects.get(id=request.POST.get('assignment_id'))
+            assignment.student_submissions.add(f)
+            assignment.save()
             messages.success(request, "Assignment submitted successfully!")
             return redirect("course_dashboard", id=course.id, instructor_id=instructor_id)
 
@@ -384,11 +389,11 @@ def course_dashboard(request, id, instructor_id):
         form2 = AssignmentForm()
         student_submission_form = AssignmentSubmissionForm()
         
-    user = CustomUser.objects.get(id=instructor_id)
-    print("user ", user)
+    student_submission_form = AssignmentSubmissionForm()
+    instructor = CustomUser.objects.get(id=instructor_id)
+    user = CustomUser.objects.get(id=request.user.id)
     posts = Post.objects.filter(course__id = id).order_by("-date_posted")
     assignments = Assignment.objects.filter(course__id = id).order_by("-date_posted")
-    print(posts)
     students = CustomUser.objects.filter(course__id = id)
     context = {
         'form':form, 
@@ -396,7 +401,8 @@ def course_dashboard(request, id, instructor_id):
         "posts":posts, 
         "course": course, 
         "assignments":assignments,
-        "instructor":user,
+        "instructor":instructor,
+        "user":user,
         "students":students,
         "student_submission_form":student_submission_form,
     }
@@ -481,36 +487,40 @@ def course_assignment_edit(request, assignment_id):
     }
     return render(request, 'sis/admin_templates/edit_assignment.html', context)
 
-"""
-def course_assignment_submit(request, course_id, student_id):
-    student = CustomUser.objects.get(id=student_id)
+def course_student_submission(request, course_id, assignment_id):
+    print("reacing submission")
     course = Course.object.get(id=course_id)
-    instructor_id = course.instructor.id
-    form = AssignmentSubmissionForm(request, request.POST, request.FILES)
-
-    if request.method == "POST" and form.is_valid():
-        f = form.save(commit=False)
-        f.student = student
-        f.save()
-        for file in request.FILES.getlist('file'):
-            obj = AssignmentSubmissionFile.objects.create(
-                file=file,
-                instructor = f.instructor,
+    instructor = course.instructor
+    if request.method == "POST":
+        student_submission_form = AssignmentSubmissionForm(request.POST, request.FILES)
+        if student_submission_form.is_valid():
+            f = student_submission_form.save(commit=False)
+            f.student = CustomUser.objects.get(id=request.user.id)
+            f.instructor = CustomUser.objects.get(id=instructor.id)
+            f.submitted_at = timezone.now()
+            f.submitted = True
+            grade, created = Grade.objects.get_or_create(
+                course=course,
+                student = CustomUser.objects.get(id=request.user.id)
             )
-            obj.save()
-            f.files.add(obj)
+            grade.save()
+            f.grade = grade
             f.save()
+            for file in request.FILES.getlist('file'):
+                obj = AssignmentSubmissionFile.objects.create(
+                    file=file,
+                    student = CustomUser.objects.get(id=request.user.id),
+                )
+                obj.save()
+                f.files.add(obj)
+                f.save()
+            assignment = Assignment.objects.get(id=assignment_id)
+            assignment.student_submissions.add(f)
             messages.success(request, "Assignment submitted successfully!")
-            return redirect("course_dashboard", id=course.id, instructor_id=instructor_id)
-    else:
-        form = AssignmentSubmission()
-    context = {
-        'form':form
-    }
-    return render(request, "sis/admin_templates/course_assignmet_student_submit.html", context)
-"""
+            return redirect("course_dashboard", id=course.id, instructor_id=instructor.id)
 
-
+    messages.add_message(request, 99, "Get request!", "danger")
+    return redirect("course_dashboard", id=course.id, instructor_id=instructor.id)
 # Attendance
 
 def view_attendance(request):
