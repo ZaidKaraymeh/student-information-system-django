@@ -83,7 +83,7 @@
       <a class="nav-link" id="pills-people-tab" data-toggle="pill" href="#pills-people" role="tab" aria-controls="pills-people" aria-selected="false">People</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" id="pills-marks-tab" data-toggle="pill" href="#pills-marks" role="tab" aria-controls="pills-marks" aria-selected="false">Marks</a>
+      <a class="nav-link" id="pills-marks-tab" data-toggle="pill" href="#pills-marks" role="tab" aria-controls="pills-marks" aria-selected="false">Grades</a>
     </li>
   </ul>
   <div class="tab-content" id="pills-tabContent">
@@ -102,9 +102,19 @@
             <div class="col-2 py-2" >
                 <div class="card rounded shadow-sm">
                   <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted border-bottom">Upcoming Tasks and Due Dates</h6>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <a href="#" class="card-link">View All</a>
+                    <h6 class="card-subtitle mb-2 text-muted border-bottom py-2">Upcoming Tasks and Due Dates</h6>
+                    {% for assignment in assignments %}
+                      {% if not assignment|is_submitted:user %}
+                      <p class="text-left border-bottom">
+                        <strong>
+                          {{assignment.name}} 
+                        </strong>
+                        <small>
+                          {{assignment.due_date}} 
+                        </small>
+                      </p>
+                      {% endif %}
+                    {% endfor %}
                   </div>
                 </div>
             </div>
@@ -166,6 +176,7 @@
           </div>
         </div>
     </div>
+
     {% comment %} Classwork Tab {% endcomment %}
     <div class="tab-pane fade" id="pills-classwork" role="tabpanel" aria-labelledby="pills-classwork-tab">
       
@@ -174,62 +185,7 @@
             <a class="btn btn-dark text-light" href="{% url 'course_assignment_build' %}" role="button">
              <i class="fas fa-plus"></i> Create
             </a>
-            {% comment %} <div class="px-3 dropdown">
-              <a class="btn btn-dark text-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-               <i class="fas fa-plus"></i> Create
-              </a>
-
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="#"><i class="fas fa-tasks pr-3"></i> Task</a>
-                <a class="dropdown-item" href="{% url 'course_assignment_builder' %}"> <i class="fas fa-align-justify pr-3"></i> Quiz</a>
-                <a class="dropdown-item" href="{% url 'course_assignment_builder' %}"><i class="fas fa-align-center pr-3"></i> Test</a>
-                <a class="dropdown-item" href="#"><i class="fas fa-pen pr-3"></i> Homework</a>
-                <a class="dropdown-item" href="#"><i class="fas fa-hammer pr-3"></i> Project</a>
-              </div>
-            </div> {% endcomment %}
           </div>
-            <!-- <button 
-                class="btn btn-dark col-12" 
-                type="button" data-toggle="collapse"
-                data-target="#assignment_form" 
-                aria-expanded="false" 
-                aria-controls="assignment_form"
-                onClick="d-none">
-                <i class="fas fa-plus"></i> Create
-            </button>
-            <div class="collapse " id="assignment_form">
-                <div class="card">
-                  <div class="card-body">
-                      <form method="POST" class="">
-                        {% csrf_token %}
-
-                        <fieldset class="form-group" > 
-                            {% comment %} <legend> Enroll New Course </legend> {% endcomment %}
-                            <div class="row">
-                              <div class="col-6 d-block" >
-                                  {{form2.name|as_crispy_field}}
-                                </div>
-                                <div class="col-6 d-block">
-                                  {{form2.description|as_crispy_field}}
-                              </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-6 d-block" >
-                                  {{form2.possible_points|as_crispy_field}}
-                                </div>
-                                <div class="col-6 d-block">
-                                  {{form2.category|as_crispy_field}}
-                              </div>
-                            </div>
-                        </fieldset>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-dark"> Post </button>
-                        </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-          </div> -->
           <div class="row">
               {% for assignment in assignments %}
                 <div class="col-12 py-2" >
@@ -237,9 +193,15 @@
                   <a href="#{{assignment.id}}" class=" text-dark" data-toggle="modal" data-target=".assignment-{{assignment.id}}" >
                     <div class="card rounded shadow-sm">
                       <div class="card-body d-flex">
-                        <div class="col-11 d-flex align-items-start">
+                        <div class="col-3 d-flex align-items-start flex-column">
+                          <h5>
+                            <i class="pr-5 fas fa-thumbtack"> <strong>{{assignment.category}}</strong> </i>
+                          </h5>
+                        </div>
+                        <div class="col-8 d-flex align-items-start flex-column">
                           
-                          <h5 class="card-title "><i class="pr-5 fas fa-thumbtack"> <strong>{{assignment.category}}</strong> </i> {{assignment.name}} posted by {{assignment.instructor.username}} <small>at {{assignment.date_posted}}</small></h5>
+                          <h5 class="card-title "> {{assignment.name}} posted by {{assignment.instructor.username}} <small>at {{assignment.date_posted}}</small></h5>
+                          <h6>Due Date: <small>{{assignment.due_date}}</small></h6>
 
                         </div>
                         <div class="col-1">
@@ -258,9 +220,166 @@
                             <span aria-hidden="true">&times;</span>
                           </button>
                         </div>
+
+                        {% if user.id != instructor.id %}
+                        {% comment %} Insert pill here {% endcomment %}
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                          <li class="nav-item">
+                            <a class="nav-link active" id="home{{assignment.id}}-tab" data-toggle="tab" href="#home{{assignment.id}}" role="tab" aria-controls="home{{assignment.id}}" aria-selected="true">Student View</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" id="profile{{assignment.id}}-tab" data-toggle="tab" href="#profile{{assignment.id}}" role="tab" aria-controls="profile{{assignment.id}}" aria-selected="false">Submissions</a>
+                          </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                          <div class="tab-pane fade show active" id="home{{assignment.id}}" role="tabpanel" aria-labelledby="home{{assignment.id}}-tab">
+
+                              <div class="row p-4">
+                                <div class="col-11 text-left">
+
+                                  <section>
+                                    <p>
+                                      {{assignment.description}}
+                                    </p>
+                                  </section>
+                                  <section>
+                                    <ul style="list-style: none;">
+                                      {% for file in assignment.files.all %}
+                                        <li >
+                                          <a href="{{file.file.url}}" class="text-decoration: none !important;">
+                                          <i class="fas fa-file mx-2"></i> {{file.filename}}
+                                          </a>
+                                        </li>
+                                      {% endfor %}
+                                    </ul>
+                                  </section>
+                                  <section>
+                                    {% if assignment|is_submitted:user %}
+                                      <h3> Assignment Submitted </h3>
+                                    {% else %}
+                                      <h3 class="my-3"> Submission due at {{assignment.due_date}}</h3>
+                                      <form method="post" >
+                                        {% csrf_token %}
+                                        {{student_submission_form|crispy}}
+                                        <input type="hidden" name="assignment_id" value="{{assignment.id}}" />
+                                        <button type="submit" class="btn btn-dark my-2">Attempt Submission</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                      </form>
+                                    {% endif %}
+                                  </section>
+                                </div> 
+                                {% comment %} end col-11 {% endcomment %}
+                                <div class="col-1">
+                                   <span class="align-items-end" > */{{assignment.possible_points}} </span>
+                                </div>
+                              </div>
+                            </div>
+                            {% comment %} Submitted {% endcomment %}
+                            <div class="tab-pane fade" id="profile{{assignment.id}}" role="tabpanel" aria-labelledby="profile{{assignment.id}}-tab">
+                              <div class="row p-0 m-0">
+                                <div class="col-12">
+                                 <div class="row text-left" style="min-width:100%;">
+                                   <div class="table-responsive p-0 overflow-auto" style="height:50vh;" >
+                                    <table id="view_courses" class="table table-striped table-hover table-bordered text-center">
+                                      <thead>
+                                          <tr>
+                                          <th  scope="col">#</th>
+                                          <th scope="col">Name</th>
+                                          <th scope="col">Submission</th>
+                                          <th scope="col">Submitted At</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                        {% for student in assignment.course.students.all %}
+                                          <tr>
+                                            <td>{{forloop.counter}}</td>
+                                            <td>{{student.username}}</td>
+                                            <td>{% if assignment|is_submitted:student %} Yes {% else %} No {% endif %}</td>
+                                            <td>{{ assignment|date_submitted:student }}</td>
+                                          </tr>
+                                        {% endfor %}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                  </div> 
+                                </div>
+                              </div>
+                          </div>
+                        </div>
+
+                        
+                        <!-- <ul class="nav nav-tabs mb-3 justify-content-center" id="pills-tab" role="tablist">
+                          <li class="nav-item">
+                            <a class="nav-link active" id="pills-student-view-tab" data-toggle="pill" href="#pills-student-view" role="tab" aria-controls="pills-student-view" aria-selected="true">Stream</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" id="pills-student-submitted-tab" data-toggle="pill" href="#pills-student-submitted" role="tab" aria-controls="pills-student-submitted" aria-selected="false">Classwork</a>
+                          </li>
+                        </ul>
+
+                          <div class="tab-pane fade show active" id="pills-student-view" role="tabpanel" aria-labelledby="pills-student-view-tab">
+                            {% comment %} Insert Student view here {% endcomment %}
+                            
+                            <div class="row">
+                              <div class="col-11">
+
+                                <section class="text-left"> 
+                                  <p>
+                                    {{assignment.description}}
+                                  </p>
+                                </section>
+                                
+                                <section class="text-left"> 
+                                  <ul style="list-style: none;">
+                                  {% for file in assignment.files.all %}
+                                    <li >
+                                      <a href="{{file.file.url}}" class="text-decoration: none !important;">
+                                       <i class="fas fa-file mx-2"></i> {{file.filename}}
+                                      </a>
+                                    </li>
+                                  {% endfor %}
+                                  </ul>
+                                </section>
+
+                                <section class="text-left border-top">
+                                  {% if assignment|is_submitted:user %}
+                                    <h3> Assignment Submitted </h3>
+                                  {% else %}
+                                  <h3 class="my-3"> Submission </h3>
+                                  <form method="post" >
+                                    {% csrf_token %}
+                                    {{student_submission_form|crispy}}
+                                    <input type="hidden" name="assignment_id" value="{{assignment.id}}" />
+                                    <button type="submit" class="btn btn-dark my-2">Attempt Submission</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  </form>
+                                  {% endif %}
+                                </section>
+
+                              </div>
+                              <div class="col-1">
+                                <span class="align-items-end" > */{{assignment.possible_points}} </span>
+                              </div>
+                            </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="pills-student-submitted" role="tabpanel" aria-labelledby="pills-student-submitted-tab">
+                              {% comment %} Insert Student submitted here {% endcomment %}
+                              <div class="row">
+                                {% for submitted in assignment.student_submissions.all %}
+                                  <ul>
+                                    <li> {{submitted.student.username}} </li>
+                                  </ul>
+                                
+                                {% endfor %}
+                              </div>
+                          </div> -->
+                        
+                        {% else %}
+                        
+
                         <div class="modal-body">
                           <div class="row">
-                            
                             <div class="col-11">
                               <section class="text-left"> 
                                 <p>
@@ -280,7 +399,6 @@
                                 </ul>
                               </section>
                               <section class="text-left border-top">
-
                                 {% if assignment|is_submitted:user %}
                                   <h3> Assignment Submitted </h3>
                                 {% else %}
@@ -300,8 +418,9 @@
                             </div>
                           </div>
                         </div>
-                        <div class="modal-footer">
-                      </div>
+
+                        {% endif %}
+
 
                       </div>
                     </div>
@@ -311,7 +430,6 @@
               {% endfor %}
           </div>
       </div>
-
     </div>
 
     {% comment %} People Tab {% endcomment %}
@@ -331,7 +449,7 @@
                       {{instructor.username}}</h5>
                   </div>
                   <div class="col-3">
-                    <a type="button" href="#" class="btn btn-dark text-light text-decoration-none" ><span class+"align-items-end" > <i class="far fa-envelope"></i> Send Email </span></a>
+                    <a type="button" href="#" class="btn btn-dark text-light text-decoration-none" ><span class="align-items-end" > <i class="far fa-envelope"></i> Send Email </span></a>
                   </div>
                 </div>
             </div>
@@ -360,7 +478,7 @@
                     </div>
                     <div class="col-3">
                       <a type="button" href="#" class="btn btn-dark text-light text-decoration-none" >
-                        <span class+"align-items-end" > <i class="far fa-envelope"></i> Send Email </span>
+                        <span class="align-items-end" > <i class="far fa-envelope"></i> Send Email </span>
                       </a>
                     </div>
                   </div>
@@ -373,83 +491,46 @@
     </div>
 
     {% comment %} Marks Tab {% endcomment %}
-    <div class="tab-pane fade" id="pills-marks" role="tabpanel" aria-labelledby="pills-marks-tab">...</div>
-  </div>
-    <!-- Button trigger modal -->
-    {% comment %} <button
-      type="button"
-      class="btn btn-primary"
-      data-toggle="modal"
-      data-target="#new_course_modal"
-    >
-      Add Post
-    </button>
-
-
-    <!-- Modal -->
-    <div
-      class="modal fade"
-      id="new_course_modal"
-      tabindex="-1"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
+    <div class="tab-pane fade" id="pills-marks" role="tabpanel" aria-labelledby="pills-marks-tab">
+      <div class="container" style="width: 50vw;">
+        <div class="row  pb-3 " >
+          <div class="col-8 d-flex align-items-start border-bottom border-secondary" style="min-width:100%;">
+            <h2> Your Grades </h2>
           </div>
-          <div class="modal-body">
-            <div class="row">
-              <form method="POST" class="p-4">
-                {% csrf_token %}
+        </div>
+      {% for assignment in assignments %}
+        <div class="card rounded shadow-sm my-1">
+          <div class="card-body d-flex">
+            <div class="col-9 d-flex align-items-start">
+              
+              <h5 class="card-title "> {{assignment.name}}</h5>
 
-                <fieldset class="form-group">
-                  <legend>New Post</legend>
-                  {{ form|crispy }}
-                </fieldset>
-                <div class="form-group">
-                  <button type="submit" class="btn btn-dark">Post</button>
-                </div>
-              </form>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-dismiss="modal"
-            >
-              Close
-            </button>
-            <button type="button" class="btn btn-primary">Save changes</button>
-          </div>
+            <div class="col-3">
+              <span class="align-items-end" > {{ assignment|student_grade:user }}/{{assignment.possible_points}} </span>
+            </div>
         </div>
-      </div>
-    </div>
-  </div> {% endcomment %}
+        <!-- <div class="col-12 py-2" >
 
-  {% comment %} {% for post in posts %}
-    <div class="row" >
-      <div class="col">
-        <div class="card my-4">
-          <div class="card-body">
-            <h5 class="card-title border-bottom"> {{post.user.username}} | {{post.title}} <small>{{post.date_posted}}</small> </h5>
-            <p class="card-text">
-              {{post.content}}
-            </p>
-          </div>
+          <div class="card rounded shadow-md">
+            <div class="card-body text-left">
+              <div clss="row">
+
+                <div class="col-11">
+                  <h5 class="py-2"> {{assignment.name}} </h5>
+                  
+                </div>
+                <div class="col-1">
+                  <h5 class="py-2"> /{{assignment.possible_points}} </h5>
+                  
+                </div>
+              </div>
+            </div>
+          </div> -->
         </div>
+        {% endfor %}
       </div>
     </div>
-  {% endfor %} {% endcomment %}
+  </div>
 
 {%endblock content %}

@@ -3,6 +3,7 @@ from django import forms
 
 from users.models import CustomUser, Course, Post, Assignment, AssignmentSubmission, Quiz, MultipleChoiceQuestion, AttendanceReport
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.admin import widgets                                       
 
 # from .models import Profile
 
@@ -156,10 +157,14 @@ class AssignmentForm(forms.ModelForm):
     class Meta:
         model = Assignment
 
-        fields = ['name', 'description', 'category', 'possible_points', 'courses', 'file']
+        fields = ['name', 'description', 'category', 'possible_points', 'courses', 'file', "due_date"]
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}) ,
             'description': forms.Textarea(attrs={'class': 'form-control'}),
+            'due_date': forms.DateTimeInput(attrs={'type':'datetime-local'})
+        }
+        labels = {
+            'due_date': 'Due Date'
         }
     def __init__(self, *args, **kwargs):
         super(AssignmentForm  , self).__init__(*args, **kwargs)

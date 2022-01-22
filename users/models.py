@@ -89,7 +89,7 @@ class Grade(models.Model):
     letter_grade = models.CharField(
         max_length=50,
         choices=GRADE_TYPE_CHOICES,
-        default=A,
+        default=F,
         null=True,
         )
     point_grade = models.IntegerField(default=0)

@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'sis.apps.SisConfig',
     'crispy_forms',
-    'django_fastdev',
+    # 'django_fastdev',
 ]
 
 MIDDLEWARE = [

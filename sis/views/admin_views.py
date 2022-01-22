@@ -337,7 +337,7 @@ def course_dashboard(request, id, instructor_id):
             f.instructor = CustomUser.objects.get(id=instructor_id)
             f.submitted_at = timezone.now()
             f.submitted = True
-            grade, created = Grade.objects.get_or_create(
+            grade = Grade.objects.create(
                 course=course,
                 student = CustomUser.objects.get(id=request.user.id)
             )
@@ -447,6 +447,16 @@ def course_assignment_build(request):
                 obj.save()
                 f.files.add(obj)
                 f.save()
+            students = f.course.students.all()
+            for student in students:
+                grade = Grade.objects.create(
+                    student=student,
+                    course = course,
+                )
+                grade.save()
+                f.students_grades.add(grade)
+                f.save()
+
             return redirect('course_assignment_builder')
     else:
         add_assignment_form = AssignmentForm()
