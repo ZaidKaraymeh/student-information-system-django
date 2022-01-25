@@ -331,6 +331,30 @@ def course_dashboard(request, id, instructor_id):
         form = PostForm(request.POST, request.FILES)
         form2 = AssignmentForm(request.POST, request.FILES)
         student_submission_form = AssignmentSubmissionForm(request.POST, request.FILES)
+        
+        if form2.is_valid():
+            f = form2.save(commit= False)
+            f.course = course
+            f.instructor = CustomUser.objects.get(id=instructor_id)
+            f.save()
+            messages.success(
+                request,
+                f"Assignment Posted Successful!"
+            )
+            return redirect("course_dashboard", id=id, instructor_id=instructor_id)
+
+        if form.is_valid():
+            f = form.save(commit= False)
+            f.course = course
+            print("form course",  f.course)
+            f.user = CustomUser.objects.get(id=instructor_id)
+            print("form user",  f.user)
+            f.save()
+            messages.success(
+                request,
+                f"Post Successful!"
+            )
+            return redirect("course_dashboard", id=id, instructor_id=instructor_id)
         if student_submission_form.is_valid():
             f = student_submission_form.save(commit=False)
             f.student = CustomUser.objects.get(id=request.user.id)
@@ -358,30 +382,6 @@ def course_dashboard(request, id, instructor_id):
             assignment.save()
             messages.success(request, "Assignment submitted successfully!")
             return redirect("course_dashboard", id=course.id, instructor_id=instructor_id)
-
-        if form2.is_valid():
-            f = form2.save(commit= False)
-            f.course = course
-            f.instructor = CustomUser.objects.get(id=instructor_id)
-            f.save()
-            messages.success(
-                request,
-                f"Assignment Posted Successful!"
-            )
-            return redirect("course_dashboard", id=id, instructor_id=instructor_id)
-
-        if form.is_valid():
-            f = form.save(commit= False)
-            f.course = course
-            print("form course",  f.course)
-            f.user = CustomUser.objects.get(id=instructor_id)
-            print("form user",  f.user)
-            f.save()
-            messages.success(
-                request,
-                f"Post Successful!"
-            )
-            return redirect("course_dashboard", id=id, instructor_id=instructor_id)
 
         # student_assignment_submission_form = 
     else:
@@ -625,3 +625,31 @@ def edit_attendance_course_report(request, course_id, attendance_id):
         'attendance_id':attendance_id,
     }
     return render(request, 'sis/admin_templates/edit_attendance_course_report.html', context)
+
+
+def dashboard(request):
+    reports = AttendanceReport.objects.all()
+    attendance_present = 0
+
+    attendance_total = 0
+    attendance_absent = attendance_total - attendance_present
+    for report in reports:
+        if report.is_absent == False:
+            attendance_present += 1
+
+        attendance_total += 1
+
+    attendance_present_percentage =   str(round(attendance_present/attendance_total, 4)*100)
+    
+
+
+    context = {
+        "attendance_total": attendance_total,
+        "attendance_present": attendance_present,
+        "attendance_absent": attendance_absent,
+        "attendance_present_percentage": attendance_present_percentage,
+
+    }
+    return render(request, "sis/admin_templates/dashboard.html", context)
+
+        

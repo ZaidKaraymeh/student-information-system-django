@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'sis.apps.SisConfig',
     'crispy_forms',
     # 'django_fastdev',
+    'chartjs'
 ]
 
 MIDDLEWARE = [

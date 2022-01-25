@@ -35,5 +35,6 @@ urlpatterns = [
     path("sis/add_attendance_report/<int:course_id>/", admin_views.add_attendance_course_report, name="add_attendance_course_report"),
     path("sis/export/staff", admin_views.export_staff, name="export_staff"),
     path("sis/export/staff/classes/<int:id>", admin_views.export_staff_enrolled_course, name="export_staff_enrolled_course"),
+    path("sis/dashboard/", admin_views.dashboard, name="dashboard"),
 
 ]

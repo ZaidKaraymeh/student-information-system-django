@@ -275,7 +275,9 @@ a.btn-customized-4.btn-customized-light.btn.btn-primary:not(:disabled):not(.disa
 .section-container { margin: 0 auto; padding-bottom: 80px; }
 
 .section-container-gray-bg { background: #f8f8f8; }
-
+.section-container-image-bg{
+	min-width: 100vw;
+}
 .section-container-image-bg, 
 .section-container-image-bg h2, 
 .section-container-image-bg h3 { color: #fff; }
@@ -433,3 +435,29 @@ a.btn-customized-4.btn-customized-light.btn.btn-primary:not(:disabled):not(.disa
 
 footer { padding: 40px 0; }
 
+.recent-card:hover {
+  background-color:#f6f5f5;
+}
+
+
+
+.recent-card p{
+	height: inherit;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+	color:#444;
+}
+
+.recent-card h5 {
+	font-weight: bold;
+	color:rgb(83, 83, 83);
+}
+
+.recent-feed a {
+	color: inherit;
+}
+
+
+.recent-feed {
+	list-style-type: none;
+}

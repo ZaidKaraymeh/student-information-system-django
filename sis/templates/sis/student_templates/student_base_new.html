@@ -3595,6 +3595,18 @@
 				<ul class="list-unstyled menu-elements">
 
 
+                    <li class="">
+                        <a class="" href="{% url 'dashboard' %}"><i class="fas fa-home"></i>Activity Stream</a>
+					</li>
+					<li class="">
+                        <a class="" href="{% url 'view_courses' %}"><i class="fas fa-book"></i>Courses</a>
+					</li>
+                    <li class="active">
+                        <a class="" href="#section-5"><i class="fas fa-pencil-alt"></i>Grades </a>
+                    </li>
+					<li class="">
+                        <a class="" href="#section-2"><i class="fas fa-envelope"></i>Inbox </a>
+					</li>
                     {% if request.user.is_authenticated %}
                     <li>
                         <a 
@@ -3612,30 +3624,6 @@
                         </a>
                      </li>
                     {% endif %}
-					<li class="">
-						<a class="" href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a>
-					</li>
-					<li class="">
-						<a class="" href="{% url 'view_students' %}"><i class="fas fa-user "></i>Students</a>
-					</li>
-					<li class="">
-						<a class="" href="{% url 'view_staff' %}"><i class="fas fa-users-cog"></i>Staff</a>
-					</li>
-					<li class="">
-						<a class="" href="{% url 'view_courses' %}"><i class="fas fa-book"></i>Courses</a>
-					</li>
-                    <li class="">
-                            <a class="" href="{% url 'course_assignment_builder' %}"><i class="fas fa-hammer"></i> Assignment Builder</a>
-					</li>
-					<li class="">
-						<a class="" href="{% url 'view_attendance' %}"><i class="fas fa-cog"></i> Attendance</a>
-					</li>
-					<li class="">
-						<a class="" href="#section-2"><i class="fas fa-user"></i> Inbox </a>
-					</li>
-					<li class="active">
-						<a class="" href="#section-5"><i class="fas fa-pencil-alt"></i> Grades </a>
-					</li>
 					
                     
 				</ul>
