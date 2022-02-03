@@ -1,6 +1,7 @@
 from django.urls import path, include
 from .views import views
 from .views import admin_views
+from .views import student_views
 urlpatterns = [
     path("", views.home, name="home" ),
     path("sis/", views.home_sis, name="home_sis" ),
@@ -12,6 +13,8 @@ urlpatterns = [
     path("sis/export/courses", admin_views.export_courses, name="export_courses"),
     path("sis/course_dashboard/<int:id>/<int:instructor_id>", admin_views.course_dashboard, name="course_dashboard"),
 
+    path("sis/my_courses/", student_views.view_student_courses, name="my_courses"),
+
     # STUDENT URLS
     path("sis/add_student/", admin_views.add_student, name="add_student" ),
     path("sis/view_students/", admin_views.view_students, name="view_students"),
@@ -19,6 +22,7 @@ urlpatterns = [
     path("sis/delete_student_enrolled/<slug:course_id>/<int:id>/", admin_views.delete_course_enrolled, name="delete_student_enrolled"),
     path("sis/export/students", admin_views.export_students, name="export_students"),
     path("sis/export/student/classes/<int:id>", admin_views.export_student_enrolled_course, name="export_student_enrolled_course"),
+    path("sis/grades", student_views.grades, name="grades"),
 
     # STAFF URLS
 
@@ -36,5 +40,12 @@ urlpatterns = [
     path("sis/export/staff", admin_views.export_staff, name="export_staff"),
     path("sis/export/staff/classes/<int:id>", admin_views.export_staff_enrolled_course, name="export_staff_enrolled_course"),
     path("sis/dashboard/", admin_views.dashboard, name="dashboard"),
+
+
+    # universal
+    path("sis/inbox/", views.inbox, name="inbox"),
+    path("sis/account/", views.account, name="account"),
+
+
 
 ]

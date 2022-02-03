@@ -1,0 +1,95 @@
+{% extends 'sis/admin_templates/base_new.html' %}
+
+{% block content %}
+{% load tags %}
+<div class="container">
+    <a class="btn btn-primary btn-customized open-menu" href="#" role="button">
+      <i class="fas fa-align-left"></i> <span>Menu</span>
+    </a>
+    <section class="border-bottom my-5  ">
+        <h1 class="font-weight-bold" >My Grades</h1>
+    </section>
+    <section>
+        <div class="row" >
+    
+            {% for course in courses %}
+            <div class="col-4 link ">
+                <a class="link" href="{% url 'course_dashboard' course.id course.instructor.id %}" data-toggle="modal" data-target=".bd-example-modal-lg-{{course.id}}" >
+
+                    <div class="card mb-3 shadow course-card card-shadow">
+                        <img class=" course-img " src="https://picsum.photos/id/104{{course|course_id_modulus}}/500/300" alt="Card image cap">
+                        
+                        <div class="card-body">
+                            <h5 class="card-title"> {{course.code}} {{course.name}}</h5>
+                            <p class="card-text text-success view-grades">
+                                View Grades
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="modal fade bd-example-modal-lg-{{course.id}}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">{{course.code}} {{course.name}} Section {{course.section}} <small> instructed by {{course.instructor.username}}</small></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body text-left py-0">
+                            <div class="row">
+                                {% for assignment in course|assignments_course %}
+                                <div class="col-12 p-0">
+                                    <div class="card rounded">
+                                        <div class="card-body d-flex">
+                                            <div class="col-3 d-flex align-items-start flex-column">
+                                            <h5>
+                                                <i class="pr-5 fas fa-thumbtack"> <strong>{{assignment.category}}</strong> </i>
+                                            </h5>
+                                            </div>
+                                            <div class="col-8 d-flex align-items-start flex-column">
+                                            
+                                            <h5 class="card-title "> {{assignment.name}} <small> posted by {{assignment.instructor.username}}  at {{assignment.date_posted}}</small></h5>
+                                            <h6>Due Date: <small>{{assignment.due_date}}</small>
+                                            </h6>
+                                            {% if assignment|is_submitted:user %} 
+                                                <h6 style="color:green" >
+                                                Submitted
+                                                </h6>
+                                                
+                                            {% else %}
+                                                <h6 style="color:red" >
+                                                Not Submitted
+                                                </h6>
+
+                                            {% endif %}
+                                            </div>
+                                            <div class="col-1">
+                                                <span class="align-items-end" > 
+                                                    {{assignment|assignment_grade:user}}/{{assignment.possible_points}} 
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    
+
+        
+
+
+
+</div>
+
+{% endblock content %}

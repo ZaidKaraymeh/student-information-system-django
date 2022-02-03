@@ -165,7 +165,7 @@
                   <div class="col-12 py-2" >
                     <div class="card rounded shadow-md">
                       <div class="card-body text-left">
-                        <h5 class="card-title py-2 border-bottom"> {{post.title}} | {{post.user.username}} <small>at {{post.date_posted}}</small>  </h5>
+                        <h5 class="card-title py-2 border-bottom"> {{post.title}}  <small> posted by {{post.user.username}} at {{post.date_posted}}</small>  </h5>
                         <p class="card-text">{{post.content|linebreaksbr}}</p>
                       </div>
                     </div>
@@ -200,12 +200,24 @@
                         </div>
                         <div class="col-8 d-flex align-items-start flex-column">
                           
-                          <h5 class="card-title "> {{assignment.name}} posted by {{assignment.instructor.username}} <small>at {{assignment.date_posted}}</small></h5>
-                          <h6>Due Date: <small>{{assignment.due_date}}</small></h6>
+                          <h5 class="card-title "> {{assignment.name}} <small> posted by {{assignment.instructor.username}}  at {{assignment.date_posted}}</small></h5>
+                          <h6>Due Date: <small>{{assignment.due_date}}</small>
+                          </h6>
+                          {% if assignment|is_submitted:user %} 
+                            <h6 style="color:green" >
+                              Submitted
+                            </h6>
+                            
+                          {% else %}
+                            <h6 style="color:red" >
+                              Not Submitted
+                            </h6>
 
+                          {% endif %}
                         </div>
                         <div class="col-1">
                           <span class="align-items-end" > */{{assignment.possible_points}} </span>
+                          
                         </div>
                       </div>
                     </div>
@@ -499,7 +511,7 @@
           </div>
         </div>
       {% for assignment in assignments %}
-        <div class="card rounded shadow-sm my-1">
+        <div class="card rounded shadow-sm my-3">
           <div class="card-body d-flex">
             <div class="col-9 d-flex align-items-start">
               

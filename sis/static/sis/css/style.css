@@ -1,5 +1,5 @@
 
-body { font-family: 'Roboto', sans-serif; font-size: 16px; font-weight: 300; color: #888; line-height: 30px; text-align: center; }
+body { font-family: 'Roboto', sans-serif; font-size: 16px; font-weight: 300; color: #888; line-height: 30px; text-align: center; margin: 0; padding: 0; }
 
 strong { font-weight: 500; }
 
@@ -460,4 +460,74 @@ footer { padding: 40px 0; }
 
 .recent-feed {
 	list-style-type: none;
+}
+
+/* .course.img {
+	display: block !important;
+	max-width:150px !important;
+	max-height:50px !important;
+	width: auto !important;
+	height: auto !important;
+	object-fit: cover !important;
+} */
+
+
+.course-card {
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+	width: 100%;
+}
+.course-card:hover {
+	animation-name: card;
+    animation-timing-function: ease;
+}
+@keyframes card {
+	0%   { transform: translateY(0); }
+	50%  { transform: translateY(-10px); }
+	100% { transform: translateY(0); }
+}
+
+
+.inbox-card {
+	animation-duration: 2.1s !important;
+	animation-iteration-count: infinite !important;
+	width: 100% !important;
+}
+.inbox-card:hover {
+    animation-name: inbox_card !important;
+    animation-timing-function: ease !important;
+}
+@keyframes inbox_card {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-3px); }
+  100% { transform: translateY(0); }
+}
+
+.link a {
+	color: inherit;
+}
+
+.view-grades p:hover {
+	background-color: #39ee63 !important; 
+}
+
+/* .card-shadow:hover {
+	box-shadow:0 0 0 .25rem rgba(76, 144, 92, 0.308) !important;
+	
+} */
+
+.card-shadow:hover{box-shadow:0 .5rem 1.25rem rgba(76, 144, 92,.35)!important}
+
+
+.message-form {
+	display: none;
+	width: 250px; 
+	height: 11vh; 
+	bottom: 0 !important; 
+	right: -255px !important; 
+	z-index: 999; 
+	transition: all .3s; 
+} 
+.hide {
+  display: none;
 }

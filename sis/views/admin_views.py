@@ -347,7 +347,8 @@ def course_dashboard(request, id, instructor_id):
             f = form.save(commit= False)
             f.course = course
             print("form course",  f.course)
-            f.user = CustomUser.objects.get(id=instructor_id)
+            user = CustomUser.objects.get(id =request.user.id)
+            f.user = CustomUser.objects.get(id=user.id)
             print("form user",  f.user)
             f.save()
             messages.success(
@@ -359,14 +360,14 @@ def course_dashboard(request, id, instructor_id):
             f = student_submission_form.save(commit=False)
             f.student = CustomUser.objects.get(id=request.user.id)
             f.instructor = CustomUser.objects.get(id=instructor_id)
-            f.submitted_at = timezone.now()
             f.submitted = True
-            grade = Grade.objects.create(
-                course=course,
-                student = CustomUser.objects.get(id=request.user.id)
-            )
-            grade.save()
-            f.grade = grade
+            f.course = course
+            # grade = Grade.objects.create(
+            #     course=course,
+            #     student = CustomUser.objects.get(id=request.user.id)
+            # )
+            # grade.save()
+            # f.grade = grade
             f.save()
             for file in request.FILES.getlist('file'):
                 obj = AssignmentSubmissionFile.objects.create(
@@ -456,8 +457,8 @@ def course_assignment_build(request):
                 grade.save()
                 f.students_grades.add(grade)
                 f.save()
-
-            return redirect('course_assignment_builder')
+            messages.success(request, "Assignment Posted Successfully!")
+            return redirect('course_dashboard', id=course.id, instructor_id = course.instructor.id)
     else:
         add_assignment_form = AssignmentForm()
         add_assignment_form.fields["courses"].queryset = Course.objects.filter(instructor__id = user.id)

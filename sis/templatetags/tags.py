@@ -41,7 +41,21 @@ def student_grade(value, arg):
 # def all_submitted(value):
     # return Assignment.objects.filter(assignment__id = value.id).student_submissions.all()
 
+
+def course_id_modulus(value):
+    return value.id % 10
+
+
+def assignment_grade(value, arg):
+    return value.students_grades.get(student__id=arg.id).point_grade
+
+def assignments_course(value):
+    return Assignment.objects.filter(course=value)
+
 register.filter('is_submitted', is_submitted)
 register.filter('date_submitted', date_submitted)
 register.filter('student_grade', student_grade)
+register.filter('course_id_modulus', course_id_modulus)
+register.filter('assignment_grade', assignment_grade)
+register.filter('assignments_course', assignments_course)
 # register.filter('all_submitted', all_submitted)

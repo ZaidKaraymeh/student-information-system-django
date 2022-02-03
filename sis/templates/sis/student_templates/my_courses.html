@@ -1,0 +1,40 @@
+{% extends 'sis/admin_templates/base_new.html' %}
+
+{% load static %}
+ {% load tags %}
+{% block content %}
+
+
+<div class="container" >
+    <a class="btn btn-primary btn-customized open-menu" href="#" role="button">
+      <i class="fas fa-align-left"></i> <span>Menu</span>
+    </a>
+    <!-- img id start from 1032 -->
+    <section class="border-bottom my-5  ">
+        <h1 class="font-weight-bold" >My Courses</h1>
+    </section>
+    <section>
+        <div class="row" >
+    
+            {% for course in courses %}
+            <div class="col-4 d-flex link ">
+                <a class="link" href="{% url 'course_dashboard' course.id course.instructor.id %}" >
+
+                    <div class="card mb-3 shadow course-card card-shadow">
+                        <img class=" course-img " src="https://picsum.photos/id/104{{course|course_id_modulus}}/500/300" alt="Card image cap">
+                        <div class="card-body">
+                            <h5 class="card-title"> {{course.code}} {{course.name}} #{{course.section}}</h5>
+                            <p class="card-text">
+                                Instructed by {{course.instructor.username}}
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+    </section>
+</div>
+
+{% endblock content %}

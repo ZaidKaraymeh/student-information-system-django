@@ -58,6 +58,9 @@ class Course(models.Model):
     students = models.ManyToManyField(CustomUser)
     # assignments = models.ManyToManyField(Assignment)
 
+    def __str__(self):
+        return f"{self.name} {self.code}"
+
 class Grade(models.Model):
 
     A = 'A'
@@ -120,7 +123,7 @@ class AssignmentFile(models.Model):
 
 
 class AssignmentSubmission(models.Model):
-    submitted_at = models.DateField(auto_now=False, auto_now_add=False)
+    submitted_at = models.DateTimeField(auto_now=False, auto_now_add=True)
     submitted = models.BooleanField(default=False)
     instructor = models.ForeignKey(
         CustomUser, 
@@ -131,14 +134,17 @@ class AssignmentSubmission(models.Model):
         on_delete=models.CASCADE,
         related_name='student_submission'
     )
+    course = models.ForeignKey(
+        Course, 
+        related_name="course_submission", 
+        on_delete=models.CASCADE,
+        null=True,
+    )
 
     files = models.ManyToManyField(AssignmentSubmissionFile)
     description = models.CharField(max_length=9000)
     
-    grade = models.ForeignKey(
-        Grade, 
-        on_delete=models.CASCADE,
-    )
+    
 
 class Assignment(models.Model):
     TEST = "Test"
@@ -267,3 +273,24 @@ class Marks_Of_User(models.Model):
     
     def __str__(self):
         return str(self.quiz)
+
+
+class Message(models.Model):
+    sender = models.ForeignKey(
+        CustomUser, 
+        on_delete=models.CASCADE, 
+        related_name="sender"
+    )
+    reciever = models.ForeignKey(
+        CustomUser, 
+        on_delete=models.CASCADE, 
+        related_name="reciever",
+        null=True,
+    )
+    
+    title = models.CharField(max_length=250)
+    content = models.TextField(max_length=9000)
+
+    date_sent = models.DateTimeField(auto_now=False, auto_now_add=True)
+
+

@@ -1,7 +1,9 @@
+from cProfile import label
+from email.policy import default
 from django import forms
 # from django.forms import ChoiceWidget
 
-from users.models import CustomUser, Course, Post, Assignment, AssignmentSubmission, Quiz, MultipleChoiceQuestion, AttendanceReport
+from users.models import CustomUser, Course, Post, Assignment, AssignmentSubmission, Quiz, MultipleChoiceQuestion, AttendanceReport, Message
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.admin import widgets                                       
 
@@ -262,3 +264,49 @@ class AttendanceReportForm(forms.ModelForm):
     field_order = ['student', 'is_absent', 'note']
 
 
+class MessageForm(forms.ModelForm):
+    # docfile = forms.FileField(
+    #     label='Select a file',
+    #     help_text='max. 42 megabytes'
+    # )
+    USER_CHOICES = [
+        (
+            user.id ,
+            f"{user.username}"
+            ) for user in CustomUser.objects.all()
+    ]
+    users = forms.ChoiceField(choices=USER_CHOICES, label="")
+
+    class Meta:
+        model = Message
+
+        fields = ['users','title', 'content']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Subject"}), 
+            'content': forms.Textarea(attrs={'class': 'form-control','placeholder': "Enter text here..."}),
+        }
+    def __init__(self, *args, **kwargs):
+        super(MessageForm, self).__init__(*args, **kwargs) # Call to ModelForm constructor
+        self.fields['title'].widget.attrs['style'] = 'width:100%; height:40px;'
+        self.fields['title'].label = ""
+        self.fields['content'].label = ""
+        
+class MessageRecieversForm(forms.ModelForm):
+    # docfile = forms.FileField(
+    #     label='Select a file',
+    #     help_text='max. 42 megabytes'
+    # )
+    is_reciever = forms.BooleanField(required=False)
+
+    class Meta:
+        model = CustomUser
+
+        fields = ['is_reciever']
+        widgets = {
+            # 'username': forms.TextInput(attrs={'class': 'form-control',}), 
+        }
+    def __init__(self, *args, **kwargs):
+        super(MessageRecieversForm, self).__init__(*args, **kwargs) # Call to ModelForm constructor
+        # self.fields['username'].widget.attrs['style'] = 'width:100%; height:40px;'
+        # self.fields['username'].label = ""
+        self.fields['is_reciever'].label = ""

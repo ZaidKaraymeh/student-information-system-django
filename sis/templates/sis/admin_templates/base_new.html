@@ -23,8 +23,8 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
-        <!-- hart JS -->
-        
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <style id="fillbot@styles" type="text/css">._mprHub {
         --fontFamily: "Source Sans Pro", arial !important;
@@ -3582,6 +3582,72 @@
 		<!-- Wrapper -->
     	<div class="">
             <!-- Sidebar -->
+
+            {% if user.user_type == "STU" %}
+            <nav class="sidebar mCustomScrollbar _mCS_1 mCS-autoHide mCS_no_scrollbar" style="overflow: visible;"><div id="mCSB_1" class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside" style="max-height: none;" tabindex="0"><div id="mCSB_1_container" class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y" style="position:relative; top:0; left:0;" dir="ltr">
+				
+				<!-- close sidebar menu -->
+				<div class="dismiss">
+					<i class="fas fa-arrow-left"></i>
+				</div>
+                <div class="logo">
+					<h3><a href="index.html">Modern Knowledge Schools with Sidebar Menu</a></h3>
+				</div>
+				
+				<ul class="list-unstyled menu-elements">
+
+
+                    <li class="">
+                        <a class="" href="{% url 'account' %}"><i class="fas fa-user"></i>Account</a>
+					</li>
+                    <li class="">
+                        <a class="" href="{% url 'home_sis' %}"><i class="fas fa-home"></i>Activity Stream</a>
+					</li>
+					<li class="">
+                        <a class="" href="{% url 'my_courses' %}"><i class="fas fa-book"></i>Courses</a>
+					</li>
+                    <li class="">
+                        <a class="" href="{% url 'grades' %}"><i class="fas fa-pencil-alt"></i>Grades </a>
+                    </li>
+					<li class="">
+                        <a class="" href="{% url 'inbox' %}"><i class="fas fa-envelope"></i>Inbox </a>
+					</li>
+                    {% if request.user.is_authenticated %}
+                    <li>
+                        <a 
+                            class="" 
+                            href="{% url 'logout' %}">
+                            <i class="fas fa-sign-in-alt"></i> Logout
+                        </a>
+                     </li>
+                    {% else %}
+                    <li>
+                        <a 
+                            class="" 
+                            href="{% url 'login' %}">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                     </li>
+                    {% endif %}
+					
+                    
+				</ul>
+				
+				{% comment %} <div class="to-top">
+					<a class="btn btn-primary btn-customized-3" href="#" role="button">
+	                    <i class="fas fa-arrow-up"></i> Top
+	                </a>
+				</div>
+				
+				<div class="dark-light-buttons">
+					<a class="btn btn-primary btn-customized-4 btn-customized-dark" href="#" role="button">Dark</a>
+					<a class="btn btn-primary btn-customized-4 btn-customized-light" href="#" role="button">Light</a>
+				</div> {% endcomment %}
+			
+			</div></div><div id="mCSB_1_scrollbar_vertical" class="mCSB_scrollTools mCSB_1_scrollbar mCS-minimal-dark mCSB_scrollTools_vertical" style="display: none;"><div class="mCSB_draggerContainer"><div id="mCSB_1_dragger_vertical" class="mCSB_dragger" style="position: absolute; min-height: 50px; height: 0px; top: 0px;"><div class="mCSB_dragger_bar" style="line-height: 50px;"></div></div><div class="mCSB_draggerRail"></div></div></div></nav>
+            
+            {% else %}
+
 			<nav class="sidebar mCustomScrollbar _mCS_1 mCS-autoHide mCS_no_scrollbar" style="overflow: visible;"><div id="mCSB_1" class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside" style="max-height: none;" tabindex="0"><div id="mCSB_1_container" class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y" style="position:relative; top:0; left:0;" dir="ltr">
 				
 				<!-- close sidebar menu -->
@@ -3612,6 +3678,9 @@
                         </a>
                      </li>
                     {% endif %}
+                    <li class="">
+                        <a class="" href="{% url 'account' %}"><i class="fas fa-user"></i>Account</a>
+					</li>
 					<li class="">
 						<a class="" href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a>
 					</li>
@@ -3631,16 +3700,16 @@
 						<a class="" href="{% url 'view_attendance' %}"><i class="fas fa-cog"></i> Attendance</a>
 					</li>
 					<li class="">
-						<a class="" href="#section-2"><i class="fas fa-user"></i> Inbox </a>
+						<a class="" href="{% url 'inbox' %}"><i class="fas fa-user"></i> Inbox </a>
 					</li>
-					<li class="active">
-						<a class="" href="#section-5"><i class="fas fa-pencil-alt"></i> Grades </a>
+					<li class="">
+						<a class="" href="{% url 'grades' %}"><i class="fas fa-pencil-alt"></i> Grades </a>
 					</li>
 					
                     
 				</ul>
 				
-				<div class="to-top">
+				{% comment %} <div class="to-top">
 					<a class="btn btn-primary btn-customized-3" href="#" role="button">
 	                    <i class="fas fa-arrow-up"></i> Top
 	                </a>
@@ -3649,14 +3718,15 @@
 				<div class="dark-light-buttons">
 					<a class="btn btn-primary btn-customized-4 btn-customized-dark" href="#" role="button">Dark</a>
 					<a class="btn btn-primary btn-customized-4 btn-customized-light" href="#" role="button">Light</a>
-				</div>
+				</div> {% endcomment %}
 			
 			</div></div><div id="mCSB_1_scrollbar_vertical" class="mCSB_scrollTools mCSB_1_scrollbar mCS-minimal-dark mCSB_scrollTools_vertical" style="display: none;"><div class="mCSB_draggerContainer"><div id="mCSB_1_dragger_vertical" class="mCSB_dragger" style="position: absolute; min-height: 50px; height: 0px; top: 0px;"><div class="mCSB_dragger_bar" style="line-height: 50px;"></div></div><div class="mCSB_draggerRail"></div></div></div></nav>
 			<!-- End sidebar -->
+            {% endif %}
 
             {% if messages %} 
                 {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show ">{{message}}  
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show m-0 ">{{message}}  
                         <a 
                             href="#" 
                             class="close" 
@@ -3687,6 +3757,7 @@
 		<script src="{% static 'sis/js/jquery-migrate-3.0.0.min.js' %}"></script>
         <script src="{% static 'sis/js/jquery.backstretch.min.js' %}"></script>
         <script src="{% static 'sis/js/wow.min.js' %}"></script>
+        <script src="{% static 'sis/js/search.js' %}"></script>
         <script src="{% static 'sis/js/jquery.waypoints.min.js' %}"></script>
         <script src="{% static 'sis/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
         <script src="{% static 'sis/js/scripts.js' %}"></script>
