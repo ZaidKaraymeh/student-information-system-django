@@ -3,7 +3,7 @@ from email.policy import default
 from django import forms
 # from django.forms import ChoiceWidget
 
-from users.models import CustomUser, Course, Post, Assignment, AssignmentSubmission, Quiz, MultipleChoiceQuestion, AttendanceReport, Message
+from users.models import CustomUser, Course, Post, Assignment, AssignmentSubmission, Quiz, MultipleChoiceQuestion, AttendanceReport, Message, Reply
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.admin import widgets                                       
 
@@ -265,10 +265,12 @@ class AttendanceReportForm(forms.ModelForm):
 
 
 class MessageForm(forms.ModelForm):
-    # docfile = forms.FileField(
-    #     label='Select a file',
-    #     help_text='max. 42 megabytes'
-    # )
+    file = forms.FileField(
+        label='Select a file',
+        help_text='max. 42 megabytes',
+        required=False,
+        widget=forms.ClearableFileInput(attrs={'multiple': True})
+    )
     USER_CHOICES = [
         (
             user.id ,
@@ -280,13 +282,34 @@ class MessageForm(forms.ModelForm):
     class Meta:
         model = Message
 
-        fields = ['users','title', 'content']
+        fields = ['users','title', 'content', 'file']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Subject"}), 
             'content': forms.Textarea(attrs={'class': 'form-control','placeholder': "Enter text here..."}),
         }
     def __init__(self, *args, **kwargs):
         super(MessageForm, self).__init__(*args, **kwargs) # Call to ModelForm constructor
+        self.fields['title'].widget.attrs['style'] = 'width:100%; height:40px;'
+        self.fields['title'].label = ""
+        self.fields['content'].label = ""
+        
+class MessageReplyForm(forms.ModelForm):
+    file = forms.FileField(
+        label='Select a file',
+        help_text='max. 42 megabytes',
+        required=False,
+        widget=forms.ClearableFileInput(attrs={'multiple': True})
+    )
+    class Meta:
+        model = Reply
+
+        fields = ['title', 'content', 'file']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Subject"}), 
+            'content': forms.Textarea(attrs={'class': 'form-control','placeholder': "Enter text here..."}),
+        }
+    def __init__(self, *args, **kwargs):
+        super(MessageReplyForm, self).__init__(*args, **kwargs) # Call to ModelForm constructor
         self.fields['title'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['title'].label = ""
         self.fields['content'].label = ""

@@ -10,12 +10,21 @@ from django.forms import modelformset_factory
 def view_student_courses(request):
     student = CustomUser.objects.get(id=request.user.id)
     courses = student.course_set.all()
-
-    print(courses)
+    assigns = []
+    for course in courses:
+        assigns = [
+            *assigns, 
+            Assignment.objects.filter(
+                course=course,
+            )
+        ]
+    assigns = [*assigns]
+    print(assigns)
 
     context = {
         "user":student,
         "courses": courses,
+        "assignments":assigns,
     }
 
     return render(request, "sis/student_templates/my_courses.html", context)

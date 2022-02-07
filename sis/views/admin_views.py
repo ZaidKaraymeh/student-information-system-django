@@ -31,7 +31,11 @@ def delete_course_enrolled(request, id, course_id, *args, **kwargs):
     return redirect("view_student_enrolled_courses", id=id)
 
 def view_courses(request):
-    courses = Course.objects.all().order_by('code')
+    user = CustomUser.objects.get(id=request.user.id)
+    if user.user_type == "STA":
+        courses = Course.objects.filter(instructor__id = user.id).order_by('code')
+    else:
+        courses = Course.objects.all().order_by('code')
     context = {"courses": courses}
     return render(request, "sis/admin_templates/view_courses.html", context)
 
@@ -394,7 +398,14 @@ def course_dashboard(request, id, instructor_id):
     instructor = CustomUser.objects.get(id=instructor_id)
     user = CustomUser.objects.get(id=request.user.id)
     posts = Post.objects.filter(course__id = id).order_by("-date_posted")
+
+    # if user.user_type == "STA":
+    #     assignments = Assignment.objects.filter(course__id = id).order_by("-date_posted")
+    # else:
+    #     assignments = Assignment.objects.filter(course__id = id, ).order_by("-date_posted")
+
     assignments = Assignment.objects.filter(course__id = id).order_by("-date_posted")
+
     students = CustomUser.objects.filter(course__id = id)
     context = {
         'form':form, 
@@ -411,8 +422,15 @@ def course_dashboard(request, id, instructor_id):
 
 
 def course_assignment_builder(request):
-    assignments = Assignment.objects.all().order_by('-date_posted')
-    print("plinker", assignments)
+
+    user = CustomUser.objects.get(id = request.user.id)
+
+    if user.user_type == "STA":
+        assignments = Assignment.objects.filter(instructor__id=user.id).order_by('-date_posted')
+    else:
+        assignments = Assignment.objects.all().order_by('-date_posted')
+
+
     if request.method == "POST":
         add_test_form = AddTestForm(request.POST or None)
         if add_test_form.is_valid():
@@ -535,7 +553,12 @@ def course_student_submission(request, course_id, assignment_id):
 # Attendance
 
 def view_attendance(request):
-    courses = Course.objects.all()
+    user = CustomUser.objects.get(id = request.user.id)
+
+    if user.user_type == "STA":
+        courses = Course.objects.filter(instructor__id=user.id)
+    else:
+        courses = Course.objects.all()
     context = {"courses": courses}
     print("view attendance")
     # attendance = Attendance.objects.all()

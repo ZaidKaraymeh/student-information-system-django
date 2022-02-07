@@ -51,6 +51,8 @@ def assignment_grade(value, arg):
 
 def assignments_course(value):
     return Assignment.objects.filter(course=value)
+def unread_notif(value):
+    return value.notifications.unread().count()
 
 register.filter('is_submitted', is_submitted)
 register.filter('date_submitted', date_submitted)
@@ -58,4 +60,5 @@ register.filter('student_grade', student_grade)
 register.filter('course_id_modulus', course_id_modulus)
 register.filter('assignment_grade', assignment_grade)
 register.filter('assignments_course', assignments_course)
+register.filter('unread_notif', unread_notif)
 # register.filter('all_submitted', all_submitted)

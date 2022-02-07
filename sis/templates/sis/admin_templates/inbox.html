@@ -66,27 +66,151 @@
                             <div class="modal-dialog modal-xl" role="document">
                                 <div class="modal-content text-dark">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">
-                                        <strong>
-                                            {{msg.title}}
-                                        </strong>
-                                        <small>
-                                            {{msg.sender}}
-                                        </small>
+                                    <h5 class="modal-title text-left" id="exampleModalLabel" style="width: 100%;">
+                                        <div class="row my-3">
+                                            <div class="col-12">
+                                                <strong>
+                                                    {{msg.title}}
+                                                </strong>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <small>
+                                                    From: {{msg.sender}}
+                                                </small>
+                                            </div>
+                                            <div class="col-6 d-flex justify-content-end">
+                                                <small>
+                                                    {{msg.date_sent}}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12 text-left">
+                                                <h5>
+                                                    <small>
+                                                        To: {{msg.reciever}}
+                                                    </small>
+                                                </h5>
+                                            </div>
+                                        </div>
                                     </h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body text-left" >
-                                    <p>
-                                        {{msg.content|linebreaksbr}}
-                                    </p>
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <p>
+                                                {{msg.content|linebreaksbr}}
+                                            </p>
+                                            <ul>
+                                                {% for file in msg.files.all %}
+        
+                                                <li> <a href="{{file.file.url}}" >{{file.filename}} </a> </li>
+                                            
+                                            
+                                                {% endfor %}
+                                            </ul>
+                                            {% for reply in msg.replies.all %}
+                                                <div class="container border-top">
+                                                    <h5 class="modal-title text-left" id="exampleModalLabel" style="width: 100%;">
+                                                        <div class="row my-3">
+                                                            <div class="col-12">
+                                                                <strong>
+                                                                    {{reply.title}}
+                                                                </strong>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-6">
+                                                                <small>
+                                                                    From: {{reply.sender}}
+                                                                </small>
+                                                            </div>
+                                                            <div class="col-6 d-flex justify-content-end">
+                                                                <small>
+                                                                    {{reply.date_sent}}
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-12 text-left">
+                                                                <h5>
+                                                                    <small>
+                                                                        To: {{reply.reciever}}
+                                                                    </small>
+                                                                </h5>
+                                                            </div>
+                                                        </div>
+                                                    </h5>
+                                                </div>
+                                                <p>
+                                                {{reply.content|linebreaksbr}}
+                                                </p>
+                                                <ul>
+                                                    {% for file in reply.files.all %}
+                                                        <li> <a href="{{file.file.url}}" >{{file.filename}} </a> </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endfor %}
+                                        </div>
+
+                                    </div>
+                                    <button 
+                                            class="btn btn-info" 
+                                            type="button" data-toggle="collapse"
+                                            data-target="#collapseExample" 
+                                            aria-expanded="false" 
+                                            aria-controls="collapseExample"
+                                            onClick="d-none">
+                                            Reply
+                                        </button>
+                                    
+                                    <button type="button" class="btn btn-dark">Close</button>
+                                    <div class="collapse my-2" id="collapseExample">
+                                        <div class="card card-body">
+                                            <form method="POST" enctype="multipart/form-data">
+                                                {% csrf_token %}
+
+                                                <fieldset class="form-group" > 
+                                                    {% comment %} <legend> Enroll New Course </legend> {% endcomment %}
+                                                    <div class="d-flex align-items-start" >
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-12 text-left" >
+                                                            <label> <strong>Reply To {{msg.sender}}</strong> </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-12 text-left" >
+                                                            {{reply_form.title|as_crispy_field}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row py-3">
+                                                        <div class="col-12 text-left" >
+                                                            {{reply_form.content|as_crispy_field}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row py-3">
+                                                        <div class="col-12 text-left" >
+                                                            {{reply_form.file|as_crispy_field}}
+                                                            <input type="hidden" name="reply_id" value="{{msg.replies.last.id}}" />
+                                                            <input type="hidden" name="msg_id" value="{{msg.id}}" />
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </fieldset>
+                                                <div class="form-group d-flex justify-content-start">
+                                                    <button type="submit" class="btn btn-dark"> Reply </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save changes</button>
-                                </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -118,17 +242,17 @@
                             {% for msg in recieved_msgs %}
                                 <div class="col-12 ">
 
-                                    <a  href="#sent-msg-{{msg.id}}" class=" text-dark " data-toggle="modal" data-target="#sent-msg-{{msg.id}}" >
+                                    <a  href="#recieved-msg-{{msg.id}}" class=" text-dark " data-toggle="modal" data-target="#recieved-msg-{{msg.id}}" >
                                         <div class="card rounded my-1"  >
                                             <div class="card-body d-flex">
-                                                <div class="col-2 d-flex align-items-start flex-column">
+                                                <div class="col-3 d-flex align-items-start flex-column">
                                                     <h6>
                                                         <strong>
-                                                            To: {{msg.reciever}}
+                                                            From: {{msg.sender}}
                                                         </strong>
                                                     </h6>
                                                 </div>
-                                                <div class="col-7 d-flex align-items-start flex-column" style="text-overflow: ellipsis; max-width:800px; overflow: hidden; white-space: nowrap;">
+                                                <div class="col-6 d-flex align-items-start flex-column" style="text-overflow: ellipsis; max-width:800px; overflow: hidden; white-space: nowrap;">
                                                 
                                                     <h6 class="card-title " > 
                                                         {{msg.title}} <small> {{msg.content}}</small>
@@ -143,30 +267,146 @@
                                         </div>
                                     </a>
                                 </div>
-                            <div class="modal fade" id='sent-msg-{{msg.id}}'  tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal fade" id='recieved-msg-{{msg.id}}'  tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-xl" role="document">
                                     <div class="modal-content text-dark">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">
-                                            <strong>
-                                                {{msg.title}}
-                                            </strong>
-                                            <small>
-                                                {{msg.sender}}
-                                            </small>
+                                        <h5 class="modal-title text-left" id="exampleModalLabel" style="width: 100%;">
+                                            <div class="row my-3">
+                                                <div class="col-12">
+                                                    <strong>
+                                                        {{msg.title}}
+                                                    </strong>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <small>
+                                                        From: {{msg.sender}}
+                                                    </small>
+                                                </div>
+                                                <div class="col-6 d-flex justify-content-end">
+                                                    <small>
+                                                        {{msg.date_sent}}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12 text-left">
+                                                    <h5>
+                                                        <small>
+                                                            To: {{msg.reciever}}
+                                                        </small>
+                                                    </h5>
+                                                </div>
+                                            </div>
                                         </h5>
+            
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div class="modal-body text-left" >
-                                        <p>
-                                            {{msg.content|linebreaksbr}}
-                                        </p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                        <div class="container-fluid">
+                                            <p>
+                                                {{msg.content|linebreaksbr}}
+                                            </p>
+                                            <ul>
+                                                {% for file in msg.files.all %}
+                                                    <li> <a href="{{file.file.url}}" >{{file.filename}} </a> </li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% for reply in msg.replies.all %}
+                                                <div class="container border-top">
+                                                    <h5 class="modal-title text-left" id="exampleModalLabel" style="width: 100%;">
+                                                        <div class="row my-3">
+                                                            <div class="col-12">
+                                                                <strong>
+                                                                    {{reply.title}}
+                                                                </strong>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-6">
+                                                                <small>
+                                                                    From: {{reply.sender}}
+                                                                </small>
+                                                            </div>
+                                                            <div class="col-6 d-flex justify-content-end">
+                                                                <small>
+                                                                    {{reply.date_sent}}
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-12 text-left">
+                                                                <h5>
+                                                                    <small>
+                                                                        To: {{reply.reciever}}
+                                                                    </small>
+                                                                </h5>
+                                                            </div>
+                                                        </div>
+                                                    </h5>
+                                                </div>
+                                                <p>
+                                                {{reply.content|linebreaksbr}}
+                                                </p>
+                                                <ul>
+                                                    {% for file in reply.files.all %}
+                                                        <li> <a href="{{file.file.url}}" >{{file.filename}} </a> </li>
+                                                    {% endfor %}
+                                                </ul>
+
+
+
+                                            {% endfor %}
+                                        </div>
+                                         <button 
+                                            class="btn btn-info" 
+                                            type="button" data-toggle="collapse"
+                                            data-target="#collapseExample" 
+                                            aria-expanded="false" 
+                                            aria-controls="collapseExample"
+                                            onClick="d-none">
+                                            Reply
+                                        </button>
+                                        <button type="button" class="btn btn-dark">Close</button>
+                                        <div class="collapse my-2" id="collapseExample">
+                                            <div class="card card-body">
+                                                <form method="POST" enctype="multipart/form-data">
+                                                    {% csrf_token %}
+
+                                                    <fieldset class="form-group" > 
+                                                        {% comment %} <legend> Enroll New Course </legend> {% endcomment %}
+                                                        <div class="d-flex align-items-start" >
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-12 text-left" >
+                                                                {{reply_form.title|as_crispy_field}}
+                                                            </div>
+                                                        </div>
+                                                        <div class="row py-3">
+                                                            <div class="col-12 text-left" >
+                                                                {{reply_form.content|as_crispy_field}}
+                                                            </div>
+                                                        </div>
+                                                        <div class="row py-3">
+                                                            <div class="col-12 text-left" >
+                                                                {{reply_form.file|as_crispy_field}}
+
+                                                                <input type="hidden" name="reply_id" value="{{msg.replies.last.id}}" />
+                                                                <input type="hidden" name="msg_id" value="{{msg.id}}" />
+                                                            </div>
+                                                        </div>
+                                                        
+                                                    </fieldset>
+                                                    <div class="form-group d-flex justify-content-end">
+                                                        <button type="submit" class="btn btn-dark"> Submit </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                     </div>
                                 </div>
@@ -195,7 +435,7 @@
                     </button>
                 </div>
                 <div class="modal-body ">
-                    <form method="POST" class="">
+                    <form method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
 
                         <fieldset class="form-group" > 
@@ -220,6 +460,12 @@
                                     {{message_form.content|as_crispy_field}}
                                 </div>
                             </div>
+                            <div class="row py-3">
+                                <div class="col-12 text-left" >
+                                    {{message_form.file|as_crispy_field}}
+                                </div>
+                            </div>
+                            
                         </fieldset>
                         <div class="form-group d-flex justify-content-end">
                             <button type="submit" class="btn btn-dark"> Submit </button>

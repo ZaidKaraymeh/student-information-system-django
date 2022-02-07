@@ -1,4 +1,7 @@
 {% load static %}
+{% load notifications_tags %}
+{% load tags %}
+
 <!DOCTYPE html>
 <html lang="en"><link type="text/css" rel="stylesheet" id="dark-mode-custom-link"><link type="text/css" rel="stylesheet" id="dark-mode-general-link"><style lang="en" type="text/css" id="dark-mode-custom-style"></style><style lang="en" type="text/css" id="dark-mode-native-style"></style><head>
 
@@ -3608,10 +3611,13 @@
 					</li>
                     <li class="">
                         <a class="" href="{% url 'grades' %}"><i class="fas fa-pencil-alt"></i>Grades </a>
+
+                    <li class="">
+                        <a class="" href="{% url 'inbox' %}">
+                            <i class="fas fa-envelope"></i></i> Inbox {% if user|unread_notif %} <span class="badge badge-info">{% notifications_unread %}</span> {% endif %}
+                        </a>
                     </li>
-					<li class="">
-                        <a class="" href="{% url 'inbox' %}"><i class="fas fa-envelope"></i>Inbox </a>
-					</li>
+
                     {% if request.user.is_authenticated %}
                     <li>
                         <a 

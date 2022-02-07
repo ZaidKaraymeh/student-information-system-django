@@ -275,6 +275,33 @@ class Marks_Of_User(models.Model):
         return str(self.quiz)
 
 
+
+class MailFiles(models.Model):
+    file = models.FileField(upload_to='documents/%Y/%m/%d', null = True)
+
+    def __str__(self):
+        return os.path.basename(self.file.name)
+    
+    def filename(self):
+        return os.path.basename(self.file.name)
+
+class Reply(models.Model):
+    sender = models.ForeignKey(
+        CustomUser, 
+        on_delete=models.CASCADE, 
+        related_name="sender_reply"
+    )
+    reciever = models.ForeignKey(
+        CustomUser, 
+        on_delete=models.CASCADE, 
+        related_name="reciever_reply",
+        null=True,
+    )
+    files = models.ManyToManyField(MailFiles)
+    title = models.CharField(max_length=250)
+    content = models.TextField(max_length=9000)
+
+    date_sent = models.DateTimeField(auto_now=False, auto_now_add=True)
 class Message(models.Model):
     sender = models.ForeignKey(
         CustomUser, 
@@ -290,7 +317,13 @@ class Message(models.Model):
     
     title = models.CharField(max_length=250)
     content = models.TextField(max_length=9000)
-
     date_sent = models.DateTimeField(auto_now=False, auto_now_add=True)
+    is_replied = models.BooleanField(default=False)
+    date_reply = models.DateTimeField(auto_now=True, auto_now_add=False)
+    files = models.ManyToManyField(MailFiles)
+    replies = models.ManyToManyField(Reply)
+
+
+
 
 
