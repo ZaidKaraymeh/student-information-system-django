@@ -55,10 +55,9 @@
                                                 </tr>
                                             </head>
                                             <tbody>
-                                                {% for course in courses %}
                                                     {% for assignment in course|assignments_course %}
                                                     <tr>
-                                                    <th scope="row"> {{forloop.counter|add:forloop.parentloop.counter0}} </th>
+                                                    <th scope="row"> {{forloop.counter}} </th>
                                                         <td> {{course.name}} {{course.code}} {{course.section}}  </td>
                                                         <td> {{assignment|assignment_grade:user}}/{{assignment.possible_points}} </td>
                                                         <td> {{assignment.name}} </td>
@@ -69,11 +68,10 @@
                                                         {% endif %}
                                                         <td> {{assignment.due_date}} </td>
                                                         <td> {{assignment|date_submitted:user}} </td>
-                                                        <td class="" > <a class="btn btn-primary btn-block" href="{% url 'course_dashboard' id=course.id instructor_id=course.instructor.id  %}" > View Dashboard </a> </td>
+                                                        <td class="" > <a class="btn btn-primary btn-block" href="{% url 'course_dashboard' id=course.id instructor_id=course.instructor.id  %}" > View </a> </td>
                                                         
                                                     </tr>
                                                         {% endfor %}
-                                                {% endfor %}
                                             </tbody>
                                             <thead>
                                                 <tr>

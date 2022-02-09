@@ -2,6 +2,7 @@ from django.urls import path, include
 from .views import views
 from .views import admin_views
 from .views import student_views
+from .views import staff_views
 urlpatterns = [
     path("", views.home, name="home" ),
     path("sis/", views.home_sis, name="home_sis" ),
@@ -40,6 +41,8 @@ urlpatterns = [
     path("sis/export/staff", admin_views.export_staff, name="export_staff"),
     path("sis/export/staff/classes/<int:id>", admin_views.export_staff_enrolled_course, name="export_staff_enrolled_course"),
     path("sis/dashboard/", admin_views.dashboard, name="dashboard"),
+    path("sis/gradebook", staff_views.gradebook, name="gradebook"),
+    path("sis/gradebook/<int:course_id>/", staff_views.gradebook_course, name="gradebook_course"),
 
 
     # universal

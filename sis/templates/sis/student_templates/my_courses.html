@@ -59,21 +59,23 @@
                     <tbody>
                         {% for course in courses %}
                             {% for assignment in course|assignments_course %}
-                            <tr>
-                            <th scope="row"> {{forloop.counter|add:forloop.parentloop.counter0}} </th>
-                                <td> {{course.name}} {{course.code}} {{course.section}}  </td>
-                                <td> {{course.instructor.first_name}} {{course.instructor.last_name}} </td>
-                                <td> {{assignment.name}} </td>
-                                {% if assignment|is_submitted:user %} 
-                                    <td style="color:green" >Submitted </td>
-                                {% else %}
-                                    <td style="color:red" > Not Submitted </td>
+                                {% if not assignment|is_submitted:user %}
+                                    <tr>
+                                    <th scope="row"> {{forloop.counter|add:forloop.parentloop.counter0}} </th>
+                                        <td> {{course.name}} {{course.code}} {{course.section}}  </td>
+                                        <td> {{course.instructor.first_name}} {{course.instructor.last_name}} </td>
+                                        <td> {{assignment.name}} </td>
+                                        {% if assignment|is_submitted:user %} 
+                                            <td style="color:green" >Submitted </td>
+                                        {% else %}
+                                            <td style="color:red" > Not Submitted </td>
+                                        {% endif %}
+                                        <td> {{assignment.due_date}} </td>
+                                        <td class="" > <a class="btn btn-primary btn-block" href="{% url 'course_dashboard' id=course.id instructor_id=course.instructor.id  %}" > View Dashboard </a> </td>
+                                        
+                                    </tr>
                                 {% endif %}
-                                <td> {{assignment.due_date}} </td>
-                                <td class="" > <a class="btn btn-primary btn-block" href="{% url 'course_dashboard' id=course.id instructor_id=course.instructor.id  %}" > View Dashboard </a> </td>
-                                
-                            </tr>
-                                {% endfor %}
+                            {% endfor %}
                         {% endfor %}
                     </tbody>
                     <thead>

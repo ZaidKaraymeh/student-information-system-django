@@ -157,8 +157,15 @@ def inbox(request):
         message_form = MessageForm()
         reply_form = MessageReplyForm()
 
-    sent_messages = Message.objects.filter(sender_id=user.id).order_by("-date_reply")
-    recieved_messages = Message.objects.filter(Q(reciever_id=user.id) | Q(is_replied=True)).order_by("-date_reply")
+    sent_messages = Message.objects.filter(sender_id=user.id).order_by("-date_sent")
+    recieved_messages = Message.objects.filter(
+        Q(reciever_id=user.id, is_replied=False) 
+        | 
+        Q(is_replied=True, reciever_id=user.id)
+        |
+        Q(is_replied=True, sender_id=user.id)
+    ).order_by("-date_reply")
+    # recieved_messages = Message.objects.filter(Q(reciever_id=user.id, is_replied=True) | Q(reciever_id=user.id)).order_by("-date_reply")
 
     context = {
             "user": user,

@@ -93,6 +93,7 @@ class Grade(models.Model):
         null=True,
         )
     point_grade = models.IntegerField(default=0)
+    possible_points = models.IntegerField(null=True)
     course = models.ForeignKey(
         Course, 
         on_delete=models.CASCADE,
@@ -325,5 +326,39 @@ class Message(models.Model):
 
 
 
+
+class FeeReport(models.Model):
+    student = models.ForeignKey(
+        CustomUser, 
+        on_delete=models.CASCADE, 
+        related_name="student_fee"
+    )
+    paid_full = models.BooleanField()
+    note = models.CharField(max_length=255)
+    amount_paid = models.IntegerField()
+
+class Fee(models.Model):
+    twentyTwentyone = "2020/2021"
+    twentyoneTwentytwo = "2021/2022"
+    twentytwoTwentythree = "2022/2023"
+    UNKOWN = "UNKOWN"
+
+    YEAR_CHOICES = [
+        (twentyTwentyone, '2020/2021'),
+        (twentyoneTwentytwo, '2021/2022'),
+        (twentytwoTwentythree, '2022/2023'),
+        (UNKOWN, "Unknown"),
+    ]
+    year = models.CharField(
+        max_length=10,
+        choices=YEAR_CHOICES,
+        default=UNKOWN
+    )
+    
+    student_fees = models.ManyToManyField(FeeReport)
+
+    paid_full = models.BooleanField()
+    note = models.CharField(max_length=255)
+    amount_paid = models.IntegerField()
 
 

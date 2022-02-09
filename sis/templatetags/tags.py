@@ -1,5 +1,5 @@
 from django import template
-from users.models import AssignmentSubmission, Assignment, Grade
+from users.models import AssignmentSubmission, Assignment, Grade, AttendanceReport
 
 register = template.Library()
 
@@ -59,7 +59,28 @@ def assignment_grade(value, arg):
     return value.students_grades.get(student__id=arg.id).point_grade
 
 def assignments_course(value):
-    return Assignment.objects.filter(course=value)
+    return Assignment.objects.filter(course=value).order_by("due_date")
+
+def absence_student(student, course):
+    return AttendanceReport.objects.filter(course=course, student=student, is_absent=True).count()
+
+def average_grade_student(student, course):
+    grades = Grade.objects.filter(course=course, student=student)
+
+    sum = 0
+    for grade in grades:
+        sum += (grade.point_grade / grade.possible_points)
+    
+    avg = (sum/grades.count()) * 100
+    avg = round(avg, 2)
+    return avg
+    
+
+
+def assignment_unsubmitted(value, arg):
+    assignment_id, user_id = value.id, arg.id
+    obj = AssignmentSubmission.objects.get(assignment__id=assignment_id, student__id=user_id)
+    return obj.submitted
 def unread_notif(value):
     return value.notifications.unread().count()
 
@@ -69,5 +90,8 @@ register.filter('student_grade', student_grade)
 register.filter('course_id_modulus', course_id_modulus)
 register.filter('assignment_grade', assignment_grade)
 register.filter('assignments_course', assignments_course)
+register.filter('absence_student', absence_student)
+register.filter('average_grade_student', average_grade_student)
+register.filter('assignment_unsubmitted', assignment_unsubmitted)
 register.filter('unread_notif', unread_notif)
 # register.filter('all_submitted', all_submitted)

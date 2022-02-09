@@ -40,7 +40,7 @@
                 <div class="row">
                     <div class="col ">
                         <strong>
-                            Student ID
+                            ID
                         </strong>
                     </div>
                     <div class="col text-left border-left"> {{user.id}} </div>
@@ -66,16 +66,18 @@
                     <div class="col text-left border-left"> {{user.address}} </div>
                 </div>
             </li>
-            <li class="list-group-item">
-                <div class="row">
-                    <div class="col ">
-                        <strong>
-                            Class of
-                        </strong>
+            {% if user.user_type == "STU" %}
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col ">
+                            <strong>
+                                Class of
+                            </strong>
+                        </div>
+                        <div class="col text-left border-left"> {{user.year}} </div>
                     </div>
-                    <div class="col text-left border-left"> {{user.year}} </div>
-                </div>
-            </li>
+                </li>
+            {% endif %}
         </ul>
     </section>
 </div>

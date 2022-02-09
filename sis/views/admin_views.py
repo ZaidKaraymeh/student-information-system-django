@@ -8,6 +8,7 @@ from django.forms import modelformset_factory
 import xlwt
 
 def add_course(request):
+    user = CustomUser.objects.get(id=request.user.id)
     if request.method == "POST":
         form = AddCourseForm(request.POST)
         if form.is_valid():
@@ -17,7 +18,10 @@ def add_course(request):
     else:
         form = AddCourseForm()
         form.fields["instructor"].queryset = CustomUser.objects.filter(user_type = "STA")    
-    context = {"form":form}
+    context = {
+        "form":form,
+        "user":user
+        }
     return render(request, "sis/admin_templates/add_course.html", context)
 
 def manage_course(request):
@@ -36,7 +40,10 @@ def view_courses(request):
         courses = Course.objects.filter(instructor__id = user.id).order_by('code')
     else:
         courses = Course.objects.all().order_by('code')
-    context = {"courses": courses}
+    context = {
+        "courses": courses,
+        "user":user
+        }
     return render(request, "sis/admin_templates/view_courses.html", context)
 
 def export_courses(request):
@@ -70,6 +77,7 @@ def export_courses(request):
 
 def edit_course(request, id):
     course = Course.objects.get(id=id)
+    user = CustomUser.objects.get(id=request.user.id)
     if request.method == "POST":
         form = AddCourseForm(request.POST, instance=course)
         if form.is_valid():
@@ -79,7 +87,11 @@ def edit_course(request, id):
     else:
         form = AddCourseForm(instance=course)
         form.fields["instructor"].queryset = CustomUser.objects.filter(user_type = "STA")    
-    context = {"form":form, "course":course}
+    context = {
+        "form":form, 
+        "course":course,
+        "user":user
+        }
     return render(request, "sis/admin_templates/edit_course.html", context)
 
 def delete_course(request, id):
@@ -96,6 +108,7 @@ def delete_course(request, id):
 # STUDENT VIEWS
 
 def add_student(request):
+    user = CustomUser.objects.get(id=request.user.id)
     if request.method == "POST":
         form = AddStudentForm(request.POST)
         if form.is_valid():
@@ -108,12 +121,19 @@ def add_student(request):
     else:
         form = AddStudentForm()
           
-    context = {"form":form}
+    context = {
+        "form":form,
+        "user":user
+        }
     return render(request, "sis/admin_templates/add_student.html", context)
 
 def view_students(request):
+    user = CustomUser.objects.get(id=request.user.id)
     students = CustomUser.objects.filter(user_type = "STU")
-    context = {"students": students}
+    context = {
+        "students": students,
+        "user":user
+        }
     return render(request, "sis/admin_templates/view_students.html", context)
 
 def export_students(request):
@@ -146,8 +166,10 @@ def export_students(request):
     return response
 
 def view_student_enrolled_courses(request, id):
+    user = CustomUser.objects.get(id=request.user.id)
     courses_enrolled = Course.objects.filter(students__id = id)
     student = CustomUser.objects.get(id=id)
+    user = CustomUser.objects.get(id=request.user.id)
     if request.method == "POST":
         form = AddStudentToCourseForm(request.POST)
         if form.is_valid():
@@ -163,7 +185,12 @@ def view_student_enrolled_courses(request, id):
         form = AddStudentToCourseForm()
 
           
-    context = {"courses": courses_enrolled, "student":student, "form":form}
+    context = {
+        "courses": courses_enrolled, 
+        "student":student, 
+        "form":form,
+        "user":user
+        }
     return render(request, "sis/admin_templates/view_student_enrolled_courses.html", context)
 
 
@@ -171,6 +198,7 @@ def view_student_enrolled_courses(request, id):
 
 
 def add_staff(request):
+    user = CustomUser.objects.get(id=request.user.id)
     if request.method == "POST":
         form = AddStaffForm(request.POST)
         if form.is_valid():
@@ -183,21 +211,33 @@ def add_staff(request):
     else:
         form = AddStaffForm()
           
-    context = {"form":form}
+    context = {
+        "form":form,
+        "user":user
+        }
     return render(request, "sis/admin_templates/add_staff.html", context)
 
 
 def view_staff(request):
+    user = CustomUser.objects.get(id=request.user.id)
     staffs = CustomUser.objects.filter(user_type = "STA")
-    context = {"staffs": staffs}
+    context = {
+        "staffs": staffs,
+        "user":user
+        }
     return render(request, "sis/admin_templates/view_staff.html", context)
 
 def view_instructor_enrolled_courses(request, id):
+    user = CustomUser.objects.get(id=request.user.id)
     courses_enrolled = Course.objects.filter(instructor__id = id)
     instructor = CustomUser.objects.get(id=id)
 
         
-    context = {"courses": courses_enrolled, "instructor":instructor}
+    context = {
+        "courses": courses_enrolled, 
+        "instructor":instructor,
+        "user":user
+        }
     return render(request, "sis/admin_templates/view_instructor_enrolled_courses.html", context)
 
 # def edit_instructor_enrolled_courses(request, course_id, )
@@ -442,6 +482,7 @@ def course_assignment_builder(request):
     context = {
         'form':add_test_form,
         'assignments': assignments,
+        "user":user
     }
 
     return render(request, 'sis/admin_templates/course_assignment_builder.html', context)
@@ -471,6 +512,7 @@ def course_assignment_build(request):
                 grade = Grade.objects.create(
                     student=student,
                     course = course,
+                    possible_points = f.possible_points,
                 )
                 grade.save()
                 f.students_grades.add(grade)
@@ -483,6 +525,7 @@ def course_assignment_build(request):
 
     context = {
         'form':add_assignment_form,
+        "user":user
     }
     return render(request, 'sis/admin_templates/add_assignment.html', context)
 
@@ -513,6 +556,7 @@ def course_assignment_edit(request, assignment_id):
     context = {
         'form':assignment_form,
         'files':files,
+        "user":user
     }
     return render(request, 'sis/admin_templates/edit_assignment.html', context)
 
@@ -528,12 +572,6 @@ def course_student_submission(request, course_id, assignment_id):
             f.instructor = CustomUser.objects.get(id=instructor.id)
             f.submitted_at = timezone.now()
             f.submitted = True
-            grade, created = Grade.objects.get_or_create(
-                course=course,
-                student = CustomUser.objects.get(id=request.user.id)
-            )
-            grade.save()
-            f.grade = grade
             f.save()
             for file in request.FILES.getlist('file'):
                 obj = AssignmentSubmissionFile.objects.create(
@@ -559,21 +597,31 @@ def view_attendance(request):
         courses = Course.objects.filter(instructor__id=user.id)
     else:
         courses = Course.objects.all()
-    context = {"courses": courses}
+    context = {
+        "courses": courses,
+        "user":user
+    }
     print("view attendance")
     # attendance = Attendance.objects.all()
     # context = {"attendance": attendance}
     return render(request, "sis/admin_templates/view_attendance.html", context)
 
 def view_attendance_course(request, course_id):
+    user = CustomUser.objects.get(id=request.user.id)
     print("view_attendance_course")
 
     attendance = Attendance.objects.filter(course__id = course_id)
     course = Course.objects.get(id=course_id)
-    context = {"attendance": attendance, "course": course}
+    context = {
+        "attendance": attendance, 
+        "course": course,
+        "user":user
+        
+    }
     return render(request, "sis/admin_templates/view_attendance_course.html", context)
 
 def view_attendance_course_report(request, attendance_id, course_id):
+    user = CustomUser.objects.get(id=request.user.id)
     attendance = AttendanceReport.objects.filter(attendance__id = attendance_id)
     print(attendance)
     course = Course.objects.get(id=course_id)
@@ -582,7 +630,8 @@ def view_attendance_course_report(request, attendance_id, course_id):
         "attendance": attendance,
         "course": course,
         'attendance_id':attendance_id,
-        "date":date
+        "date":date,
+        "user":user
     
     }
     # attendance = Attendance.objects.all()
@@ -617,6 +666,8 @@ def add_attendance_course_report(request, course_id):
         return redirect("view_attendance_course", course_id=course_id)
 
 def edit_attendance_course_report(request, course_id, attendance_id):
+    user = CustomUser.objects.get(id=request.user.id)
+
     attendance = AttendanceReport.objects.filter(attendance__id = attendance_id)
     attendance_reports = AttendanceReport.objects.filter(attendance__id = attendance_id)
 
@@ -647,11 +698,14 @@ def edit_attendance_course_report(request, course_id, attendance_id):
         'course':course,
         'attendance':attendance,
         'attendance_id':attendance_id,
+        "user":user
     }
     return render(request, 'sis/admin_templates/edit_attendance_course_report.html', context)
 
 
 def dashboard(request):
+    user = CustomUser.objects.get(id=request.user.id)
+
     reports = AttendanceReport.objects.all()
     attendance_present = 0
 
@@ -672,6 +726,7 @@ def dashboard(request):
         "attendance_present": attendance_present,
         "attendance_absent": attendance_absent,
         "attendance_present_percentage": attendance_present_percentage,
+        "user":user
 
     }
     return render(request, "sis/admin_templates/dashboard.html", context)

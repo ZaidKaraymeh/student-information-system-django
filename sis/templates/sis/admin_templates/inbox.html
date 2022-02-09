@@ -247,9 +247,17 @@
                                             <div class="card-body d-flex">
                                                 <div class="col-3 d-flex align-items-start flex-column">
                                                     <h6>
-                                                        <strong>
-                                                            From: {{msg.sender}}
-                                                        </strong>
+                                                        {% if msg.is_replied %} 
+                                                        
+                                                            <strong>
+                                                                From: {{msg.reciever}}
+                                                                
+                                                            </strong>
+                                                        {% else %}
+                                                            <strong>
+                                                                From: {{msg.sender}}
+                                                            </strong>
+                                                        {% endif %}
                                                     </h6>
                                                 </div>
                                                 <div class="col-6 d-flex align-items-start flex-column" style="text-overflow: ellipsis; max-width:800px; overflow: hidden; white-space: nowrap;">
@@ -260,7 +268,7 @@
                                                 
                                                 </div>
                                                 <div class="col-3">
-                                                <span class="align-items-end" > {{msg.date_sent}} </span>
+                                                <span class="align-items-end" > {{msg.date_reply}} </span>
                                                 
                                                 </div>
                                             </div>

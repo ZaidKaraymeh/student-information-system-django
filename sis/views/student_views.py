@@ -42,6 +42,12 @@ def grades(request):
             )
         ]
     assigns = [*assigns]
+
+    # assigns_sorted = sorted(
+    #     assigns,
+    #     key= lambda x: (x["date_posted"], x[""])
+    # )
+
     context  = {
         "user": student,
         "courses": courses,
