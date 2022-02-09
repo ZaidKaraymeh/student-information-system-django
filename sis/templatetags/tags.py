@@ -21,6 +21,15 @@ def is_submitted(value, arg):
         return exists.submitted
     except:
         return False
+def assignment_grade(value, arg):
+    assignment_id, user_id = value.id, arg.id
+    try:
+        asn = Assignment.objects.get(assignment__id = assignment_id)
+        grade = asn.students_grades.filter(student__id=user_id).first()
+
+        return grade.point_grade
+    except:
+        return False
 
 def date_submitted(value, arg):
     assignment_id, user_id = value.id, arg.id

@@ -39,41 +39,58 @@
                         </div>
                         <div class="modal-body text-left py-0">
                             <div class="row">
-                                {% for assignment in course|assignments_course %}
                                 <div class="col-12 p-0">
-                                    <div class="card rounded">
-                                        <div class="card-body d-flex">
-                                            <div class="col-3 d-flex align-items-start flex-column">
-                                            <h5>
-                                                <i class="pr-5 fas fa-thumbtack"> <strong>{{assignment.category}}</strong> </i>
-                                            </h5>
-                                            </div>
-                                            <div class="col-8 d-flex align-items-start flex-column">
-                                            
-                                            <h5 class="card-title "> {{assignment.name}} <small> posted by {{assignment.instructor.username}}  at {{assignment.date_posted}}</small></h5>
-                                            <h6>Due Date: <small>{{assignment.due_date}}</small>
-                                            </h6>
-                                            {% if assignment|is_submitted:user %} 
-                                                <h6 style="color:green" >
-                                                Submitted
-                                                </h6>
-                                                
-                                            {% else %}
-                                                <h6 style="color:red" >
-                                                Not Submitted
-                                                </h6>
-
-                                            {% endif %}
-                                            </div>
-                                            <div class="col-1">
-                                                <span class="align-items-end" > 
-                                                    {{assignment|assignment_grade:user}}/{{assignment.possible_points}} 
-                                                </span>
-                                            </div>
-                                        </div>
+                                    <div class="table-responsive p-0 overflow-auto"  >
+                                        <table id="view_courses" class="table table-striped table-hover table-bordered text-center">
+                                            <thead>
+                                                <tr>
+                                                <th  scope="col">#</th>
+                                                <th scope="col">Course</th>
+                                                <th scope="col">Grade</th>
+                                                <th scope="col">Assignment</th>
+                                                <th scope="col">Submission</th>
+                                                <th scope="col">Due Date</th>
+                                                <th scope="col">Submitted At</th>
+                                                <th scope="col">Course</th>
+                                                </tr>
+                                            </head>
+                                            <tbody>
+                                                {% for course in courses %}
+                                                    {% for assignment in course|assignments_course %}
+                                                    <tr>
+                                                    <th scope="row"> {{forloop.counter|add:forloop.parentloop.counter0}} </th>
+                                                        <td> {{course.name}} {{course.code}} {{course.section}}  </td>
+                                                        <td> {{assignment|assignment_grade:user}}/{{assignment.possible_points}} </td>
+                                                        <td> {{assignment.name}} </td>
+                                                        {% if assignment|is_submitted:user %} 
+                                                            <td style="color:green" >Submitted </td>
+                                                        {% else %}
+                                                            <td style="color:red" > Not Submitted </td>
+                                                        {% endif %}
+                                                        <td> {{assignment.due_date}} </td>
+                                                        <td> {{assignment|date_submitted:user}} </td>
+                                                        <td class="" > <a class="btn btn-primary btn-block" href="{% url 'course_dashboard' id=course.id instructor_id=course.instructor.id  %}" > View Dashboard </a> </td>
+                                                        
+                                                    </tr>
+                                                        {% endfor %}
+                                                {% endfor %}
+                                            </tbody>
+                                            <thead>
+                                                <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Course</th>
+                                                <th scope="col">Grade</th>
+                                                <th scope="col">Assignment</th>
+                                                <th scope="col">Submission</th>
+                                                <th scope="col">Due Date</th>
+                                                <th scope="col">Submitted At</th>
+                                                <th scope="col">Course</th>
+                                                </tr>
+                                            </head>
+                                        </table>
                                     </div>
+                                    
                                 </div>
-                                {% endfor %}
                             </div>
                         </div>
                         <div class="modal-footer">
