@@ -14,11 +14,13 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500&amp;display=swap">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></src=>
+        {% comment %} <link rel="stylesheet" href="{% static 'sis/bootstrap-dark3.min.css' %}"> {% endcomment %}
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
         <link rel="stylesheet" href="{% static 'sis/css/jquery.mCustomScrollbar.min.css' %}">
         <link rel="stylesheet" href="{% static 'sis/css/animate.css' %}">
         <link rel="stylesheet" href="{% static 'sis/css/style.css' %}">
         <link rel="stylesheet" href="{% static 'sis/css/media-queries.css' %}">
+
 
         <!-- Favicon and touch icons -->
         <link rel="shortcut icon" href="assets/ico/favicon.png">
@@ -3706,7 +3708,7 @@
                         <a class="" href="{% url 'view_attendance' %}"><i class="fas fa-cog"></i> Attendance</a>
 					</li>
 					<li class="">
-                        <a class="" href="{% url 'inbox' %}"><i class="fas fa-user"></i> Inbox </a>
+                        <a class="" href="{% url 'inbox' %}"><i class="fas fa-user"></i> Inbox {% if user|unread_notif %} <span class="badge badge-info">{% notifications_unread %}</span> {% endif %} </a>
 					</li>
 					
 					
@@ -3779,7 +3781,7 @@
                                 <a class="" href="{% url 'view_attendance' %}"><i class="fas fa-cog"></i> Attendance</a>
                             </li>
                             <li class="">
-                                <a class="" href="{% url 'inbox' %}"><i class="fas fa-user"></i> Inbox </a>
+                                <a class="" href="{% url 'inbox' %}"><i class="fas fa-user"></i> Inbox  {% if user|unread_notif %} <span class="badge badge-info">{% notifications_unread %}</span> {% endif %}</a>
                             </li>
                             <li class="">
                                 <a class="" href="{% url 'grades' %}"><i class="fas fa-pencil-alt"></i> Grades </a>

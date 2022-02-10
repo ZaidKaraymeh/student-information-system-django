@@ -43,6 +43,8 @@ urlpatterns = [
     path("sis/dashboard/", admin_views.dashboard, name="dashboard"),
     path("sis/gradebook", staff_views.gradebook, name="gradebook"),
     path("sis/gradebook/<int:course_id>/", staff_views.gradebook_course, name="gradebook_course"),
+    path("sis/gradebook/report/<int:course_id>/<int:student_id>/", staff_views.gradebook_report, name="gradebook_report"),
+    path("sis/gradebook/report/<int:course_id>/<int:student_id>/edit", staff_views.gradebook_report_edit, name="gradebook_report_edit"),
 
 
     # universal

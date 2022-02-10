@@ -3,7 +3,7 @@ from email.policy import default
 from django import forms
 # from django.forms import ChoiceWidget
 
-from users.models import CustomUser, Course, Post, Assignment, AssignmentSubmission, Quiz, MultipleChoiceQuestion, AttendanceReport, Message, Reply
+from users.models import CustomUser, Course, Post, Assignment, AssignmentSubmission, Quiz, MultipleChoiceQuestion, AttendanceReport, Message, Reply, Grade
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.admin import widgets                                       
 
@@ -262,6 +262,24 @@ class AttendanceReportForm(forms.ModelForm):
         self.fields['instructor'].widget.attrs['class'] = 'form-control text-center'
         self.fields['note'].widget.attrs['class'] = 'form-control'
     field_order = ['student', 'is_absent', 'note']
+
+class GradeForm(forms.ModelForm):
+    class Meta:
+        model = Grade
+        fields = ['point_grade']
+        # widgets = {
+        #     'note': forms.Textarea(attrs={'class': 'form-control'}),
+        # }
+        labels = {
+           'point_grade': "",
+       }
+    def __init__(self, *args, **kwargs):
+        super(GradeForm  , self).__init__(*args, **kwargs)
+
+        self.fields['point_grade'].required = False
+        self.fields['point_grade'].widget.attrs['style'] = 'width:25%; height:30px;'
+        self.fields['point_grade'].widget.attrs['class'] = 'form-control text-center'
+    # field_order = ['student', 'is_absent', 'note']
 
 
 class MessageForm(forms.ModelForm):

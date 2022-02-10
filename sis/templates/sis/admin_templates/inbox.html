@@ -1,5 +1,6 @@
 {% extends 'sis/admin_templates/base_new.html' %}
 {% load crispy_forms_tags %}
+{% load tags %}
 
 {% block content %}
 
@@ -244,13 +245,13 @@
 
                                     <a  href="#recieved-msg-{{msg.id}}" class=" text-dark " data-toggle="modal" data-target="#recieved-msg-{{msg.id}}" >
                                         <div class="card rounded my-1"  >
-                                            <div class="card-body d-flex">
+                                            <div class="card-body d-flex shadow-sm inbox-card card-shadow">
                                                 <div class="col-3 d-flex align-items-start flex-column">
                                                     <h6>
                                                         {% if msg.is_replied %} 
                                                         
                                                             <strong>
-                                                                From: {{msg.reciever}}
+                                                                From: {{msg|reply_sender}}
                                                                 
                                                             </strong>
                                                         {% else %}

@@ -1,5 +1,6 @@
 from django import template
 from users.models import AssignmentSubmission, Assignment, Grade, AttendanceReport
+import html
 
 register = template.Library()
 
@@ -61,11 +62,18 @@ def assignment_grade(value, arg):
 def assignments_course(value):
     return Assignment.objects.filter(course=value).order_by("due_date")
 
+def reply_sender(value):
+    reply = value.replies.last()
+    return reply.sender
+
 def absence_student(student, course):
     return AttendanceReport.objects.filter(course=course, student=student, is_absent=True).count()
 
 def average_grade_student(student, course):
     grades = Grade.objects.filter(course=course, student=student)
+
+    if grades.count() == 0:
+        return "0.00"
 
     sum = 0
     for grade in grades:
@@ -84,6 +92,18 @@ def assignment_unsubmitted(value, arg):
 def unread_notif(value):
     return value.notifications.unread().count()
 
+def form_iter(form, iter):
+    s = f'{form[iter]}'
+    l = ['<td>', '</td>', '<th>', '</th>', '<tr>', '</tr>']
+    for tag in l:
+        s = s.replace(tag, '')
+    
+    print(type(form))
+    print(type(form[iter]))
+    print(form[iter])
+
+    return s
+
 register.filter('is_submitted', is_submitted)
 register.filter('date_submitted', date_submitted)
 register.filter('student_grade', student_grade)
@@ -94,4 +114,6 @@ register.filter('absence_student', absence_student)
 register.filter('average_grade_student', average_grade_student)
 register.filter('assignment_unsubmitted', assignment_unsubmitted)
 register.filter('unread_notif', unread_notif)
+register.filter('reply_sender', reply_sender)
+register.filter('form_iter', form_iter)
 # register.filter('all_submitted', all_submitted)

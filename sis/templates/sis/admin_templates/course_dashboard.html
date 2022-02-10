@@ -85,8 +85,11 @@
 
     {% if user.user_type == "STA" or user.user_type == "ADM" %}
     
-    <li class="nav-item">
+    {% comment %} <li class="nav-item">
       <a class="nav-link" id="pills-marks-tab" data-toggle="pill" href="#pills-marks" role="tab" aria-controls="pills-marks" aria-selected="false">Grades</a>
+    </li> {% endcomment %}
+    <li class="nav-item">
+      <a class="nav-link"  href="{% url 'gradebook' %}"   aria-selected="false">Grades</a>
     </li>
     
     {% else %}
