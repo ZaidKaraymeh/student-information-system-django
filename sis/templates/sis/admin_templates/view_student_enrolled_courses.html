@@ -1,6 +1,7 @@
 {% extends 'sis/admin_templates/base_new.html' %}
 
 {% load crispy_forms_tags %}
+{% load tags %}
 {% block sidebar %}
 <!-- Sidebar -->
 			<nav class="sidebar mCustomScrollbar _mCS_1 mCS-autoHide mCS_no_scrollbar" style="overflow: visible;"><div id="mCSB_1" class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside" style="max-height: none;" tabindex="0"><div id="mCSB_1_container" class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y" style="position:relative; top:0; left:0;" dir="ltr">
@@ -72,10 +73,18 @@
 <a class="btn btn-primary btn-customized open-menu" href="#" role="button">
     <i class="fas fa-align-left"></i> <span>Menu</span>
 </a>
+
+<div class="table-responsive p-0 overflow-auto my-4 " style="" >
+    <h2 class="p-2 border-bottom font-weight-bold" > {% if student.first_name %} 
+        {{student.first_name}} {{student.last_name}}'s Enrolled Courses
+        {% else %} 
+        {{student.username}}'s Enrolled Courses
+        {% endif %} 
+    </h2>
     <div class="col" >
         <form method="POST" class="p-4">
             {% csrf_token %}
-
+    
             <fieldset class="form-group" > 
                 <legend> Enroll New Course </legend>
                 {{ form|crispy }}
@@ -85,26 +94,18 @@
             </div>
         </form>
     </div>
-    <div class="col p-4  d-flex justify-content-end align-items-start" >
-        <a 
-            class="btn btn-dark mx-2" 
-            href="{% url 'export_student_enrolled_course' student.id %}" 
-            > Export
-        </a>
-        <a 
-            class="btn btn-primary" 
-            href="{% url 'view_students' %}" 
-            > Back
-        </a>
-    </div>
-
-<div class="table-responsive p-0 overflow-auto" style="height:100vh;" >
-    <h2 class="p-2" > {% if student.first_name %} 
-                {{student.first_name}} {{student.last_name}}'s Enrolled Courses
-        {% else %} 
-                {{student.username}}'s Enrolled Courses
-        {% endif %} 
-    </h2>
+        <div class="col p-4  d-flex justify-content-end align-items-start" >
+            <a 
+                class="btn btn-dark mx-2" 
+                href="{% url 'export_student_enrolled_course' student.id %}" 
+                > Export
+            </a>
+            <a 
+                class="btn btn-primary" 
+                href="{% url 'view_students' %}" 
+                > Back
+            </a>
+        </div>
     <table id="view_courses" class="table table-striped table-hover table-bordered text-center ">
         <thead>
             <tr>
@@ -113,8 +114,9 @@
             <th scope="col">Instructor</th>
             <th scope="col">Code</th>
             <th scope="col">Section</th>
+            <th scope="col">Grades</th>
             <th scope="col">Drop Course</th>
-            <th scope="col">Personal Analysis</th>
+            
             </tr>
         </head>
         <tbody>
@@ -125,8 +127,10 @@
                     <td> {{course.instructor.first_name}} {{course.instructor.last_name}} </td>
                     <td> {{course.code}} </td>
                     <td> {{course.section}} </td>
+                    
+                    <td class="" ><a class="btn btn-dark btn-block" href="#" >View Grades </a></td>
                     <td class="" ><a class="btn btn-dark btn-block" href="{% url 'delete_student_enrolled' course_id=course.id id=student.id  %}" >Drop </a></td>
-                    <td class="" > <a class="btn btn-primary btn-block" href="#{{course.id}}_dashboard" > View Analysis </a> </td>
+                    
                     
                 </tr>
             {% endfor %}
@@ -138,11 +142,13 @@
             <th scope="col">Instructor</th>
             <th scope="col">Code</th>
             <th scope="col">Section</th>
+            <th scope="col">Grades</th>
             <th scope="col">Drop Course</th>
-            <th scope="col">Personal Analysis</th>
+            
             </tr>
         </head>
     </table>
 </div>
 
 {% endblock content %}
+

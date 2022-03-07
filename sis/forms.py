@@ -14,28 +14,31 @@ class AddCourseForm(forms.ModelForm):
         # Interacts with User model
         model = Course
         # What fields to show and in which order
-        fields = ["name", "code", "section", "instructor"]
+        fields = ["name", "code", "year", "section", "instructor"]
         
     def __init__(self, *args, **kwargs):
         super(AddCourseForm  , self).__init__(*args, **kwargs)
 
         self.fields['name'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['code'].widget.attrs['style'] = 'width:100%; height:40px;'
+        self.fields['year'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['section'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['instructor'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['name'].widget.attrs['class'] = 'form-control'
         self.fields['code'].widget.attrs['class'] = 'form-control'
+        self.fields['year'].widget.attrs['class'] = 'form-control'
         self.fields['section'].widget.attrs['class'] = 'form-control'
         self.fields['instructor'].widget.attrs['class'] = 'form-control'
-
-class AddStudentToCourseForm(forms.Form):
+def get_student_courses():
     COURSE_CHOICES = [
         (
             course.id ,
             f"{course.code} {course.name} Sec {course.section}"
             ) for course in Course.objects.all().order_by('code')
     ]
-    courses = forms.ChoiceField(choices=COURSE_CHOICES)
+    return COURSE_CHOICES
+class AddStudentToCourseForm(forms.Form):
+    courses = forms.ChoiceField(choices=get_student_courses, label="")
     # class Meta:
     #     # Interacts with User model
     #     model = Course
@@ -60,6 +63,9 @@ class AddStudentForm(UserCreationForm):
                 'password1': forms.TextInput(attrs={'class': 'form-control',}), 
                 'password2': forms.TextInput(attrs={'class': 'form-control',}), 
             }
+        
+        
+
     def __init__(self, *args, **kwargs):
         super(AddStudentForm  , self).__init__(*args, **kwargs)
 
@@ -88,7 +94,7 @@ class AddStaffForm(UserCreationForm):
         # Interacts with User model
         model = CustomUser
         # What fields to show and in which order
-        fields = ["first_name", "last_name", "email", "phone_number",  "password1", "password2", "year", "address"]
+        fields = ["first_name", "last_name", "email", "phone_number",  "password1", "password2", "address"]
 
 
         widgets = {
@@ -109,12 +115,10 @@ class AddStaffForm(UserCreationForm):
         self.fields['email'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['phone_number'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['address'].widget.attrs['style'] = 'width:100%; height:40px;'
-        self.fields['year'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['password1'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['password2'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['password1'].widget.attrs['class'] = 'form-control'
         self.fields['password2'].widget.attrs['class'] = 'form-control'
-        self.fields['year'].widget.attrs['class'] = 'form-control'
         # self.fields['first_name'].label = ""
         # self.fields['last_name'].label = ""
 # For course posts
@@ -137,19 +141,37 @@ class PostForm(forms.ModelForm):
         self.fields['title'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['title'].label = ""
         self.fields['content'].label = ""
-
-class AssignmentForm(forms.ModelForm):
-    # docfile = forms.FileField(
-    #     label='Select a file',
-    #     help_text='max. 42 megabytes'
-    # )
+def get_courses():
     COURSE_CHOICES = [
         (
             course.id ,
             f"{course.code} {course.name} Sec {course.section}"
             ) for course in Course.objects.all().order_by('code')
     ]
-    courses = forms.ChoiceField(choices=COURSE_CHOICES, label='Course')
+    return COURSE_CHOICES
+class AssignmentForm(forms.ModelForm):
+    def __init__(self, choices=[], *args, **kwargs):
+        super(AssignmentForm  , self).__init__(*args, **kwargs)
+        self.fields['courses'].choices = choices
+
+
+        self.fields['name'].widget.attrs['style'] = 'width:100%; height:40px;'
+        self.fields['description'].widget.attrs['style'] = 'width:100%; height:300px;'
+        self.fields['category'].widget.attrs['style'] = 'width:100%; height:40px; font-weight: bold'
+        self.fields['courses'].widget.attrs['style'] = 'width:100%; height:40px;font-weight: bold'
+        self.fields['possible_points'].widget.attrs['style'] = 'width:100%; height:40px;'
+        self.fields['name'].widget.attrs['class'] = 'form-control'
+        self.fields['description'].widget.attrs['class'] = 'form-control'
+        self.fields['category'].widget.attrs['class'] = 'form-control'
+        self.fields['courses'].widget.attrs['class'] = 'form-control'
+        self.fields['possible_points'].widget.attrs['class'] = 'form-control'
+    # docfile = forms.FileField(
+    #     label='Select a file',
+    #     help_text='max. 42 megabytes'
+    # )
+    
+    # COURSE_CHOICES = Course.objects.all()
+    courses = forms.ChoiceField(choices=get_courses, label='Course')
     file = forms.FileField(
         label='Select a file',
         help_text='max. 42 megabytes',
@@ -168,19 +190,6 @@ class AssignmentForm(forms.ModelForm):
         labels = {
             'due_date': 'Due Date'
         }
-    def __init__(self, *args, **kwargs):
-        super(AssignmentForm  , self).__init__(*args, **kwargs)
-
-        self.fields['name'].widget.attrs['style'] = 'width:100%; height:40px;'
-        self.fields['description'].widget.attrs['style'] = 'width:100%; height:300px;'
-        self.fields['category'].widget.attrs['style'] = 'width:100%; height:40px; font-weight: bold'
-        self.fields['courses'].widget.attrs['style'] = 'width:100%; height:40px;font-weight: bold'
-        self.fields['possible_points'].widget.attrs['style'] = 'width:100%; height:40px;'
-        self.fields['name'].widget.attrs['class'] = 'form-control'
-        self.fields['description'].widget.attrs['class'] = 'form-control'
-        self.fields['category'].widget.attrs['class'] = 'form-control'
-        self.fields['courses'].widget.attrs['class'] = 'form-control'
-        self.fields['possible_points'].widget.attrs['class'] = 'form-control'
 
 class AssignmentSubmissionForm(forms.ModelForm):
     file = forms.FileField(

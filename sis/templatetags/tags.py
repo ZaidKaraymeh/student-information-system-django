@@ -1,5 +1,5 @@
 from django import template
-from users.models import AssignmentSubmission, Assignment, Grade, AttendanceReport
+from users.models import AssignmentSubmission, Assignment, Grade, AttendanceReport, Fee, FeeReport
 import html
 
 register = template.Library()
@@ -104,6 +104,27 @@ def form_iter(form, iter):
 
     return s
 
+"""
+
+pick year for fee same as course year and student
+
+"""
+# def student_fee(value):
+#     report = FeeReport.objects.get(student)
+#     return reply.sender
+
+def fee_remaining(fee_report):
+    report = FeeReport.objects.get(id=fee_report.id)
+    fee = Fee.objects.last()
+
+    return fee.amount_needed - report.amount_paid
+
+
+def paid_full(student):
+    report = FeeReport.objects.filter(student=student).last()
+    return "Yes" if report.paid_full else "No"
+
+
 register.filter('is_submitted', is_submitted)
 register.filter('date_submitted', date_submitted)
 register.filter('student_grade', student_grade)
@@ -116,4 +137,6 @@ register.filter('assignment_unsubmitted', assignment_unsubmitted)
 register.filter('unread_notif', unread_notif)
 register.filter('reply_sender', reply_sender)
 register.filter('form_iter', form_iter)
+register.filter('fee_remaining', fee_remaining)
+register.filter('paid_full', paid_full)
 # register.filter('all_submitted', all_submitted)

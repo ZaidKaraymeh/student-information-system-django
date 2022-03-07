@@ -13,8 +13,8 @@ urlpatterns = [
     path("sis/delete_course/<int:id>", admin_views.delete_course, name="delete_course"),
     path("sis/export/courses", admin_views.export_courses, name="export_courses"),
     path("sis/course_dashboard/<int:id>/<int:instructor_id>", admin_views.course_dashboard, name="course_dashboard"),
-
     path("sis/my_courses/", student_views.view_student_courses, name="my_courses"),
+    path("sis/fees/fees_report/<int:student_id>/", admin_views.fees_student_portal, name="fees_report"),
 
     # STUDENT URLS
     path("sis/add_student/", admin_views.add_student, name="add_student" ),

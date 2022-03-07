@@ -95,6 +95,7 @@
             <th scope="col">Course</th>
             <th scope="col">Instructor</th>
             <th scope="col">Code</th>
+            <th scope="col">Year</th>
             <th scope="col">Section</th>
             <th scope="col">Edit Course</th>
             <th scope="col">Analysis</th>
@@ -107,6 +108,7 @@
                     <td> {{course.name}} </td>
                     <td> {{course.instructor.first_name}} {{course.instructor.last_name}} </td>
                     <td> {{course.code}} </td>
+                    <td> {{course.year}} </td>
                     <td> {{course.section}} </td>
                     <td class="" ><a class="btn btn-dark btn-block" href="{% url 'edit_course' id=course.id %}" >Edit </a></td>
                     <td class="" > <a class="btn btn-primary btn-block" href="{% url 'course_dashboard' id=course.id instructor_id=course.instructor.id  %}" > View Dashboard </a> </td>
@@ -120,6 +122,7 @@
             <th scope="col">Course</th>
             <th scope="col">Instructor</th>
             <th scope="col">Code</th>
+            <th scope="col">Year</th>
             <th scope="col">Section</th>
             <th scope="col">Edit Course</th>
             <th scope="col">Analysis</th>

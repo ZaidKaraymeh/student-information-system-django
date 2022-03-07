@@ -38,49 +38,50 @@
             </div>
             <div class="table-responsive p-0 overflow-auto " style="border-left-width: thick;border-right-width: thick;" >
                 <table id="view_courses" class="table table-striped table-hover table-bordered text-center" style="border-left-width: thick;border-right-width: thick;">
-                    <thead>
-                        <tr>
-                        <th  scope="col">#</th>
-                        <th scope="col">Assignment</th>
-                        <th scope="col">Type</th>
-                        <th scope="col">Grade</th>
-                        <th scope="col">Due Date</th>
-                        <th scope="col">Submitted At</th>
-                        <th scope="col">Submission</th>
-                        <th scope="col">Edit</th>
-                        </tr>
-                    </head>
-                    <tbody>
-                            {% for assignment in assignments %}
+                        <thead>
                             <tr>
-                            <th scope="row"> {{forloop.counter}} </th>
-                            <td> {{assignment.name}} </td>
-                            <td> {{assignment.category}} </td>
-                                <td> {{assignment|assignment_grade:student}}/{{assignment.possible_points}} </td>
-                                <td> {{assignment.due_date}} </td>
-                                <td> {{assignment|date_submitted:student}} </td>
-                                {% if assignment|is_submitted:student %} 
-                                    <td style="color:green" >Submitted </td>
-                                {% else %}
-                                    <td style="color:red" > Not Submitted </td>
-                                {% endif %}
-                                <td class="" > <a class="btn btn-dark btn-block" href="{% url 'gradebook_report_edit' course.id student.id %}" > Edit </a> </td>
-                                
+                            <th  scope="col">#</th>
+                            <th scope="col">Assignment</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Grade</th>
+                            <th scope="col">Due Date</th>
+                            <th scope="col">Submitted At</th>
+                            <th scope="col">Submission</th>
+                            <th scope="col">Edit</th>
                             </tr>
-                                {% endfor %}
-                    </tbody>
-                    <thead>
-                        <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Assignment</th>
-                        <th scope="col">Type</th>
-                        <th scope="col">Grade</th>
-                        <th scope="col">Due Date</th>
-                        <th scope="col">Submitted At</th>
-                        <th scope="col">Submission</th>
-                        <th scope="col">Edit</th>
-                        </tr>
-                    </head>
+                        </head>
+                        <tbody>
+                                {% for assignment in assignments %}
+                                <tr>
+                                <th scope="row"> {{forloop.counter}} </th>
+                                <td> {{assignment.name}} </td>
+                                <td> {{assignment.category}} </td>
+                                    <td> {{assignment|assignment_grade:student}}/{{assignment.possible_points}} </td>
+                                    <td> {{assignment.due_date}} </td>
+                                    <td> {{assignment|date_submitted:student}} </td>
+                                    {% if assignment|is_submitted:student %} 
+                                        <td style="color:green" >Submitted </td>
+                                    {% else %}
+                                        <td style="color:red" > Not Submitted </td>
+                                    {% endif %}
+                                    <td class="" > <a class="btn btn-dark btn-block" href="{% url 'gradebook_report_edit' course.id student.id %}" > Edit </a> </td>
+                                    
+                                </tr>
+                                    {% endfor %}
+                        </tbody>
+                        <thead>
+                            <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Assignment</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Grade</th>
+                            <th scope="col">Due Date</th>
+                            <th scope="col">Submitted At</th>
+                            <th scope="col">Submission</th>
+                            <th scope="col">Edit</th>
+                            </tr>
+                        </head>
+                    
                 </table>
             </div>
 

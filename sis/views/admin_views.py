@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render, HttpResponse
 
 from ..forms import AddCourseForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, AssignmentForm, AttendanceReportForm, PostForm, AssignmentForm, AssignmentSubmissionForm,  AddMultipleChoiceQuestionForm, AddTestForm
-from users.models import Course, CustomUser, Post, Grade, Assignment, AssignmentSubmission, AssignmentSubmissionFile, Attendance, AttendanceReport, AssignmentFile
+from users.models import Course, CustomUser, Post, Grade, Assignment, AssignmentSubmission, AssignmentSubmissionFile, Attendance, AttendanceReport, AssignmentFile, Fee, FeeReport
 from django.contrib import messages
 from django.utils import timezone
 from django.forms import modelformset_factory
@@ -170,6 +170,16 @@ def view_student_enrolled_courses(request, id):
     courses_enrolled = Course.objects.filter(students__id = id)
     student = CustomUser.objects.get(id=id)
     user = CustomUser.objects.get(id=request.user.id)
+
+    assigns = []
+    for course in courses_enrolled:
+        assigns = [
+            *assigns, 
+            Assignment.objects.filter(
+                course=course,
+            )
+        ]
+    assigns = [*assigns]
     if request.method == "POST":
         form = AddStudentToCourseForm(request.POST)
         if form.is_valid():
@@ -189,7 +199,8 @@ def view_student_enrolled_courses(request, id):
         "courses": courses_enrolled, 
         "student":student, 
         "form":form,
-        "user":user
+        "user":user,
+        "assignments":assigns,
         }
     return render(request, "sis/admin_templates/view_student_enrolled_courses.html", context)
 
@@ -371,6 +382,13 @@ def course_test_builder(request, course_id, instructor_id, quiz_type, *args, **k
 
 def course_dashboard(request, id, instructor_id):
     course = Course.objects.get(id=id)
+    inst = CustomUser.objects.get(id=instructor_id)
+    choices = [
+        (
+            course.id ,
+            f"{course.code} {course.name} Sec {course.section}"
+            ) for course in Course.objects.filter(instructor__id=inst.id).order_by('code')
+    ]
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES)
         form2 = AssignmentForm(request.POST, request.FILES)
@@ -489,8 +507,15 @@ def course_assignment_builder(request):
 
 def course_assignment_build(request):
     user = CustomUser.objects.get(id=request.user.id)
+    choices = [
+        (
+            course.id ,
+            f"{course.code} {course.name} Sec {course.section}"
+            ) for course in Course.objects.filter(instructor__id=user.id).order_by('code')
+    ]
     if request.method == "POST":
-        add_assignment_form = AssignmentForm(request.POST or None, request.FILES)
+
+        add_assignment_form = AssignmentForm(choices, request.POST or None, request.FILES)
         # file_form = AssignmentFileForm(request.POST, request.FILES)
         
         if add_assignment_form.is_valid():
@@ -520,8 +545,10 @@ def course_assignment_build(request):
             messages.success(request, "Assignment Posted Successfully!")
             return redirect('course_dashboard', id=course.id, instructor_id = course.instructor.id)
     else:
-        add_assignment_form = AssignmentForm()
+        add_assignment_form = AssignmentForm(choices)
         add_assignment_form.fields["courses"].queryset = Course.objects.filter(instructor__id = user.id)
+        # courses = Course.objects.filter(instructor__id = user.id)
+        # add_assignment_form.fields["courses"].filter(lambda x:x in courses, courses)
 
     context = {
         'form':add_assignment_form,
@@ -731,4 +758,35 @@ def dashboard(request):
     }
     return render(request, "sis/admin_templates/dashboard.html", context)
 
-        
+
+def fees(request):
+    user = CustomUser.objects.get(id=request.user.id)
+    fees = Fee.objects.all()
+
+
+def fees_student_portal(request, student_id):
+    user = CustomUser.objects.get(id=request.user.id)
+    student = CustomUser.objects.get(id=student_id)
+    fee = Fee.objects.last()
+    report, created = FeeReport.objects.get_or_create(
+    student = student,
+    defaults={
+        'note': "---",
+        "amount_paid": 0,
+        "paid_full":False,
+        },
+    )
+    
+    if created:
+        fee.student_fees.add(report)
+
+    context = {
+        "user":user,
+        "student":student,
+        "report":report,
+        "fee":fee,
+
+    }
+    return render(request, "sis/admin_templates/fee_report.html", context)
+    
+

@@ -1,5 +1,5 @@
 {% extends 'sis/admin_templates/base_new.html' %}
-
+{% load tags %}
 {% block sidebar %}
 <!-- Sidebar -->
 			<nav class="sidebar mCustomScrollbar _mCS_1 mCS-autoHide mCS_no_scrollbar" style="overflow: visible;"><div id="mCSB_1" class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside" style="max-height: none;" tabindex="0"><div id="mCSB_1_container" class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y" style="position:relative; top:0; left:0;" dir="ltr">
@@ -71,8 +71,8 @@
     <i class="fas fa-align-left"></i> <span>Menu</span>
 </a>
 
-<div class="col p-4 " >
-      <h2> Manage Students </h2>  
+<div class="col p-4 border-bottom  " >
+      <h2 class="font-weight-bold" > Manage Students </h2>  
 </div>
 <div class="col p-4 d-flex justify-content-end align-items-start" >
 	<a 
@@ -80,13 +80,21 @@
         href="{% url 'add_student' %}" 
         > Add Student
     </a>
+    <!-- <a 
+        type="button" 
+        data-toggle="modal"
+        data-target="#exampleModal"
+        class="btn btn-dark mr-2" 
+        href="{% url 'export_students' %}" 
+        > Renew Fees
+    </a> -->
     <a 
         class="btn btn-primary" 
         href="{% url 'export_students' %}" 
         > Export
     </a>
 </div>
-<div class="table-responsive p-0 overflow-auto" style="" >
+<div class="table-responsive p-0 overflow-auto">
     <table id="view_courses" class="table table-striped table-hover table-bordered text-center">
         <thead>
             <tr>
@@ -95,8 +103,9 @@
             <th scope="col">Year</th>
             <th scope="col">Phone Number</th>
             <th scope="col">Address</th>
+            <th scope="col">Paid</th>
+            <th scope="col">Fees Portal</th>
             <th scope="col">Enrolled Courses</th>
-            <th scope="col">Analysis</th>
             <th scope="col">Grades</th>
             </tr>
         </thead>
@@ -112,14 +121,15 @@
                     </td>
                     <td> {{student.year}} </td>
                     {% if not student.phone_number %}
-                        <td> N/A </td>
+                    <td> N/A </td>
                     {% else %}
-                        <td> {{student.phone_number}} </td>
+                    <td> {{student.phone_number}} </td>
                     {% endif %}
                     <td> {{student.address}} </td>
+                    <td> {{student|paid_full}} </td>
+                    <td class="" ><a class="btn btn-dark btn-block" href="{% url 'fees_report' student.id %}" >View Portal </a></td>
                     <td class="" ><a class="btn btn-dark btn-block" href="{% url 'view_student_enrolled_courses' id=student.id %}" >View Courses </a></td>
-                    <td class="" > <a class="btn btn-primary btn-block" href="#{{student.id}}_dashboard" > View Analysis </a> </td>
-                    <td class="" > <a class="btn btn-dark btn-block" href="#_dashboard" > View Grades </a> </td>
+                    <td class="" > <a class="btn btn-dark btn-block" href="#l" > View Grades </a> </td>
 
                     
                 </tr>
@@ -132,12 +142,37 @@
             <th scope="col">Year</th>
             <th scope="col">Phone Number</th>
             <th scope="col">Address</th>
+            <th scope="col">Paid</th>
+            <th scope="col">Fees Portal</th>
             <th scope="col">Enrolled Courses</th>
-            <th scope="col">Analysis</th>
             <th scope="col">Grades</th>
             </tr>
         </head>
     </table>
 </div>
 
+
+<!-- Modal -->
+<!-- <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title font-weight-bold text-dark" id="exampleModalLabel"> 
+            Renew Fees
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="text-danger text-left" >  
+            Are you sure you want to reset student fees? A record of this fee snapshot will be provided in archive menu.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger">Renew Fees</button>
+      </div>
+    </div>
+  </div>
+</div> -->
 {% endblock content %}

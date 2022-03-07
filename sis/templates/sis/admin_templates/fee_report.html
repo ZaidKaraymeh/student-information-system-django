@@ -1,6 +1,8 @@
 {% extends 'sis/admin_templates/base_new.html' %}
 
+{% load static %}
 {% load tags %}
+
 {% block content %}
 
 <div class="container">
@@ -10,12 +12,24 @@
     <section>
         <h1 class=" p-5">
             <strong>
-                Your Account
+                {{student.username}}'s Fee Report - {{fee.year}}
             </strong>
         </h1>
     </section>
 
     <section>
+        <div class="col p-4 d-flex justify-content-end align-items-start" >
+                <a 
+                    class="btn btn-dark mx-2" 
+                    href="{% url 'view_students'  %}" 
+                    > Export
+                </a>
+                <a 
+                    class="btn btn-primary" 
+                    href="{% url 'view_students' %}" 
+                    > Back
+                </a>
+            </div>
         <ul class="list-group list-group-flush">
             <li class="list-group-item">
                 <div class="row">
@@ -24,7 +38,37 @@
                             Full Name
                         </strong>
                     </div>
-                    <div class="col text-left border-left">{{user.username}}</div>
+                    <div class="col text-left border-left">{{student.username}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">
+                        <strong>
+                            Paid
+                        </strong>
+                    </div>
+                    <div class="col text-left border-left">{{student|paid_full}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">
+                        <strong>
+                            Amount Paid
+                        </strong>
+                    </div>
+                    <div class="col text-left border-left">{{report.amount_paid}}</div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">
+                        <strong>
+                            Amount Remaining
+                        </strong>
+                    </div>
+                    <div class="col text-left border-left">{{report|fee_remaining}}</div>
                 </div>
             </li>
             <li class="list-group-item">
@@ -34,7 +78,7 @@
                             Email Address
                         </strong>
                     </div>
-                    <div class="col text-left border-left">{{user.email}}</div>
+                    <div class="col text-left border-left">{{student.email}}</div>
                 </div>
             </li>
             <li class="list-group-item">
@@ -44,7 +88,7 @@
                             ID
                         </strong>
                     </div>
-                    <div class="col text-left border-left"> {{user.id}} </div>
+                    <div class="col text-left border-left"> {{student.id}} </div>
                 </div>
             </li>
             <li class="list-group-item">
@@ -54,7 +98,7 @@
                             Mobile Number
                         </strong>
                     </div>
-                    <div class="col text-left border-left"> {{user.phone_number}} </div>
+                    <div class="col text-left border-left"> {{student.phone_number}} </div>
                 </div>
             </li>
             <li class="list-group-item">
@@ -64,7 +108,7 @@
                             Address
                         </strong>
                     </div>
-                    <div class="col text-left border-left"> {{user.address}} </div>
+                    <div class="col text-left border-left"> {{student.address}} </div>
                 </div>
             </li>
             {% if user.user_type == "STU" %}
@@ -75,37 +119,7 @@
                                 Class of
                             </strong>
                         </div>
-                        <div class="col text-left border-left"> {{user.year}} </div>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col">
-                            <strong>
-                                Paid
-                            </strong>
-                        </div>
-                        <div class="col text-left border-left">{{student|paid_full}}</div>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col">
-                            <strong>
-                                Amount Paid
-                            </strong>
-                        </div>
-                        <div class="col text-left border-left">{{report.amount_paid}}</div>
-                    </div>
-                </li>
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col">
-                            <strong>
-                                Amount Remaining
-                            </strong>
-                        </div>
-                        <div class="col text-left border-left">{{report|fee_remaining}}</div>
+                        <div class="col text-left border-left"> {{student.year}} </div>
                     </div>
                 </li>
             {% endif %}

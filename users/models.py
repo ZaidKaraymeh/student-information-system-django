@@ -5,18 +5,6 @@ import os
 # Create your models here.
 
 class CustomUser(User):
-    twentyTwentyone = "2020/2021"
-    twentyoneTwentytwo = "2021/2022"
-    twentytwoTwentythree = "2022/2023"
-    UNKOWN = "UNKOWN"
-
-    YEAR_CHOICES = [
-        (twentyTwentyone, '2020/2021'),
-        (twentyoneTwentytwo, '2021/2022'),
-        (twentytwoTwentythree, '2022/2023'),
-        (UNKOWN, "Unknown"),
-    ]
-
     STUDENT = 'STU'
     STAFF = 'STA'
     ADMIN = "ADM"
@@ -29,10 +17,31 @@ class CustomUser(User):
 
     phone_number = models.CharField(max_length=20, null=True)
     address = models.CharField(null=True, max_length=500)
+    
+    twentyTwentyone = "2020/2021"
+    twentyoneTwentytwo = "2021/2022"
+    twentytwoTwentythree = "2022/2023"
+    twentythreeTwentyfour = "2023/2024"
+    twentyfourTwentyfive = "2024/2025"
+    twentyfiveTwentysix = "2025/2026"
+    twentysixTwentyseven = "2026/2027"
+    UNKOWN = "UNKOWN"
+
+    YEAR_CHOICES = [
+        (twentyTwentyone, '2020/2021'),
+        (twentyoneTwentytwo, '2021/2022'),
+        (twentytwoTwentythree, '2022/2023'),
+        (twentythreeTwentyfour, "2023/2024"),
+        (twentyfourTwentyfive, "2024/2025"),
+        (twentyfiveTwentysix, "2025/2026"),
+        (twentysixTwentyseven, "2026/2027"),
+        (UNKOWN, "Unknown"),
+    ]
     year = models.CharField(
         max_length=10,
         choices=YEAR_CHOICES,
-        default=UNKOWN
+        default=UNKOWN,
+        null=True
     )
     user_type = models.CharField(
         max_length=8,
@@ -50,16 +59,47 @@ class Profile(models.Model):
     def __str__(self):
         return f"{self.user.username} Profile"
 
+
+
 class Course(models.Model):
     name = models.CharField(null = True, max_length=50)
     code = models.CharField(null = True, max_length=8)
     section = models.CharField(default="None", max_length=15)
     instructor = models.ForeignKey(CustomUser, related_name="instructor", on_delete=models.CASCADE)
     students = models.ManyToManyField(CustomUser)
+    year = models.CharField(null = True, max_length=10)
     # assignments = models.ManyToManyField(Assignment)
+    # year = models.ForeignKey(Year, on_delete=models.CASCADE)
+    # twentyTwentyone = "2020/2021"
+    # twentyoneTwentytwo = "2021/2022"
+    # twentytwoTwentythree = "2022/2023"
+    # twentythreeTwentyfour = "2023/2024"
+    # twentyfourTwentyfive = "2024/2025"
+    # twentyfiveTwentysix = "2025/2026"
+    # twentysixTwentyseven = "2026/2027"
+    # UNKOWN = "UNKOWN"
+
+    # YEAR_CHOICES = [
+    #     (twentyTwentyone, '2020/2021'),
+    #     (twentyoneTwentytwo, '2021/2022'),
+    #     (twentytwoTwentythree, '2022/2023'),
+    #     (twentythreeTwentyfour, "2023/2024"),
+    #     (twentyfourTwentyfive, "2024/2025"),
+    #     (twentyfiveTwentysix, "2025/2026"),
+    #     (twentysixTwentyseven, "2026/2027"),
+    #     (UNKOWN, "Unknown"),
+    # ]
+    # year = models.CharField(
+    #     max_length=10,
+    #     choices=YEAR_CHOICES,
+    #     default=UNKOWN,
+    #     null=True
+    # )
+
+
 
     def __str__(self):
-        return f"{self.name} {self.code}"
+        return f"{self.code} {self.name} {self.section}"
 
 class Grade(models.Model):
 
@@ -333,7 +373,10 @@ class FeeReport(models.Model):
         on_delete=models.CASCADE, 
         related_name="student_fee"
     )
-    paid_full = models.BooleanField()
+    date_paid_full = models.DateTimeField(auto_now=False, auto_now_add=True)
+    date_paid = models.DateTimeField(auto_now=True, auto_now_add=False)
+
+    paid_full = models.BooleanField(default=False)
     note = models.CharField(max_length=255)
     amount_paid = models.IntegerField()
 
@@ -341,24 +384,36 @@ class Fee(models.Model):
     twentyTwentyone = "2020/2021"
     twentyoneTwentytwo = "2021/2022"
     twentytwoTwentythree = "2022/2023"
+    twentythreeTwentyfour = "2023/2024"
+    twentyfourTwentyfive = "2024/2025"
+    twentyfiveTwentysix = "2025/2026"
+    twentysixTwentyseven = "2026/2027"
     UNKOWN = "UNKOWN"
 
     YEAR_CHOICES = [
         (twentyTwentyone, '2020/2021'),
         (twentyoneTwentytwo, '2021/2022'),
         (twentytwoTwentythree, '2022/2023'),
+        (twentythreeTwentyfour, "2023/2024"),
+        (twentyfourTwentyfive, "2024/2025"),
+        (twentyfiveTwentysix, "2025/2026"),
+        (twentysixTwentyseven, "2026/2027"),
         (UNKOWN, "Unknown"),
     ]
     year = models.CharField(
         max_length=10,
         choices=YEAR_CHOICES,
-        default=UNKOWN
+        default=UNKOWN,
+        null=True
     )
     
     student_fees = models.ManyToManyField(FeeReport)
 
-    paid_full = models.BooleanField()
-    note = models.CharField(max_length=255)
-    amount_paid = models.IntegerField()
+    note = models.CharField(max_length=255, null=True)
+    amount_needed = models.IntegerField(null=True)
+
+    def __str__(self) -> str:
+        return self.year
+
 
 

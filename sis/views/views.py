@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.dispatch import receiver
 from django.http.response import HttpResponseForbidden
 from django.shortcuts import redirect, render
-from users.models import CustomUser, Assignment, Post, Message, Reply, MailFiles
+from users.models import CustomUser, Assignment, Post, Message, Reply, MailFiles, Fee, FeeReport
 from ..forms import MessageForm, MessageRecieversForm, MessageReplyForm
 from itertools import chain
 from operator import attrgetter
@@ -23,7 +23,10 @@ from notifications.signals import notify
 Schools home menu, for everyone to see
 """
 def home(request):
-    user = CustomUser.objects.get(id=request.user.id)
+    try:
+        user = CustomUser.objects.get(id=request.user.id)
+    except:
+        return redirect("login")
     context = {
         'user':user,
     }
@@ -179,10 +182,26 @@ def inbox(request):
 
 def account(request):
     user = CustomUser.objects.get(id=request.user.id)
-
+    student = CustomUser.objects.get(id=request.user.id)
+    fee = Fee.objects.last()
+    report, created = FeeReport.objects.get_or_create(
+    student = student,
+    defaults={
+        'note': "---",
+        "amount_paid": 0,
+        "paid_full":False,
+        },
+    )
+    
+    if created:
+        fee.student_fees.add(report)
 
     context = {
-        "user": user,
+        "user":user,
+        "student":student,
+        "report":report,
+        "fee":fee,
+
     }
 
     return render(request, "sis/admin_templates/account.html", context)

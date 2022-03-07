@@ -32,7 +32,13 @@
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">{{course.code}} {{course.name}} Section {{course.section}} <small> instructed by {{course.instructor.username}}</small></h5>
+                            <h5 class="modal-title">
+                                <a class="" href="{% url 'course_dashboard' id=course.id instructor_id=course.instructor.id  %}" >
+
+                                    {{course.code}} {{course.name}} Section {{course.section}} 
+                                </a>
+                                
+                                <small> instructed by {{course.instructor.username}}</small></h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                             </button>
@@ -42,6 +48,8 @@
                                 <div class="col-12 p-0">
                                     <div class="table-responsive p-0 overflow-auto"  >
                                         <table id="view_courses" class="table table-striped table-hover table-bordered text-center">
+                                        {% if not assignment %}
+
                                             <thead>
                                                 <tr>
                                                 <th  scope="col">#</th>
@@ -85,6 +93,11 @@
                                                 <th scope="col">Course</th>
                                                 </tr>
                                             </head>
+                                            {% else %}
+                                                <div class="container d-flex justify-content-center">
+                                                    <h2>Wow, such empty...</h2>
+                                                </div>
+                                            {% endif %}
                                         </table>
                                     </div>
                                     
