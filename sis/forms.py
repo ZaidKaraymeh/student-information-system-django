@@ -298,13 +298,14 @@ class MessageForm(forms.ModelForm):
         required=False,
         widget=forms.ClearableFileInput(attrs={'multiple': True})
     )
-    USER_CHOICES = [
-        (
-            user.id ,
-            f"{user.username}"
-            ) for user in CustomUser.objects.all()
-    ]
-    users = forms.ChoiceField(choices=USER_CHOICES, label="")
+    # USER_CHOICES = [
+    #     (
+    #         user.id ,
+    #         f"{user.username}"
+    #         ) for user in CustomUser.objects.all()
+    # ]
+    
+    users = forms.ChoiceField(choices=[("", "")], label="")
 
     class Meta:
         model = Message
@@ -316,6 +317,7 @@ class MessageForm(forms.ModelForm):
         }
     def __init__(self, *args, **kwargs):
         super(MessageForm, self).__init__(*args, **kwargs) # Call to ModelForm constructor
+        self.fields['users'].choices = [("", "")] + [(user.id ,f"{user.username}" ) for user in CustomUser.objects.all()]
         self.fields['title'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['title'].label = ""
         self.fields['content'].label = ""
