@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-fs#u-ww#!cq@k5*en26qn_#uc11v#6k5#v@v55*@=%0h5k#jtb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["https://sis-beta-demo.herokuapp.com/", "127.0.0.1"]
 
 
 # Application definition
@@ -48,6 +48,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -152,7 +154,7 @@ LOGIN_REDIRECT_URL = "home_sis"
 LOGIN_URL = "login"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 
 TIME_ZONE = "Asia/Bahrain"
 
