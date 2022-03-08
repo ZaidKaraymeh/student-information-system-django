@@ -33,7 +33,7 @@ def get_student_courses():
     COURSE_CHOICES = [
         (
             course.id ,
-            f"{course.code} {course.name} Sec {course.section}"
+            f"{course.code} {course.name} Sec {course.section} {course.year}"
             ) for course in Course.objects.all().order_by('code')
     ]
     return COURSE_CHOICES
@@ -145,7 +145,7 @@ def get_courses():
     COURSE_CHOICES = [
         (
             course.id ,
-            f"{course.code} {course.name} Sec {course.section}"
+            f"{course.code} {course.name} Sec {course.section} {course.year}"
             ) for course in Course.objects.all().order_by('code')
     ]
     return COURSE_CHOICES

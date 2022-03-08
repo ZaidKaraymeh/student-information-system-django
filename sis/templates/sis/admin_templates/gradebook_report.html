@@ -47,6 +47,7 @@
                             <th scope="col">Due Date</th>
                             <th scope="col">Submitted At</th>
                             <th scope="col">Submission</th>
+                            <th scope="col">Late</th>
                             <th scope="col">Edit</th>
                             </tr>
                         </head>
@@ -64,6 +65,14 @@
                                     {% else %}
                                         <td style="color:red" > Not Submitted </td>
                                     {% endif %}
+
+                                    <td>
+                                        {% if assignment|is_submitted_late:student %} 
+                                            Yes
+                                        {% else %}
+                                            No
+                                        {% endif %}
+                                    </td>
                                     <td class="" > <a class="btn btn-dark btn-block" href="{% url 'gradebook_report_edit' course.id student.id %}" > Edit </a> </td>
                                     
                                 </tr>
@@ -78,6 +87,7 @@
                             <th scope="col">Due Date</th>
                             <th scope="col">Submitted At</th>
                             <th scope="col">Submission</th>
+                            <th scope="col">Late</th>
                             <th scope="col">Edit</th>
                             </tr>
                         </head>

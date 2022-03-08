@@ -194,6 +194,8 @@ def view_student_enrolled_courses(request, id):
     else:
         form = AddStudentToCourseForm()
 
+
+    
           
     context = {
         "courses": courses_enrolled, 
@@ -204,6 +206,33 @@ def view_student_enrolled_courses(request, id):
         }
     return render(request, "sis/admin_templates/view_student_enrolled_courses.html", context)
 
+def view_student_enrolled_grades(request, student_id):
+    student = CustomUser.objects.get(id=student_id)
+    user = CustomUser.objects.get(id=request.user.id)
+    courses = student.course_set.all()
+    assigns = []
+    for course in courses:
+        assigns = [
+            *assigns, 
+            Assignment.objects.filter(
+                course=course,
+            )
+        ]
+    assigns = [*assigns]
+
+    # assigns_sorted = sorted(
+    #     assigns,
+    #     key= lambda x: (x["date_posted"], x[""])
+    # )
+
+    context  = {
+        "user": user,
+        "student": student,
+        "courses": courses,
+        "assignments": assigns
+    }
+
+    return render(request, "sis/admin_templates/view_student_enrolled_grades.html", context)
 
 
 
@@ -465,6 +494,9 @@ def course_dashboard(request, id, instructor_id):
     assignments = Assignment.objects.filter(course__id = id).order_by("-date_posted")
 
     students = CustomUser.objects.filter(course__id = id)
+
+    time_now = timezone.now()
+
     context = {
         'form':form, 
         'form2':form2, 
@@ -475,6 +507,7 @@ def course_dashboard(request, id, instructor_id):
         "user":user,
         "students":students,
         "student_submission_form":student_submission_form,
+        "time_now": time_now,
     }
     return render(request, "sis/admin_templates/course_dashboard.html", context)
 

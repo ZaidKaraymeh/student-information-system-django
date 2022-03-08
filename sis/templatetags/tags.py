@@ -1,7 +1,8 @@
+from time import time
 from django import template
 from users.models import AssignmentSubmission, Assignment, Grade, AttendanceReport, Fee, FeeReport
 import html
-
+from django.utils import timezone
 register = template.Library()
 
 
@@ -22,6 +23,20 @@ def is_submitted(value, arg):
         return exists.submitted
     except:
         return False
+
+def is_submitted_late(value, arg):
+    assignment_id, user_id = value.id, arg.id
+    try:
+        asn = Assignment.objects.get(id=assignment_id)
+        sub = AssignmentSubmission.objects.get(assignment__id = assignment_id, student__id = user_id)
+        
+        return sub.submitted_at > asn.due_date
+        
+
+    except:
+        asn = Assignment.objects.get(id=assignment_id)
+        return timezone.now() > asn.due_date
+
 def assignment_grade(value, arg):
     assignment_id, user_id = value.id, arg.id
     try:
@@ -126,6 +141,7 @@ def paid_full(student):
 
 
 register.filter('is_submitted', is_submitted)
+register.filter('is_submitted_late', is_submitted_late)
 register.filter('date_submitted', date_submitted)
 register.filter('student_grade', student_grade)
 register.filter('course_id_modulus', course_id_modulus)

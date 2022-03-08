@@ -128,7 +128,7 @@
                     <td> {{course.code}} </td>
                     <td> {{course.section}} </td>
                     
-                    <td class="" ><a class="btn btn-dark btn-block" href="#" >View Grades </a></td>
+                    <td class="" ><a class="btn btn-dark btn-block" href="{% url 'view_student_enrolled_grades' student.id %}" >View Grades </a></td>
                     <td class="" ><a class="btn btn-dark btn-block" href="{% url 'delete_student_enrolled' course_id=course.id id=student.id  %}" >Drop </a></td>
                     
                     

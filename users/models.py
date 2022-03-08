@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.fields.related import ManyToManyField
 import os
 # Create your models here.
+from django.utils import timezone
 
 class CustomUser(User):
     STUDENT = 'STU'

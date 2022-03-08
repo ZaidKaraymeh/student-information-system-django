@@ -225,9 +225,15 @@
                             </h6>
                             
                           {% else %}
-                            <h6 style="color:red" >
-                              Not Submitted
-                            </h6>
+                            {% if time_now > assignment.due_date %}
+                              <h6 style="color:red" >
+                                Late
+                              </h6>
+                            {% else %}
+                              <h6 style="color:red" >
+                                Not Submitted
+                              </h6>
+                            {% endif %}
 
                           {% endif %}
                         </div>
@@ -313,8 +319,10 @@
                                           <tr>
                                           <th  scope="col">#</th>
                                           <th scope="col">Name</th>
+                                          <th scope="col">Grade</th>
                                           <th scope="col">Submission</th>
                                           <th scope="col">Submitted At</th>
+                                          <th scope="col">Late</th>
                                           </tr>
                                       </thead>
                                       <tbody>
@@ -322,8 +330,10 @@
                                           <tr>
                                             <td>{{forloop.counter}}</td>
                                             <td>{{student.username}}</td>
+                                            <td> {{assignment|assignment_grade:student}}/{{assignment.possible_points}} </td>
                                             <td>{% if assignment|is_submitted:student %} Yes {% else %} No {% endif %}</td>
                                             <td>{{ assignment|date_submitted:student }}</td>
+                                            <td>{% if assignment|is_submitted_late:student %} Yes {% else %} No {% endif %}</td>
                                           </tr>
                                         {% endfor %}
                                       </tbody>
