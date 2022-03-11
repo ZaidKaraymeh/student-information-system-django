@@ -180,11 +180,11 @@
                                                     {% comment %} <legend> Enroll New Course </legend> {% endcomment %}
                                                     <div class="d-flex align-items-start" >
                                                     </div>
-                                                    <div class="row">
+                                                    {% comment %} <div class="row">
                                                         <div class="col-12 text-left" >
                                                             <label> <strong>Reply To {{msg.sender}}</strong> </label>
                                                         </div>
-                                                    </div>
+                                                    </div> {% endcomment %}
                                                     <div class="row">
                                                         <div class="col-12 text-left" >
                                                             {{reply_form.title|as_crispy_field}}
