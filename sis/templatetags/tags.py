@@ -71,8 +71,8 @@ def course_id_modulus(value):
     return value.id % 10
 
 
-def assignment_grade(value, arg):
-    return value.students_grades.get(student__id=arg.id).point_grade
+# def assignment_grade(value, arg):
+#     return value.students_grades.get(student__id=arg.id).point_grade
 
 def assignments_course(value):
     return Assignment.objects.filter(course=value).order_by("due_date")
@@ -137,7 +137,7 @@ def fee_remaining(fee_report):
 
 def paid_full(student):
     try:
-        
+
         report = FeeReport.objects.filter(student=student).last()
         return "Yes" if report.paid_full else "No"
     except:
