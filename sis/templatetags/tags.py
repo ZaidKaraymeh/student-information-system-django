@@ -136,8 +136,11 @@ def fee_remaining(fee_report):
 
 
 def paid_full(student):
-    report = FeeReport.objects.filter(student=student).last()
-    return "Yes" if report.paid_full else "No"
+    try:
+        report = FeeReport.objects.filter(student=student).last()
+        return "Yes" if report.paid_full else "No"
+    except:
+        return "No"
 
 
 register.filter('is_submitted', is_submitted)
