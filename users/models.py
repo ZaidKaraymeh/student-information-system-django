@@ -4,11 +4,6 @@ from django.db.models.fields.related import ManyToManyField
 import os
 # Create your models here.
 from django.utils import timezone
-import django_heroku
-import cloudinary
-import cloudinary_storage
-import cloudinary.uploader
-import cloudinary.api
 
 class CustomUser(User):
     STUDENT = 'STU'
