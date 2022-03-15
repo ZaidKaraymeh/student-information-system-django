@@ -38,11 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
+    'cloudinary',
     'users.apps.UsersConfig',
     'sis.apps.SisConfig',
     'crispy_forms',
-    # 'django_fastdev',
-    'chartjs',
     'notifications',
 ]
 
@@ -157,5 +157,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 TIME_ZONE = "Asia/Bahrain"
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.RawMediaCloudinaryStorage'
+
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'htql0bsbg',
+    'API_KEY': '397382475659814',
+    'API_SECRET': 'ZzcF3_wvXmzpnzD8N2_0KEzPOWE'
+}
 
 django_heroku.settings(locals())
