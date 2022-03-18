@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.forms import modelformset_factory
 import xlwt
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from ..decorators import is_admin, is_staff
 @is_admin
@@ -494,6 +495,15 @@ def course_dashboard(request, id, instructor_id):
     user = CustomUser.objects.get(id=request.user.id)
     posts = Post.objects.filter(course__id = id).order_by("-date_posted")
 
+    page = request.GET.get('page', 1)
+    post_paginator = Paginator(posts, 10)
+    try:
+        posts_paginated = post_paginator.page(page)
+    except PageNotAnInteger:
+        posts_paginated = post_paginator.page(1)
+    except EmptyPage:
+        posts_paginated = post_paginator.page(post_paginator.num_pages)
+
     # if user.user_type == "STA":
     #     assignments = Assignment.objects.filter(course__id = id).order_by("-date_posted")
     # else:
@@ -508,7 +518,7 @@ def course_dashboard(request, id, instructor_id):
     context = {
         'form':form, 
         'form2':form2, 
-        "posts":posts, 
+        "posts":posts_paginated, 
         "course": course, 
         "assignments":assignments,
         "instructor":instructor,

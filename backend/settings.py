@@ -96,7 +96,10 @@ DATABASES = {
         'USER': "pqlinzgcmmcclx",
         'PASSWORD': "b2234fadd40716565f10d4929b2bcb4c7670310ad4d5460edaf1c2e7ada2a517",
         'HOST': "ec2-34-255-21-191.eu-west-1.compute.amazonaws.com",
-        'PORT': '5432'
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
 
     #     'default': {

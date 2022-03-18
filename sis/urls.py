@@ -55,6 +55,7 @@ urlpatterns = [
 
     # universal
     path("sis/inbox/", views.inbox, name="inbox"),
+    path("sis/inbox_sent/", views.inbox_sent, name="inbox_sent"),
     path("sis/account/", views.account, name="account"),
 
 

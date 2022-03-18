@@ -183,15 +183,118 @@ def inbox(request):
     ).order_by("-date_reply")
     # recieved_messages = Message.objects.filter(Q(reciever_id=user.id, is_replied=True) | Q(reciever_id=user.id)).order_by("-date_reply")
 
+    page = request.GET.get('page', 1)
+    paginator = Paginator(recieved_messages, 10)
+    try:
+        recieved_paginated = paginator.page(page)
+    except PageNotAnInteger:
+        recieved_paginated = paginator.page(1)
+    except EmptyPage:
+        recieved_paginated = paginator.page(paginator.num_pages)
     context = {
             "user": user,
             "message_form":message_form,
             "reply_form": reply_form,
             "sent_msgs": sent_messages,
-            "recieved_msgs": recieved_messages,
+            "recieved_msgs": recieved_paginated,
         }
     return render(request, "sis/admin_templates/inbox.html", context)
 
+
+def inbox_sent(request):
+    user = CustomUser.objects.get(id=request.user.id)
+    user.notifications.mark_all_as_read()
+
+    if request.method == "POST":
+        message_form = MessageForm(request.POST or None, request.FILES)
+        reply_form = MessageReplyForm(request.POST or None, request.FILES)
+        if message_form.is_valid():
+            message = message_form.save(commit=False)
+            message.sender = user
+            message.reciever = CustomUser.objects.get(
+                id=message_form.cleaned_data["users"]
+            )
+            message.save()
+
+            for file in request.FILES.getlist('file'):
+                obj = MailFiles.objects.create(
+                    file=file,
+                )
+                obj.save()
+                message.files.add(obj)
+                message.save()
+            sender = message.sender
+            receiver = message.reciever
+            notify.send(sender, recipient=receiver, verb='Message')
+            messages.success(request, "Message Sent Successfully!")
+            return redirect("inbox")
+        if reply_form.is_valid():
+            reply = reply_form.save(commit=False)
+            msg = Message.objects.get(id=request.POST.get('msg_id'))
+            if msg.is_replied == True:
+                prev_reply = Reply.objects.get(id=request.POST.get('reply_id'))
+                if prev_reply.sender.id == user.id:
+                    reply.sender = prev_reply.sender
+                    reply.reciever = prev_reply.reciever
+                    sender = prev_reply.sender
+                    receiver = prev_reply.reciever
+                    notify.send(sender, recipient=receiver, verb='Message')
+                else:
+                    reply.sender = prev_reply.reciever
+                    reply.reciever = prev_reply.sender
+                    sender = prev_reply.sender
+                    receiver = prev_reply.reciever
+                    notify.send(sender, recipient=receiver, verb='Message')
+            else:
+                if msg.sender.id == user.id:
+                    reply.sender = msg.sender
+                    reply.reciever = msg.reciever
+                    sender = msg.sender
+                    receiver = msg.reciever
+                    notify.send(sender, recipient=receiver, verb='Message')
+                else:
+                    reply.sender = msg.reciever
+                    reply.reciever = msg.sender
+                    sender = msg.sender
+                    receiver = msg.reciever
+                    notify.send(sender, recipient=receiver, verb='Message')
+            reply.save()
+
+            for file in request.FILES.getlist('file'):
+                obj = MailFiles.objects.create(
+                    file=file,
+                )
+                obj.save()
+                reply.files.add(obj)
+                reply.save()
+            msg.replies.add(reply)
+            msg.save()
+            
+            messages.success(request, "Reply Sent Successfully!")
+            return redirect("inbox")
+
+
+    else:
+        message_form = MessageForm()
+        reply_form = MessageReplyForm()
+    sent_messages = Message.objects.filter(sender_id=user.id).order_by("-date_sent")
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(sent_messages, 10)
+    try:
+        sent_paginated = paginator.page(page)
+    except PageNotAnInteger:
+        sent_paginated = paginator.page(1)
+    except EmptyPage:
+        sent_paginated = paginator.page(paginator.num_pages)
+    context = {
+            "user": user,
+            "sent_msgs": sent_paginated,
+            "message_form":message_form,
+            "reply_form": reply_form,
+            "sent_msgs": sent_messages,
+        }
+    return render(request, "sis/admin_templates/inbox_sent.html", context)
 
 def account(request):
     user = CustomUser.objects.get(id=request.user.id)

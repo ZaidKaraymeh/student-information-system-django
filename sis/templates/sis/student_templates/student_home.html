@@ -12,7 +12,7 @@
         <h2 class="ml-5" >Recent</h2>
             {% for post in items %}
                 <ul class="recent-feed">
-                    <a class="recent-link infinite-item" href="{% url 'course_dashboard' post.course.id post.course.instructor.id %}" >  
+                    <a class="recent-link" href="{% url 'course_dashboard' post.course.id post.course.instructor.id %}" >  
                         <div class="card border-0 recent-card">
                             <div class="card-body">
                                 <div class="row" >

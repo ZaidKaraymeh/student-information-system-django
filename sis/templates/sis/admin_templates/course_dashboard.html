@@ -185,6 +185,14 @@
                   </div>
                 {% endfor %}
               </div>
+              <div class="row d-flex justify-content-center pb-5 mb-5 pt-2">
+                  {% if posts.has_previous %}
+                      <a class="btn btn-dark infinite-more-link mx-2" href="?page={{ posts.previous_page_number }}">Previous</a>
+                  {% endif %}
+                  {% if posts.has_next %}
+                      <a class="btn btn-dark infinite-more-link" href="?page={{ posts.next_page_number }}">Next</a>
+                  {% endif %}
+              </div>
             </div>
           </div>
         </div>
