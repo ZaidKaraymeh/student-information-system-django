@@ -50,6 +50,9 @@ return render(request, template, context)
 """
 School SIS view, for students, staff, and admin only
 """
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+
 @login_required
 def home_sis(request):
     user = CustomUser.objects.get(id=request.user.id)
@@ -72,11 +75,21 @@ def home_sis(request):
             key=attrgetter('date_posted'),
             reverse=True
             )
+        paginator = Paginator(posts_sorted, 10)
+        page = request.GET.get('page', 1)
+        try:
+            items = paginator.page(page)
+        except PageNotAnInteger:
+            items = paginator.page(1)
+        except EmptyPage:
+            items = paginator.page(paginator.num_pages)
+
         # print(courses, user.username)
         context = {
             "user": user,
             "courses": courses,
             "posts": posts_sorted,
+            "items": items,
         }
 
     else:

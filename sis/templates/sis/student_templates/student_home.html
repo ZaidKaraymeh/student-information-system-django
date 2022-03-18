@@ -10,34 +10,43 @@
     </section>
     <section class="container text-left">
         <h2 class="ml-5" >Recent</h2>
-        {% for post in posts %}
-        <ul class="recent-feed">
-            <a class="recent-link" href="{% url 'course_dashboard' post.course.id post.course.instructor.id %}" >  
-                <div class="card border-0 recent-card">
-                    <div class="card-body">
-                        <div class="row" >
-                            <div class="col-2 border-right" >
-                                {{post.date_posted}}
-                            </div>
-                            <div class="col-10" >
-                                <li>
-                                    <h5> {{post.course.code}} {{post.course.name}} #{{post.course.section}} </h5>
-                                    <h5 class="card-title">
-                                        {{post.name}} {{post.title}} 
-                                    </h5>
-                                    <p>
-                                        {{post.content}} {{post.description}}
-                                    </p>
-                                </li>
+            {% for post in items %}
+                <ul class="recent-feed">
+                    <a class="recent-link infinite-item" href="{% url 'course_dashboard' post.course.id post.course.instructor.id %}" >  
+                        <div class="card border-0 recent-card">
+                            <div class="card-body">
+                                <div class="row" >
+                                    <div class="col-2 border-right" >
+                                        {{post.date_posted}}
+                                    </div>
+                                    <div class="col-10" >
+                                        <li>
+                                            <h5> {{post.course.code}} {{post.course.name}} #{{post.course.section}} </h5>
+                                            <h5 class="card-title">
+                                                {{post.name}} {{post.title}} 
+                                            </h5>
+                                            <p>
+                                                {{post.content}} {{post.description}}
+                                            </p>
+                                        </li>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </a>
-        </ul>
-        {% endfor %}
-    </section>
+                    </a>
+                </ul>
+            {% endfor %}
+        <div class="row d-flex justify-content-center pb-5 mb-5 pt-2">
+            {% if items.has_previous %}
+                <a class="btn btn-dark infinite-more-link mx-2" href="?page={{ items.previous_page_number }}">Previous</a>
+            {% endif %}
+            {% if items.has_next %}
+                <a class="btn btn-dark infinite-more-link" href="?page={{ items.next_page_number }}">Next</a>
+            {% endif %}
 
+        </div>
+
+    </section>
 </div>
 
 {% endblock content %}
