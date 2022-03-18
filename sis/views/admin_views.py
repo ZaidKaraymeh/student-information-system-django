@@ -1,6 +1,7 @@
+from multiprocessing import context
 from django.shortcuts import redirect, render, HttpResponse
 
-from ..forms import AddCourseForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, AssignmentForm, AttendanceReportForm, PostForm, AssignmentForm, AssignmentSubmissionForm,  AddMultipleChoiceQuestionForm, AddTestForm
+from ..forms import AddCourseForm, AddFeeForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, AssignmentForm, AttendanceReportForm, PostForm, AssignmentForm, AssignmentSubmissionForm,  AddMultipleChoiceQuestionForm, AddTestForm
 from users.models import Course, CustomUser, Post, Grade, Assignment, AssignmentSubmission, AssignmentSubmissionFile, Attendance, AttendanceReport, AssignmentFile, Fee, FeeReport
 from django.contrib import messages
 from django.utils import timezone
@@ -795,7 +796,44 @@ def dashboard(request):
 def fees(request):
     user = CustomUser.objects.get(id=request.user.id)
     fees = Fee.objects.all()
+    context = {
+        "user": user,
+        "fees": fees,
+    }
+    return render(request, "sis/admin_templates/fees.html", context)
 
+def add_fee(request):
+    user = CustomUser.objects.get(id=request.user.id)
+
+    if request.method == "POST":
+        form = AddFeeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Fee Added successfully!")
+            return redirect("fees")
+    else:
+        form = AddFeeForm()
+
+    context = {
+        "form": form,
+        "user": user,
+    }
+
+    return render(request, "sis/admin_templates/add_fee.html", context)
+
+def fee_instance(request, fee_id):
+    user = CustomUser.objects.get(id=request.user.id)
+    fee = Fee.objects.get(id=fee_id)
+
+    
+
+    context = {
+        "user": user,
+        "fee": fee,
+    }
+    return render(request, "sis/admin_templates/fee_instance.html", context)
+
+    
 
 def fees_student_portal(request, student_id):
     user = CustomUser.objects.get(id=request.user.id)

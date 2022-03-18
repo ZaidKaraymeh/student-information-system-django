@@ -15,6 +15,9 @@ urlpatterns = [
     path("sis/course_dashboard/<int:id>/<int:instructor_id>", admin_views.course_dashboard, name="course_dashboard"),
     path("sis/my_courses/", student_views.view_student_courses, name="my_courses"),
     path("sis/fees/fees_report/<int:student_id>/", admin_views.fees_student_portal, name="fees_report"),
+    path("sis/fees/", admin_views.fees, name="fees"),
+    path("sis/add_fee/", admin_views.add_fee, name="add_fee"),
+    path("sis/fee_instance/<int:fee_id>", admin_views.fee_instance, name="fee_instance"),
 
     # STUDENT URLS
     path("sis/add_student/", admin_views.add_student, name="add_student" ),

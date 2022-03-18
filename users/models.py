@@ -382,31 +382,33 @@ class FeeReport(models.Model):
     amount_paid = models.IntegerField()
 
 class Fee(models.Model):
-    twentyTwentyone = "2020/2021"
-    twentyoneTwentytwo = "2021/2022"
-    twentytwoTwentythree = "2022/2023"
-    twentythreeTwentyfour = "2023/2024"
-    twentyfourTwentyfive = "2024/2025"
-    twentyfiveTwentysix = "2025/2026"
-    twentysixTwentyseven = "2026/2027"
-    UNKOWN = "UNKOWN"
+    # twentyTwentyone = "2020/2021"
+    # twentyoneTwentytwo = "2021/2022"
+    # twentytwoTwentythree = "2022/2023"
+    # twentythreeTwentyfour = "2023/2024"
+    # twentyfourTwentyfive = "2024/2025"
+    # twentyfiveTwentysix = "2025/2026"
+    # twentysixTwentyseven = "2026/2027"
+    # UNKOWN = "UNKOWN"
 
-    YEAR_CHOICES = [
-        (twentyTwentyone, '2020/2021'),
-        (twentyoneTwentytwo, '2021/2022'),
-        (twentytwoTwentythree, '2022/2023'),
-        (twentythreeTwentyfour, "2023/2024"),
-        (twentyfourTwentyfive, "2024/2025"),
-        (twentyfiveTwentysix, "2025/2026"),
-        (twentysixTwentyseven, "2026/2027"),
-        (UNKOWN, "Unknown"),
-    ]
-    year = models.CharField(
-        max_length=10,
-        choices=YEAR_CHOICES,
-        default=UNKOWN,
-        null=True
-    )
+    # YEAR_CHOICES = [
+    #     (twentyTwentyone, '2020/2021'),
+    #     (twentyoneTwentytwo, '2021/2022'),
+    #     (twentytwoTwentythree, '2022/2023'),
+    #     (twentythreeTwentyfour, "2023/2024"),
+    #     (twentyfourTwentyfive, "2024/2025"),
+    #     (twentyfiveTwentysix, "2025/2026"),
+    #     (twentysixTwentyseven, "2026/2027"),
+    #     (UNKOWN, "Unknown"),
+    # ]
+    # year = models.CharField(
+    #     max_length=10,
+    #     choices=YEAR_CHOICES,
+    #     default=UNKOWN,
+    #     null=True
+    # )
+
+    fee_year = models.CharField(max_length=50, null=True)
     
     student_fees = models.ManyToManyField(FeeReport)
 
@@ -414,7 +416,7 @@ class Fee(models.Model):
     amount_needed = models.IntegerField(null=True)
 
     def __str__(self) -> str:
-        return self.year
+        return self.fee_year
 
 
 

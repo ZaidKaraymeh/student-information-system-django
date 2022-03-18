@@ -193,7 +193,7 @@ def account(request):
         },
     )
     
-    if created:
+    if created and user.user_type == "STU":
         fee.student_fees.add(report)
 
     context = {

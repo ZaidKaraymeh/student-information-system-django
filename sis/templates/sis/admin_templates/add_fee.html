@@ -1,0 +1,51 @@
+{% extends 'sis/admin_templates/base_new.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<!-- open sidebar menu -->
+<a class="btn btn-primary btn-customized open-menu" href="#" role="button">
+    <i class="fas fa-align-left"></i> <span>Menu</span>
+</a>
+	<div class="d-flex flex-column justify-content-center align-items-center" style="min-height:90vh;">
+    <form method="POST" class="p-4">
+        {% csrf_token %}
+
+        <fieldset class="form-group" > 
+            <legend> Add Fee </legend>
+            <div class="row justify-content-center">
+                <div class="col-6">
+                    <h4> Year </h4>
+                    {{ form.fee_year|as_crispy_field }}
+                </div>
+                <div class="col-6">
+                    <h4> Amount </h4>
+                    {{ form.amount_needed|as_crispy_field }}
+                </div>
+            </div>
+            
+            <div class="row justify-content-center my-4">
+                <div class="col-12">
+                    <h4> Note </h4>
+                    {{ form.note|as_crispy_field }}
+                </div>
+            </div>
+
+        </fieldset>
+        <div class="form-group py-3">
+			<button type="submit" class="btn btn-dark" > Add Fee </button>
+			<a 
+				class="btn btn-primary" 
+				href="{% url 'fees' %}" 
+				> Back
+			</a>
+        </div>
+    </form>
+</div>
+    {% comment %} <div class="border-top pt-3" >
+        <small class="text-muted" > Already have an account? <a class="ml-2" href="{% url 'login'  %}" >Sign In </a>  </small>
+    <div> {% endcomment %}
+
+
+
+{%endblock content %} 
