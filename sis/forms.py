@@ -3,7 +3,7 @@ from email.policy import default
 from django import forms
 # from django.forms import ChoiceWidget
 
-from users.models import CustomUser, Course, Post, Assignment, AssignmentSubmission, Quiz, MultipleChoiceQuestion, AttendanceReport, Message, Reply, Grade, Fee
+from users.models import CustomUser, Course, Post, Assignment, AssignmentSubmission, Quiz, MultipleChoiceQuestion, AttendanceReport, Message, Reply, Grade, Fee, FeeReport
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.admin import widgets                                       
 
@@ -377,3 +377,15 @@ class AddFeeForm(forms.ModelForm):
         self.fields['fee_year'].label = ""
         self.fields['note'].label = ""
         self.fields['amount_needed'].label = ""
+
+class AddFeeReportForm(forms.ModelForm):
+    class Meta:
+        model = FeeReport
+        fields = ['amount_paid', 'note']
+
+    def __init__(self, *args, **kwargs):
+        super(AddFeeReportForm, self).__init__(*args, **kwargs) # Call to ModelForm constructor
+        self.fields['note'].widget.attrs['style'] = 'width:100%; height:40px;'
+        self.fields['amount_paid'].widget.attrs['style'] = 'width:100%; height:40px;'
+        self.fields['note'].label = ""
+        self.fields['amount_paid'].label = ""

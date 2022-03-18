@@ -6,18 +6,19 @@
     <i class="fas fa-align-left"></i> <span>Menu</span>
 </a>
 <section class="border-bottom my-5 ">
-        <h1 class="font-weight-bold" > Manage Courses</h1>
+        <h1 class="font-weight-bold" > Manage {{fees.fee_year}} Fees</h1>
+        <h4 class="font-weight-bold" > {{fees.note}}</h4>
 </section>
 <div class="col p-4 d-flex justify-content-end align-items-start" >
     <a 
-        class="btn btn-dark mx-2" 
-        href="{% url 'add_fee' %}" 
-        > Add Fee
-    </a>
-    <a 
-        class="btn btn-primary" 
+        class="btn btn-primary mr-2" 
         href="{% url 'export_courses' %}" 
         > Export
+    </a>
+    <a 
+        class="btn btn-dark" 
+        href="{% url 'fees' %}" 
+        > back
     </a>
 </div>
 
@@ -27,23 +28,25 @@
             <tr>
             <th  scope="col">#</th>
             <th scope="col">Student</th>
-            <th scope="col">Year</th>
+            <th scope="col">Date Paid Full</th>
+            <th scope="col">Paid Full</th>
             <th scope="col">Amount Paid</th>
-            <th scope="col">Date Paid</th>
             <th scope="col">Note</th>
             <th scope="col">Edit Report</th>
             <th scope="col">View Report</th>
             </tr>
         </head>
         <tbody>
-            {% for fee in fees %}
+            {% for fee in fees.student_fees.all %}
                 <tr>
                     <th  scope="row"> {{forloop.counter}} </th>
-                    <td> {{fee.fee_year}} </td>
-                    <td> {{fee.amount_needed}} </td>
+                    <td> {{fee.student.username}} </td>
+                    <td> {{fee.student|date_paid_full}} </td>
+                    <td> {{fee|paid_full}} </td>
+                    <td> {{fee.amount_paid}} </td>
                     <td> {{fee.note}} </td>
-                    <td class="" > <a class="btn btn-dark btn-block" href="" > Edit Fee </a> </td>
-                    <td class="" > <a class="btn btn-primary btn-block" href="" > View Fee </a> </td>
+                    <td class="" > <a class="btn btn-dark btn-block" href="{% url 'edit_fee_report' fee.id %}" > Edit Fee </a> </td>
+                    <td class="" > <a class="btn btn-primary btn-block" href="{% url 'fees_report' fee.student.id %}" > View Fee </a> </td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -51,9 +54,9 @@
             <tr>
             <th scope="col">#</th>
             <th scope="col">Student</th>
-            <th scope="col">Year</th>
+            <th scope="col">Date Paid Full</th>
+            <th scope="col">Paid Full</th>
             <th scope="col">Amount Paid</th>
-            <th scope="col">Date Paid</th>
             <th scope="col">Note</th>
             <th scope="col">Edit Report</th>
             <th scope="col">View Report</th>

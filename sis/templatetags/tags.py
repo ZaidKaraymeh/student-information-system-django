@@ -138,10 +138,19 @@ def fee_remaining(fee_report):
 def paid_full(student):
     try:
 
-        report = FeeReport.objects.filter(student=student).last()
-        return "Yes" if report.paid_full else "No"
+        report = FeeReport.objects.get(student=student)
+        fee = Fee.objects.get(student_fees__id = report.id)
+        return "Yes" if report.amount_paid >= fee.amount_needed else "No"
     except:
         return "No"
+
+def date_paid_full(student):
+    try:
+        report = FeeReport.objects.get(student=student)
+        fee = Fee.objects.get(student_fees__id = report.id)
+        return report.date_paid_full if report.amount_paid >= fee.amount_needed else "---"
+    except:
+        return "---"
 
 
 register.filter('is_submitted', is_submitted)
@@ -159,4 +168,5 @@ register.filter('reply_sender', reply_sender)
 register.filter('form_iter', form_iter)
 register.filter('fee_remaining', fee_remaining)
 register.filter('paid_full', paid_full)
+register.filter('date_paid_full', date_paid_full)
 # register.filter('all_submitted', all_submitted)

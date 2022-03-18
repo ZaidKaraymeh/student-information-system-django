@@ -1,13 +1,16 @@
+from http.client import HTTPResponse
 from multiprocessing import context
 from django.shortcuts import redirect, render, HttpResponse
 
-from ..forms import AddCourseForm, AddFeeForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, AssignmentForm, AttendanceReportForm, PostForm, AssignmentForm, AssignmentSubmissionForm,  AddMultipleChoiceQuestionForm, AddTestForm
+from ..forms import AddCourseForm, AddFeeForm, AddFeeReportForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, AssignmentForm, AttendanceReportForm, PostForm, AssignmentForm, AssignmentSubmissionForm,  AddMultipleChoiceQuestionForm, AddTestForm
 from users.models import Course, CustomUser, Post, Grade, Assignment, AssignmentSubmission, AssignmentSubmissionFile, Attendance, AttendanceReport, AssignmentFile, Fee, FeeReport
 from django.contrib import messages
 from django.utils import timezone
 from django.forms import modelformset_factory
 import xlwt
 
+from ..decorators import is_admin, is_staff
+@is_admin
 def add_course(request):
     user = CustomUser.objects.get(id=request.user.id)
     if request.method == "POST":
@@ -27,7 +30,7 @@ def add_course(request):
 
 def manage_course(request):
     pass
-
+@is_admin
 def delete_course_enrolled(request, id, course_id, *args, **kwargs):
     course = Course.objects.get(id=course_id)
     user = CustomUser.objects.get(id=id)
@@ -76,6 +79,7 @@ def export_courses(request):
     wb.save(response)
     return response
 
+@is_admin
 def edit_course(request, id):
     course = Course.objects.get(id=id)
     user = CustomUser.objects.get(id=request.user.id)
@@ -95,6 +99,7 @@ def edit_course(request, id):
         }
     return render(request, "sis/admin_templates/edit_course.html", context)
 
+@is_admin
 def delete_course(request, id):
     course = Course.objects.get(id=id)
     course.delete()
@@ -165,6 +170,7 @@ def export_students(request):
 
     wb.save(response)
     return response
+
 
 def view_student_enrolled_courses(request, id):
     user = CustomUser.objects.get(id=request.user.id)
@@ -237,7 +243,7 @@ def view_student_enrolled_grades(request, student_id):
 
 
 
-
+@is_admin
 def add_staff(request):
     user = CustomUser.objects.get(id=request.user.id)
     if request.method == "POST":
@@ -258,7 +264,7 @@ def add_staff(request):
         }
     return render(request, "sis/admin_templates/add_staff.html", context)
 
-
+@is_admin
 def view_staff(request):
     user = CustomUser.objects.get(id=request.user.id)
     staffs = CustomUser.objects.filter(user_type = "STA")
@@ -267,6 +273,7 @@ def view_staff(request):
         "user":user
         }
     return render(request, "sis/admin_templates/view_staff.html", context)
+
 
 def view_instructor_enrolled_courses(request, id):
     user = CustomUser.objects.get(id=request.user.id)
@@ -512,7 +519,7 @@ def course_dashboard(request, id, instructor_id):
     }
     return render(request, "sis/admin_templates/course_dashboard.html", context)
 
-
+@is_staff
 def course_assignment_builder(request):
 
     user = CustomUser.objects.get(id = request.user.id)
@@ -539,6 +546,7 @@ def course_assignment_builder(request):
 
     return render(request, 'sis/admin_templates/course_assignment_builder.html', context)
 
+@is_staff
 def course_assignment_build(request):
     user = CustomUser.objects.get(id=request.user.id)
     choices = [
@@ -590,6 +598,7 @@ def course_assignment_build(request):
     }
     return render(request, 'sis/admin_templates/add_assignment.html', context)
 
+@is_staff
 def course_assignment_edit(request, assignment_id):
     user = CustomUser.objects.get(id=request.user.id)
     instance = Assignment.objects.get(id=assignment_id)
@@ -651,6 +660,7 @@ def course_student_submission(request, course_id, assignment_id):
     return redirect("course_dashboard", id=course.id, instructor_id=instructor.id)
 # Attendance
 
+@is_staff
 def view_attendance(request):
     user = CustomUser.objects.get(id = request.user.id)
 
@@ -667,6 +677,7 @@ def view_attendance(request):
     # context = {"attendance": attendance}
     return render(request, "sis/admin_templates/view_attendance.html", context)
 
+@is_staff
 def view_attendance_course(request, course_id):
     user = CustomUser.objects.get(id=request.user.id)
     print("view_attendance_course")
@@ -681,6 +692,7 @@ def view_attendance_course(request, course_id):
     }
     return render(request, "sis/admin_templates/view_attendance_course.html", context)
 
+@is_staff
 def view_attendance_course_report(request, attendance_id, course_id):
     user = CustomUser.objects.get(id=request.user.id)
     attendance = AttendanceReport.objects.filter(attendance__id = attendance_id)
@@ -699,6 +711,7 @@ def view_attendance_course_report(request, attendance_id, course_id):
     # context = {"attendance": attendance}
     return render(request, "sis/admin_templates/view_attendance_course_report.html", context)
 
+@is_staff
 def add_attendance_course_report(request, course_id):
     course = Course.objects.get(id=course_id)
     instructor = course.instructor
@@ -726,6 +739,7 @@ def add_attendance_course_report(request, course_id):
         messages.add_message(request, 99,  "Today's attendance has already been created", "danger")
         return redirect("view_attendance_course", course_id=course_id)
 
+@is_staff
 def edit_attendance_course_report(request, course_id, attendance_id):
     user = CustomUser.objects.get(id=request.user.id)
 
@@ -763,7 +777,7 @@ def edit_attendance_course_report(request, course_id, attendance_id):
     }
     return render(request, 'sis/admin_templates/edit_attendance_course_report.html', context)
 
-
+@is_staff
 def dashboard(request):
     user = CustomUser.objects.get(id=request.user.id)
 
@@ -792,7 +806,7 @@ def dashboard(request):
     }
     return render(request, "sis/admin_templates/dashboard.html", context)
 
-
+@is_admin
 def fees(request):
     user = CustomUser.objects.get(id=request.user.id)
     fees = Fee.objects.all()
@@ -802,6 +816,7 @@ def fees(request):
     }
     return render(request, "sis/admin_templates/fees.html", context)
 
+@is_admin
 def add_fee(request):
     user = CustomUser.objects.get(id=request.user.id)
 
@@ -821,15 +836,65 @@ def add_fee(request):
 
     return render(request, "sis/admin_templates/add_fee.html", context)
 
+@is_admin
+def edit_fee(request, fee_id):
+    user = CustomUser.objects.get(id=request.user.id)
+    fee = Fee.objects.get(id=fee_id)
+    if request.method == "POST":
+        form = AddFeeForm(request.POST, instance=fee)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Fee Added successfully!")
+            return redirect("fees")
+    else:
+        form = AddFeeForm(instance=fee)
+
+    context = {
+        "form": form,
+        "user": user,
+    }
+
+    return render(request, "sis/admin_templates/add_fee.html", context)
+
+@is_admin
+def edit_fee_report(request, report_id):
+    user = CustomUser.objects.get(id=request.user.id)
+    obj = FeeReport.objects.get(id=report_id)
+    fee = Fee.objects.get(student_fees__id=report_id)
+    student = obj.student
+    if request.method == "POST":
+        form = AddFeeReportForm(request.POST, instance=obj)
+        if form.is_valid():
+            inst = form.save(commit=False)
+            if fee.amount_needed <= inst.amount_paid:
+                inst.paid_full = True
+            else:
+                inst.paid_full = False
+            inst.save()
+            messages.success(request, "Fee Edited successfully!")
+            return redirect("fee_instance", fee_id=fee.id)
+    else:
+        form = AddFeeReportForm(instance=obj)
+
+    context = {
+        "form": form,
+        "user": user,
+        "student": student,
+    }
+
+    return render(request, "sis/admin_templates/edit_fee_report.html", context)
+
+
+@is_admin
 def fee_instance(request, fee_id):
     user = CustomUser.objects.get(id=request.user.id)
     fee = Fee.objects.get(id=fee_id)
 
-    
+
 
     context = {
         "user": user,
-        "fee": fee,
+        "fees": fee,
     }
     return render(request, "sis/admin_templates/fee_instance.html", context)
 
@@ -838,6 +903,10 @@ def fee_instance(request, fee_id):
 def fees_student_portal(request, student_id):
     user = CustomUser.objects.get(id=request.user.id)
     student = CustomUser.objects.get(id=student_id)
+
+    if student != user and user == "STU":
+        return HTTPResponse("Acess Denied")
+
     fee = Fee.objects.last()
     report, created = FeeReport.objects.get_or_create(
     student = student,

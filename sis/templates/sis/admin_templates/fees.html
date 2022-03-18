@@ -6,7 +6,7 @@
     <i class="fas fa-align-left"></i> <span>Menu</span>
 </a>
 <section class="border-bottom my-5 ">
-        <h1 class="font-weight-bold" > Manage Courses</h1>
+        <h1 class="font-weight-bold" > Manage Fees</h1>
 </section>
 <div class="col p-4 d-flex justify-content-end align-items-start" >
     <a 
@@ -40,7 +40,7 @@
                     <td> {{fee.fee_year}} </td>
                     <td> {{fee.amount_needed}} </td>
                     <td> {{fee.note}} </td>
-                    <td class="" > <a class="btn btn-dark btn-block" href="" > Edit Fee </a> </td>
+                    <td class="" > <a class="btn btn-dark btn-block" href="{% url 'edit_fee' fee.id %}" > Edit Fee </a> </td>
                     <td class="" > <a class="btn btn-primary btn-block" href="{% url 'fee_instance' fee.id %}" > View Fee </a> </td>
                 </tr>
             {% endfor %}
