@@ -9,14 +9,14 @@
     </a>
         <ul class="nav nav-tabs mb-3 justify-content-center" id="pills-tab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'inbox' %}">Inbox</a>
+                <a class="nav-link" href="{% url 'inbox' %}" aria-selected="false">Inbox</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Sent</a>
+                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="false">Sent</a>
             </li>
         </ul>
         <div class="tab-content" id="pills-tabContent">
-            <div class="tab-pane fade" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+            <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
                 <div class="container">
 
                 <div class="row">
@@ -229,7 +229,7 @@
                 </div>
                 </div>
             </div>
-            <div class="tab-pane fade show active" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                 <div class="container">
                     <div class="row">
                         <div class="col-12 d-flex align-items-start my-2">
@@ -244,7 +244,7 @@
                         {% if not recieved_msgs %}
                             <div class="col-12">
                                 <h3>
-                                    Wow, such empty...
+                                    Wow, such empty...s
                                 </h3>
                             </div>
                         {% else %}

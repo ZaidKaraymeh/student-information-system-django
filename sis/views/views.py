@@ -277,7 +277,11 @@ def inbox_sent(request):
     else:
         message_form = MessageForm()
         reply_form = MessageReplyForm()
+
+
     sent_messages = Message.objects.filter(sender_id=user.id).order_by("-date_sent")
+
+    print(sent_messages)
 
     page = request.GET.get('page', 1)
     paginator = Paginator(sent_messages, 10)
@@ -292,7 +296,6 @@ def inbox_sent(request):
             "sent_msgs": sent_paginated,
             "message_form":message_form,
             "reply_form": reply_form,
-            "sent_msgs": sent_messages,
         }
     return render(request, "sis/admin_templates/inbox_sent.html", context)
 
