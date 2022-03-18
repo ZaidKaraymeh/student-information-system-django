@@ -219,11 +219,11 @@
                     {% endif %}
                 </div>
                 <div class="row d-flex justify-content-center pb-5 mb-5 pt-2">
-                    {% if items.has_previous %}
-                        <a class="btn btn-dark infinite-more-link mx-2" href="?page={{ items.previous_page_number }}">Previous</a>
+                    {% if sent_msgs.has_previous %}
+                        <a class="btn btn-dark infinite-more-link mx-2" href="?page={{ sent_msgs.previous_page_number }}">Previous</a>
                     {% endif %}
-                    {% if items.has_next %}
-                        <a class="btn btn-dark infinite-more-link" href="?page={{ items.next_page_number }}">Next</a>
+                    {% if sent_msgs.has_next %}
+                        <a class="btn btn-dark infinite-more-link" href="?page={{ sent_msgs.next_page_number }}">Next</a>
                     {% endif %}
 
                 </div>
