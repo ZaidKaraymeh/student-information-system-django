@@ -167,8 +167,19 @@
                                   </div>
                                 </div>
                             </fieldset>
-                            <div class="form-group d-flex justify-content-start">
-                                <button type="submit" class="btn btn-dark"> Submit </button>
+                            <div class="form-group d-flex justify-content-start" >
+                                <button type="submit" class="btn btn-dark load"> Submit
+                                </button>
+                                <button class="btn btn-dark loader" onClick="onClickLoader" style="display:none;" type="button" disabled>
+                                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                  <span class="sr-only">Loading...</span>
+                                </button>
+                                <script>
+                                  function onClickLoader(){
+                                    var = document.getElementById("loader").styles.display = "flex";
+                                    var = document.getElementById("load").styles.display = "none";
+                                  }
+                                </script>
                             </div>
                         </form>
                       </div>
