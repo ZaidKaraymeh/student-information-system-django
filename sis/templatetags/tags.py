@@ -37,15 +37,16 @@ def is_submitted_late(value, arg):
         asn = Assignment.objects.get(id=assignment_id)
         return timezone.now() > asn.due_date
 
-def assignment_grade(value, arg):
-    assignment_id, user_id = value.id, arg.id
-    try:
-        asn = Assignment.objects.get(assignment__id = assignment_id)
-        grade = asn.students_grades.filter(student__id=user_id).first()
-        print(grade)
-        return grade.point_grade
-    except:
-        return 0
+# def assignment_grade(value, arg):
+#     assignment_id, user_id = value.id, arg.id
+#     try:
+#         print(Grade.objects.filter(student__id=user_id, assignment__id = assignment_id).first())
+#         grade = Grade.objects.filter(student__id=user_id, assignment__id = assignment_id).first()
+#         print(grade)
+#         return grade.point_grade
+#     except:
+#         print("XD")
+#         return 0
 
 def date_submitted(value, arg):
     assignment_id, user_id = value.id, arg.id
@@ -72,7 +73,10 @@ def course_id_modulus(value):
 
 
 def assignment_grade(value, arg):
-    return value.students_grades.get(student__id=arg.id).point_grade
+    try:
+        return value.students_grades.get(student__id=arg.id).point_grade
+    except:
+        return 0
 
 def assignments_course(value):
     return Assignment.objects.filter(course=value).order_by("due_date")
@@ -152,6 +156,36 @@ def date_paid_full(student):
     except:
         return "---"
 
+def get_assignment_name(grade):
+    try:
+        asn = Assignment.objects.filter(students_grades=grade.id).first()
+        return asn.name
+    except:
+        pass
+def get_assignment_possible_points(grade):
+    try:
+        asn = Assignment.objects.filter(students_grades=grade.id).first()
+        return asn.possible_points
+    except:
+        pass
+def get_assignment_category(grade):
+    try:
+        asn = Assignment.objects.filter(students_grades=grade.id).first()
+        return asn.category
+    except:
+        pass
+def get_assignment_due_date(grade):
+    try:
+        asn = Assignment.objects.filter(students_grades=grade.id).first()
+        return asn.due_date
+    except:
+        pass
+def get_assignment_is_submitted(grade):
+    try:
+        asn = Assignment.objects.filter(students_grades=grade.id).first()
+        return asn.is_submitted
+    except:
+        pass
 
 register.filter('is_submitted', is_submitted)
 register.filter('is_submitted_late', is_submitted_late)
@@ -169,4 +203,9 @@ register.filter('form_iter', form_iter)
 register.filter('fee_remaining', fee_remaining)
 register.filter('paid_full', paid_full)
 register.filter('date_paid_full', date_paid_full)
+register.filter('get_assignment_name', get_assignment_name)
+register.filter('get_assignment_category', get_assignment_category)
+register.filter('get_assignment_possible_points', get_assignment_possible_points)
+register.filter('get_assignment_due_date', get_assignment_due_date)
+register.filter('get_assignment_is_submitted', get_assignment_is_submitted)
 # register.filter('all_submitted', all_submitted)

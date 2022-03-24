@@ -59,7 +59,6 @@ def gradebook_report_edit(request, course_id, student_id):
 
     grades = Grade.objects.filter(student=student, course=course)
 
-
     GradeReportFormSet = modelformset_factory(
         Grade, 
         form=GradeForm,
@@ -67,16 +66,18 @@ def gradebook_report_edit(request, course_id, student_id):
         )
 
     if request.method == "POST":
-        print("post")
         formset = GradeReportFormSet(
             request.POST, 
             queryset = grades
             )
+
         if formset.is_valid():
             formset.save()
             print("form is valid")
             messages.success(request, "Grades updated successfully!")
             return redirect("gradebook_report", course_id=course_id, student_id=student_id )
+        else:
+            return JsonResponse({'status': f'{formset.errors}'}, status=400)
     else:
         formset = GradeReportFormSet(queryset = grades)
 

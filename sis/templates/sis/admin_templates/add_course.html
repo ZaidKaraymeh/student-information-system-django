@@ -91,16 +91,46 @@
                 <div class="col-6">
                     {{ form.code|as_crispy_field }}
                 </div>
-                <div class="col-6">
-                    {{ form.instructor|as_crispy_field }}
-                </div>
+				<div class="col-6">
+					{{ form.year|as_crispy_field }}
+				</div>
             </div>
-            <div class="row justify-content-start">
-                <div class="col-6">
-                    {{ form.year|as_crispy_field }}
-                </div>
-            </div>
-
+			{% if user.user_type == 'ADM' %}
+				<div class="row justify-content-start">
+					<div class="col-6">
+						{{ form.instructor|as_crispy_field }}
+					</div>
+				</div>
+			{% endif %}
+            <div class="row justify-content-start mt-5">
+				<div class="col-12">
+					<h4> Grade Weight </h4>
+					<small > <p class="my-0"> *In Percentage </p> </small>
+					<small> <p class="my-0 mb-2"> *Can be changed later </p> </small>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-6">
+					{{ weight_form.task|as_crispy_field }}
+				</div>
+				<div class="col-6">
+					{{ weight_form.homework|as_crispy_field }}
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-6">
+					{{ weight_form.quiz|as_crispy_field }}
+				</div>
+				<div class="col-6">
+					{{ weight_form.test|as_crispy_field }}
+				</div>
+			</div>
+			<div class="row justify-content-start">
+				<div class="col-6">
+					{{ weight_form.project|as_crispy_field }}
+				</div>
+			</div>
+				
         </fieldset>
         <div class="form-group py-3">
 			<button type="submit" class="btn btn-dark" > Add Course </button>

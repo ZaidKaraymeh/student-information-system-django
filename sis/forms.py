@@ -3,11 +3,36 @@ from email.policy import default
 from django import forms
 # from django.forms import ChoiceWidget
 
-from users.models import CustomUser, Course, Post, Assignment, AssignmentSubmission, Quiz, MultipleChoiceQuestion, AttendanceReport, Message, Reply, Grade, Fee, FeeReport
+from users.models import CustomUser, Course, Post, Assignment, AssignmentSubmission, Quiz, MultipleChoiceQuestion, AttendanceReport, Message, Reply, Grade, Fee, FeeReport, GradeWeight
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.admin import widgets                                       
 
 # from .models import Profile
+
+class GradeWeightForm(forms.ModelForm):
+    class Meta:
+        model = GradeWeight
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super(GradeWeightForm  , self).__init__(*args, **kwargs)
+
+        self.fields['task'].widget.attrs['style'] = 'width:100%; height:40px;'
+        self.fields['quiz'].widget.attrs['style'] = 'width:100%; height:40px;'
+        self.fields['project'].widget.attrs['style'] = 'width:100%; height:40px;'
+        self.fields['test'].widget.attrs['style'] = 'width:100%; height:40px;'
+        self.fields['homework'].widget.attrs['style'] = 'width:100%; height:40px;'
+        self.fields['task'].widget.attrs['class'] = 'form-control'
+        self.fields['quiz'].widget.attrs['class'] = 'form-control'
+        self.fields['project'].widget.attrs['class'] = 'form-control'
+        self.fields['test'].widget.attrs['class'] = 'form-control'
+        self.fields['homework'].widget.attrs['class'] = 'form-control'
+        # self.fields['task'].label = ''
+        # self.fields['quiz'].label = ''
+        # self.fields['project'].label = ''
+        # self.fields['test'].label = ''
+        # self.fields['homework'].label = ''
+
 
 class AddCourseForm(forms.ModelForm):
     class Meta:
@@ -286,7 +311,7 @@ class GradeForm(forms.ModelForm):
         super(GradeForm  , self).__init__(*args, **kwargs)
 
         self.fields['point_grade'].required = False
-        self.fields['point_grade'].widget.attrs['style'] = 'width:25%; height:30px;'
+        self.fields['point_grade'].widget.attrs['style'] = 'width:100% !important; height:30px !important;'
         self.fields['point_grade'].widget.attrs['class'] = 'form-control text-center'
     # field_order = ['student', 'is_absent', 'note']
 

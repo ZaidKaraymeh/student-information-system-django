@@ -2,7 +2,7 @@ from http.client import HTTPResponse
 from multiprocessing import context
 from django.shortcuts import redirect, render, HttpResponse
 
-from ..forms import AddCourseForm, AddFeeForm, AddFeeReportForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, AssignmentForm, AttendanceReportForm, PostForm, AssignmentForm, AssignmentSubmissionForm,  AddMultipleChoiceQuestionForm, AddTestForm
+from ..forms import AddCourseForm, AddFeeForm, AddFeeReportForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, AssignmentForm, AttendanceReportForm, PostForm, AssignmentForm, AssignmentSubmissionForm,  AddMultipleChoiceQuestionForm, AddTestForm, GradeWeightForm
 from users.models import Course, CustomUser, Post, Grade, Assignment, AssignmentSubmission, AssignmentSubmissionFile, Attendance, AttendanceReport, AssignmentFile, Fee, FeeReport
 from django.contrib import messages
 from django.utils import timezone
@@ -16,16 +16,24 @@ def add_course(request):
     user = CustomUser.objects.get(id=request.user.id)
     if request.method == "POST":
         form = AddCourseForm(request.POST)
-        if form.is_valid():
-            form.save()
+        weight_form = GradeWeightForm(request.POST)
+        if form.is_valid() and weight_form.is_valid():
+            w = weight_form.save()
+
+            f = form.save(commit=False)
+            f.weight = w
+            f.save()
+            w.save()
             messages.success(request, f"{form.cleaned_data.get('name')} has been added successfully!")
             return redirect("view_courses")
     else:
         form = AddCourseForm()
+        weight_form = GradeWeightForm()
         form.fields["instructor"].queryset = CustomUser.objects.filter(user_type = "STA")    
     context = {
         "form":form,
-        "user":user
+        "user":user,
+        "weight_form":weight_form,
         }
     return render(request, "sis/admin_templates/add_course.html", context)
 
@@ -83,22 +91,27 @@ def export_courses(request):
 @is_admin
 def edit_course(request, id):
     course = Course.objects.get(id=id)
+    weight = course.weight
     user = CustomUser.objects.get(id=request.user.id)
     if request.method == "POST":
         form = AddCourseForm(request.POST, instance=course)
-        if form.is_valid():
+        weight_form = GradeWeightForm(request.POST, instance=weight)
+        if form.is_valid() and weight_form.is_valid():
+            weight_form.save()
             form.save()
             messages.success(request, f"{form.cleaned_data.get('code')} Section {form.cleaned_data.get('section')} has been Edited successfully!")
             return redirect("view_courses")
     else:
         form = AddCourseForm(instance=course)
+        weight_form = GradeWeightForm(instance=weight)
         form.fields["instructor"].queryset = CustomUser.objects.filter(user_type = "STA")    
     context = {
         "form":form, 
         "course":course,
-        "user":user
+        "user":user,
+        "weight_form": weight_form,
         }
-    return render(request, "sis/admin_templates/edit_course.html", context)
+    return render(request, "sis/admin_templates/add_course.html", context)
 
 @is_admin
 def delete_course(request, id):
@@ -197,8 +210,26 @@ def view_student_enrolled_courses(request, id):
             user = CustomUser.objects.get(id=id)
             course.students.add(user)
             course.save()
+
+            try:
+                assignments = Assignment.objects.filter(course=course)
+                for assignment in assignments:
+                    print(assignment)
+                    grade = Grade.objects.create(
+                        student=student,
+                        course = course,
+                        possible_points = assignment.possible_points,
+                    )
+                    grade.save()
+                    print(grade)
+                    assignment.students_grades.add(grade)
+                    assignment.save()
+            except:
+                pass
+
             messages.success(request, f" {user.first_name} {user.last_name} has sucessfully enrolled in {course.code} Sec {course.section}!")
             return redirect("view_student_enrolled_courses", id=id)
+            
     else:
         form = AddStudentToCourseForm()
 
@@ -586,12 +617,14 @@ def course_assignment_build(request):
                 f.save()
             students = f.course.students.all()
             for student in students:
+                print(student)
                 grade = Grade.objects.create(
                     student=student,
                     course = course,
                     possible_points = f.possible_points,
                 )
                 grade.save()
+                print(grade)
                 f.students_grades.add(grade)
                 f.save()
             messages.success(request, "Assignment Posted Successfully!")

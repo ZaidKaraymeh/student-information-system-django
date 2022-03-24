@@ -61,6 +61,14 @@ class Profile(models.Model):
         return f"{self.user.username} Profile"
 
 
+class GradeWeight(models.Model):
+    task = models.IntegerField()
+    quiz = models.IntegerField()
+    homework = models.IntegerField()
+    project = models.IntegerField()
+    test = models.IntegerField()
+
+
 
 class Course(models.Model):
     name = models.CharField(null = True, max_length=50)
@@ -69,6 +77,7 @@ class Course(models.Model):
     instructor = models.ForeignKey(CustomUser, related_name="instructor", on_delete=models.CASCADE)
     students = models.ManyToManyField(CustomUser)
     year = models.CharField(null = True, max_length=10)
+    weight = models.ForeignKey(GradeWeight, related_name="weight", on_delete=models.CASCADE, null=True)
     # assignments = models.ManyToManyField(Assignment)
     # year = models.ForeignKey(Year, on_delete=models.CASCADE)
     # twentyTwentyone = "2020/2021"
@@ -133,7 +142,7 @@ class Grade(models.Model):
         default=F,
         null=True,
         )
-    point_grade = models.IntegerField(default=0)
+    point_grade = models.IntegerField(default=0, blank=True)
     possible_points = models.IntegerField(null=True)
     course = models.ForeignKey(
         Course, 

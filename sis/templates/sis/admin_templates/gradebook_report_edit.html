@@ -31,38 +31,70 @@
                 </a>
                 <a 
                     class="btn btn-primary" 
-                    href="{% url 'export_courses' %}" 
+                    href="{% url 'gradebook_report' course.id student.id %}" 
                     > Back
                 </a>
             </div>
-            <div class="table-responsive p-0 overflow-auto " style="border-left-width: thick;border-right-width: thick;" >
+            <div class="table-responsive p-0  " style="border-left-width: thick;border-right-width: thick;overflow-x:hidden;" >
                 <table id="view_courses" class="table table-striped table-hover table-bordered text-center" style="border-left-width: thick;border-right-width: thick;">
                     <thead>
                         <tr>
                         <th  scope="col">#</th>
                         <th scope="col">Assignment</th>
                         <th scope="col">Type</th>
-                        <th scope="col">Grade</th>
                         <th scope="col">Due Date</th>
-                        <th scope="col">Submitted At</th>
                         <th scope="col">Submission</th>
-                        <th scope="col">Edit</th>
+                        <th scope="col">Possible Points</th>
+                        <th scope="col">Grade</th>
                         </tr>
-                    </head>
-                    <tbody>
+                     <tbody>
+                        <form method="POST" >
+                            {% csrf_token %}
+                            {{ formset.management_form }}
+                            {% for form in formset %}
+                             <tr>
+                                    <th scope="row"> {{forloop.counter}} </th>
+                                    <td> {{form.instance|get_assignment_name}} </td>
+                                    <td> {{form.instance|get_assignment_category}} </td>
+                                    {% comment %} <td class="d-flex justify-content-center" > 
+                                         {{form}}/{{form.instance|get_assignment_possible_points}}
+                                    </td> {% endcomment %}
+                                    <td> {{form.instance|get_assignment_due_date}} </td>
+                                    {% if form.instance|get_assignment_is_submitted %} 
+                                    <td style="color:green" >Submitted </td>
+                                    {% else %}
+                                    <td style="color:red" > Not Submitted </td>
+                                    {% endif %}
+                                    <td> {{form.instance|get_assignment_possible_points}} </td>
+                                    {% for field in form %}
+                                        <td  >{{ field }}</td>
+                                    {% endfor %}
+                                            
+                                </tr>
+                            {% endfor %}
+                            <div class="form-group d-flex align-items-center flex-column">
+                                <button type="submit" class="btn btn-dark" style="width: max-content;" > Save Changes </button>
+                                <small>
+                                    *Changes wont apply if you refresh the page, make sure to save changes regularly.     
+                                </small>
+                            </div>
+                            
+                        </form>
+                    </tbody>
+                    {% comment %} <tbody>
                         <form method="POST" >
                             {% csrf_token %}
                             {{ formset.management_form }}
                             {% for assignment in assignments %}
                             
-                                <tr>
-                                    <th scope="row"> {{forloop.counter}} </th>
-                                    <td> {{assignment.name}} </td>
-                                    <td> {{assignment.category}} </td>
-                                    <td class="d-flex justify-content-center" > 
-                                        {{formset|form_iter:forloop.counter0|safe}} /{{assignment.possible_points}}
-                                    </td>
-                                    <td> {{assignment.due_date}} </td>
+                            <tr>
+                                <th scope="row"> {{forloop.counter}} </th>
+                                <td> {{assignment.name}} </td>
+                                <td> {{assignment.category}} </td>
+                                <td class="d-flex justify-content-center" > 
+                                    {{formset|form_iter:forloop.counter0|safe}} /{{assignment.possible_points}}
+                                </td>
+                                <td> {{assignment.due_date}} </td>
                                     <td> {{assignment|date_submitted:student}} </td>
                                     {% if assignment|is_submitted:student %} 
                                     <td style="color:green" >Submitted </td>
@@ -70,21 +102,20 @@
                                     <td style="color:red" > Not Submitted </td>
                                     {% endif %}
                                     <td class="" > <button type="submit" class="btn btn-dark" style="width: max-content;" > Save Changes </button> </td>
-                                            
+                                    
                                 </tr>
                                 {% endfor %}
                             </form>
-                    </tbody>
-                    <thead>
-                        <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Assignment</th>
+                        </tbody> {% endcomment %}
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Assignment</th>
                         <th scope="col">Type</th>
-                        <th scope="col">Grade</th>
                         <th scope="col">Due Date</th>
-                        <th scope="col">Submitted At</th>
                         <th scope="col">Submission</th>
-                        <th scope="col">Edit</th>
+                        <th scope="col">Possible Points</th>
+                        <th scope="col">Grade</th>
                         </tr>
                     </head>
                 </table>
