@@ -1,7 +1,5 @@
 {% extends 'sis/admin_templates/base_new.html' %}
 
-{% load crispy_forms_tags %}
-
 {% block sidebar %}
 <!-- Sidebar -->
 			<nav class="sidebar mCustomScrollbar _mCS_1 mCS-autoHide mCS_no_scrollbar" style="overflow: visible;"><div id="mCSB_1" class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside" style="max-height: none;" tabindex="0"><div id="mCSB_1_container" class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y" style="position:relative; top:0; left:0;" dir="ltr">
@@ -67,52 +65,47 @@
 			<!-- End sidebar -->
 
 {% endblock sidebar %}
+
 {% block content %}
 <!-- open sidebar menu -->
 <a class="btn btn-primary btn-customized open-menu" href="#" role="button">
     <i class="fas fa-align-left"></i> <span>Menu</span>
 </a>
-	<div class="d-flex flex-column justify-content-center align-items-center" style="min-height:90vh;">
-    <form method="POST" class="p-4">
-        {% csrf_token %}
+<section class="border-bottom my-5 ">
+        <h1 class="font-weight-bold" > Manage Students by Semester</h1>
+</section>
 
-        <fieldset class="form-group" > 
-            <legend> Add Semester </legend>
-            <div class="row justify-content-center mb-2">
-                <div class="col-6">
-                    {{ form.name|as_crispy_field }}
-                </div>
-                <div class="col-6">
-                    {{ form.year|as_crispy_field }}
-                </div>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-6">
-                    {{ form.archive|as_crispy_field }}
-					<small>
-						<p class="p-0" >
-							*If archive is set to 'No', all previous semesters will be archived.
-						</p>
-					</small>
-                </div>
-                <div class="col-6 text-center">
-                </div>
-            </div>
-        </fieldset>
-        <div class="form-group py-3">
-			<button type="submit" class="btn btn-dark" > Add Semester </button>
-			<a 
-				class="btn btn-primary" 
-				href="{% url 'dashboard' %}" 
-				> Back
-			</a>
-        </div>
-    </form>
+
+<div class="table-responsive p-0 overflow-auto" >
+    <table id="view_courses" class="table table-striped table-hover table-bordered text-center">
+        <thead>
+            <tr>
+            <th  scope="col">#</th>
+            <th scope="col">Semester</th>
+            <th scope="col">Year</th>
+            <th scope="col">View Semester Students</th>
+            </tr>
+        </head>
+        <tbody>
+            {% for semester in semesters %}
+                <tr>
+                    <th  scope="row"> {{forloop.counter}} </th>
+                    <td> {{semester.name}} </td>
+                    <td> {{semester.year}} </td>
+                    <td class="" ><a class="btn btn-dark btn-block" href="{% url 'view_students' semester.id %}" >View </a></td>
+                    
+                </tr>
+            {% endfor %}
+        </tbody>
+        <thead>
+            <tr>
+            <th scope="col">#</th>
+            <th scope="col">Semester</th>
+            <th scope="col">Year</th>
+            <th scope="col">View Semester Students</th>
+            </tr>
+        </head>
+    </table>
 </div>
-    {% comment %} <div class="border-top pt-3" >
-        <small class="text-muted" > Already have an account? <a class="ml-2" href="{% url 'login'  %}" >Sign In </a>  </small>
-    <div> {% endcomment %}
 
-
-
-{%endblock content %} 
+{% endblock content %}

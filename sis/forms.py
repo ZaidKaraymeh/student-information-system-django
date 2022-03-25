@@ -412,14 +412,12 @@ class MessageRecieversForm(forms.ModelForm):
 class AddFeeForm(forms.ModelForm):
     class Meta:
         model = Fee
-        fields = ['fee_year', 'note', 'amount_needed']
+        fields = ['note', 'amount_needed']
 
     def __init__(self, *args, **kwargs):
         super(AddFeeForm, self).__init__(*args, **kwargs) # Call to ModelForm constructor
-        self.fields['fee_year'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['note'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['amount_needed'].widget.attrs['style'] = 'width:100%; height:40px;'
-        self.fields['fee_year'].label = ""
         self.fields['note'].label = ""
         self.fields['amount_needed'].label = ""
 

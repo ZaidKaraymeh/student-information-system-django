@@ -17,7 +17,7 @@ from ..decorators import is_admin, is_staff
 
 
 @is_admin
-def view_semesters(request):
+def view_semesters_courses(request):
     user = CustomUser.objects.get(id=request.user.id)
     semesters = Semester.objects.all().order_by('-date_created')
 
@@ -27,11 +27,12 @@ def view_semesters(request):
         'semesters':semesters
     }
 
-    return render(request, "sis/admin_templates/view_semesters.html", context)
+    return render(request, "sis/admin_templates/view_semesters_courses.html", context)
 @is_admin
 def add_semester(request):
     user = CustomUser.objects.get(id=request.user.id)
-
+    last_semester_students = Semester.objects.last()
+    print(last_semester_students.students.all())
     if request.method == "POST":
         form = SemesterForm(request.POST)
         if form.is_valid():
@@ -43,11 +44,11 @@ def add_semester(request):
                     semester.save()
             
             f.save()
-
-
-
+            for student in last_semester_students.students.all():
+                f.students.add(student)
+            f.save()
             messages.success(request, f"Semester Added Successfully!")
-            return redirect("view_semesters")
+            return redirect("dashboard")
     else:
         form = SemesterForm()
 
@@ -202,8 +203,10 @@ def delete_course(request, id):
 
 # STUDENT VIEWS
 
-def add_student(request):
+def add_student(request, semester_id):
     user = CustomUser.objects.get(id=request.user.id)
+    semester = Semester.objects.get(id=semester_id)
+
     if request.method == "POST":
         form = AddStudentForm(request.POST)
         if form.is_valid():
@@ -211,23 +214,37 @@ def add_student(request):
             f.user_type = "STU"
             f.username = f"{form.cleaned_data.get('first_name')} {form.cleaned_data.get('last_name')}"
             f.save()
+            semester.students.add(f)
             messages.success(request, f"{form.cleaned_data.get('first_name')} {form.cleaned_data.get('last_name')} has been added successfully!")
-            return redirect("view_students")
+            return redirect("view_students", semester_id=semester_id)
     else:
         form = AddStudentForm()
           
     context = {
         "form":form,
-        "user":user
+        "user":user,
+        'semester':semester
         }
     return render(request, "sis/admin_templates/add_student.html", context)
 
-def view_students(request):
+def view_semesters_students(request):
     user = CustomUser.objects.get(id=request.user.id)
-    students = CustomUser.objects.filter(user_type = "STU")
+    semesters = Semester.objects.all()
+    context = {
+        "semesters": semesters,
+        "user":user
+        }
+    return render(request, "sis/admin_templates/view_semesters_students.html", context)
+
+def view_students(request, semester_id):
+    user = CustomUser.objects.get(id=request.user.id)
+    students = CustomUser.objects.filter(user_type = "STU", semester__id=semester_id)
+    semester = Semester.objects.get(id=semester_id)
+
     context = {
         "students": students,
-        "user":user
+        "user":user,
+        'semester':semester
         }
     return render(request, "sis/admin_templates/view_students.html", context)
 
@@ -898,65 +915,75 @@ def edit_attendance_course_report(request, course_id, attendance_id):
 @is_staff
 def dashboard(request):
     user = CustomUser.objects.get(id=request.user.id)
+    semesters = Semester.objects.all().order_by('-date_created')
+    # reports = AttendanceReport.objects.all()
+    # attendance_present = 0
 
-    reports = AttendanceReport.objects.all()
-    attendance_present = 0
+    # attendance_total = 0
+    # attendance_absent = attendance_total - attendance_present
+    # for report in reports:
+    #     if report.is_absent == False:
+    #         attendance_present += 1
 
-    attendance_total = 0
-    attendance_absent = attendance_total - attendance_present
-    for report in reports:
-        if report.is_absent == False:
-            attendance_present += 1
+    #     attendance_total += 1
 
-        attendance_total += 1
-
-    attendance_present_percentage =   str(round(attendance_present/attendance_total, 4)*100)
+    # attendance_present_percentage =   str(round(attendance_present/attendance_total, 4)*100)
     
 
 
     context = {
-        "attendance_total": attendance_total,
-        "attendance_present": attendance_present,
-        "attendance_absent": attendance_absent,
-        "attendance_present_percentage": attendance_present_percentage,
-        "user":user
+        # "attendance_total": attendance_total,
+        # "attendance_present": attendance_present,
+        # "attendance_absent": attendance_absent,
+        # "attendance_present_percentage": attendance_present_percentage,
+        "user":user,
+        'semesters':semesters,
 
     }
-    return render(request, "sis/admin_templates/dashboard.html", context)
+    return render(request, "sis/admin_templates/view_semesters.html", context)
 
 @is_admin
-def fees(request):
+def fees(request, semester_id):
     user = CustomUser.objects.get(id=request.user.id)
-    fees = Fee.objects.all()
+    fees = Fee.objects.filter(semester__id=semester_id)
+    semester = Semester.objects.get(id=semester_id)
+    
     context = {
         "user": user,
         "fees": fees,
+        'semester':semester
     }
     return render(request, "sis/admin_templates/fees.html", context)
 
 @is_admin
-def add_fee(request):
+def add_fee(request, semester_id):
     user = CustomUser.objects.get(id=request.user.id)
-
+    semester = Semester.objects.get(id=semester_id)
     if request.method == "POST":
         form = AddFeeForm(request.POST)
         if form.is_valid():
-            form.save()
+            f= form.save(commit=False)
+            f.fee_year = semester.year
+            f.save()
+            semester.fees.add(f)
+            semester.save()
             messages.success(request, "Fee Added successfully!")
-            return redirect("fees")
+            return redirect("fees", semester_id=semester_id)
     else:
         form = AddFeeForm()
 
     context = {
         "form": form,
         "user": user,
+        'semester':semester,
     }
 
     return render(request, "sis/admin_templates/add_fee.html", context)
 
 @is_admin
-def edit_fee(request, fee_id):
+def edit_fee(request, fee_id, semester_id):
     user = CustomUser.objects.get(id=request.user.id)
+    semester = Semester.objects.get(id=semester_id)
     fee = Fee.objects.get(id=fee_id)
     if request.method == "POST":
         form = AddFeeForm(request.POST, instance=fee)
@@ -970,6 +997,7 @@ def edit_fee(request, fee_id):
     context = {
         "form": form,
         "user": user,
+        "semester":semester,
     }
 
     return render(request, "sis/admin_templates/add_fee.html", context)
@@ -1004,28 +1032,31 @@ def edit_fee_report(request, report_id):
 
 
 @is_admin
-def fee_instance(request, fee_id):
+def fee_instance(request, fee_id, semester_id):
     user = CustomUser.objects.get(id=request.user.id)
     fee = Fee.objects.get(id=fee_id)
+    semester = Semester.objects.get(id=semester_id)
 
 
 
     context = {
         "user": user,
         "fees": fee,
+        'semester':semester,
     }
     return render(request, "sis/admin_templates/fee_instance.html", context)
 
     
 
-def fees_student_portal(request, student_id):
+def fees_student_portal(request, student_id, semester_id):
+    semester = Semester.objects.get(id=semester_id)
     user = CustomUser.objects.get(id=request.user.id)
     student = CustomUser.objects.get(id=student_id)
 
     if student != user and user == "STU":
         return HTTPResponse("Acess Denied")
 
-    fee = Fee.objects.last()
+    fee = Fee.objects.filter(semester__id=semester_id)
     report, created = FeeReport.objects.get_or_create(
     student = student,
     defaults={
@@ -1043,8 +1074,21 @@ def fees_student_portal(request, student_id):
         "student":student,
         "report":report,
         "fee":fee,
+        'semester':semester,
 
     }
     return render(request, "sis/admin_templates/fee_report.html", context)
     
 
+@is_admin
+def view_semesters_fees(request):
+    user = CustomUser.objects.get(id=request.user.id)
+    semesters = Semester.objects.all().order_by('-date_created')
+
+
+    context = {
+        'user':user,
+        'semesters':semesters
+    }
+
+    return render(request, "sis/admin_templates/view_semesters_fees.html", context)

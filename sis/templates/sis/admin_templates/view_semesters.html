@@ -95,7 +95,6 @@
             <th scope="col">Semester</th>
             <th scope="col">Year</th>
             <th scope="col">Edit Semester</th>
-            <th scope="col">View Courses</th>
             </tr>
         </head>
         <tbody>
@@ -105,7 +104,6 @@
                     <td> {{semester.name}} </td>
                     <td> {{semester.year}} </td>
                     <td class="" ><a class="btn btn-dark btn-block" href="{% url 'edit_semester' semester.id %}" >Edit </a></td>
-                    <td class="" ><a class="btn btn-primary btn-block" href="{% url 'view_courses' semester.id %}" > View </a> </td>
                     
                 </tr>
             {% endfor %}
@@ -116,7 +114,6 @@
             <th scope="col">Semester</th>
             <th scope="col">Year</th>
             <th scope="col">Edit Semester</th>
-            <th scope="col">View Courses</th>
             </tr>
         </head>
     </table>
