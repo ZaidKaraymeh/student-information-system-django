@@ -78,6 +78,7 @@ class Course(models.Model):
     students = models.ManyToManyField(CustomUser)
     year = models.CharField(null = True, max_length=10)
     weight = models.ForeignKey(GradeWeight, related_name="weight", on_delete=models.CASCADE, null=True)
+    archive = models.BooleanField(blank=True, null=True, default=False)
     # assignments = models.ManyToManyField(Assignment)
     # year = models.ForeignKey(Year, on_delete=models.CASCADE)
     # twentyTwentyone = "2020/2021"
@@ -110,6 +111,14 @@ class Course(models.Model):
 
     def __str__(self):
         return f"{self.code} {self.name} {self.section}"
+
+class Semester(models.Model):
+    name = models.CharField(null = True, max_length=50)
+    year = models.CharField(null = True, max_length=10)
+    courses = models.ManyToManyField(Course)
+    date_created = models.DateField(auto_now=False, auto_now_add=True, null=True)
+    archive = models.BooleanField(blank=True, default=False, null=True)
+    
 
 class Grade(models.Model):
 

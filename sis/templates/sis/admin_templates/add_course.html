@@ -92,16 +92,15 @@
                     {{ form.code|as_crispy_field }}
                 </div>
 				<div class="col-6">
-					{{ form.year|as_crispy_field }}
+					{{ form.instructor|as_crispy_field }}
 				</div>
             </div>
-			{% if user.user_type == 'ADM' %}
+			{% comment %} {% if user.user_type == 'ADM' %}
 				<div class="row justify-content-start">
 					<div class="col-6">
-						{{ form.instructor|as_crispy_field }}
 					</div>
 				</div>
-			{% endif %}
+			{% endif %} {% endcomment %}
             <div class="row justify-content-start mt-5">
 				<div class="col-12">
 					<h4> Grade Weight </h4>
@@ -136,7 +135,7 @@
 			<button type="submit" class="btn btn-dark" > Add Course </button>
 			<a 
 				class="btn btn-primary" 
-				href="{% url 'view_courses' %}" 
+				href="{% url 'view_courses' semester.id %}" 
 				> Back
 			</a>
         </div>

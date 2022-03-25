@@ -2,8 +2,8 @@ from http.client import HTTPResponse
 from multiprocessing import context
 from django.shortcuts import redirect, render, HttpResponse
 
-from ..forms import AddCourseForm, AddFeeForm, AddFeeReportForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, AssignmentForm, AttendanceReportForm, PostForm, AssignmentForm, AssignmentSubmissionForm,  AddMultipleChoiceQuestionForm, AddTestForm, GradeWeightForm
-from users.models import Course, CustomUser, Post, Grade, Assignment, AssignmentSubmission, AssignmentSubmissionFile, Attendance, AttendanceReport, AssignmentFile, Fee, FeeReport
+from ..forms import AddCourseForm, AddFeeForm, AddFeeReportForm, AddStaffForm, AddStudentForm, AddStudentToCourseForm, AssignmentForm, AttendanceReportForm, PostForm, AssignmentForm, AssignmentSubmissionForm,  AddMultipleChoiceQuestionForm, AddTestForm, GradeWeightForm, SemesterForm
+from users.models import Course, CustomUser, Post, Grade, Assignment, AssignmentSubmission, AssignmentSubmissionFile, Attendance, AttendanceReport, AssignmentFile, Fee, FeeReport, Semester
 from django.contrib import messages
 from django.utils import timezone
 from django.forms import modelformset_factory
@@ -11,9 +11,77 @@ import xlwt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from ..decorators import is_admin, is_staff
+
+
+
+
+
 @is_admin
-def add_course(request):
+def view_semesters(request):
     user = CustomUser.objects.get(id=request.user.id)
+    semesters = Semester.objects.all().order_by('-date_created')
+
+
+    context = {
+        'user':user,
+        'semesters':semesters
+    }
+
+    return render(request, "sis/admin_templates/view_semesters.html", context)
+@is_admin
+def add_semester(request):
+    user = CustomUser.objects.get(id=request.user.id)
+
+    if request.method == "POST":
+        form = SemesterForm(request.POST)
+        if form.is_valid():
+            f = form.save(commit=False)
+            semesters = Semester.objects.all().order_by('-date_created')
+            if not f.archive:
+                for semester in semesters:
+                    semester.archive = True
+                    semester.save()
+            
+            f.save()
+
+
+
+            messages.success(request, f"Semester Added Successfully!")
+            return redirect("view_semesters")
+    else:
+        form = SemesterForm()
+
+
+    context = {
+        'user':user,
+        'form': form,
+    }
+    return render(request, "sis/admin_templates/add_semester.html", context)
+@is_admin
+def edit_semester(request, semester_id):
+    user = CustomUser.objects.get(id=request.user.id)
+    semester = Semester.objects.get(id=semester_id)
+    if request.method == "POST":
+        form = SemesterForm(request.POST, instance=semester)
+        print(dict(form.fields))
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Semester Editted Successfully!")
+            return redirect("view_semesters")
+    else:
+        form = SemesterForm(instance=semester)
+
+
+    context = {
+        'user':user,
+        'form': form,
+    }
+    return render(request, "sis/admin_templates/edit_semester.html", context)
+
+@is_admin
+def add_course(request, semester_id):
+    user = CustomUser.objects.get(id=request.user.id)
+    semester = Semester.objects.get(id=semester_id)
     if request.method == "POST":
         form = AddCourseForm(request.POST)
         weight_form = GradeWeightForm(request.POST)
@@ -22,8 +90,11 @@ def add_course(request):
 
             f = form.save(commit=False)
             f.weight = w
+            f.year = semester.year
             f.save()
             w.save()
+            semester.courses.add(f)
+            semester.save()
             messages.success(request, f"{form.cleaned_data.get('name')} has been added successfully!")
             return redirect("view_courses")
     else:
@@ -34,6 +105,7 @@ def add_course(request):
         "form":form,
         "user":user,
         "weight_form":weight_form,
+        'semester':semester,
         }
     return render(request, "sis/admin_templates/add_course.html", context)
 
@@ -47,15 +119,18 @@ def delete_course_enrolled(request, id, course_id, *args, **kwargs):
     messages.success(request, f"{course.code} Sec {course.section} has been dropped successfully from {user.first_name} {user.last_name} ")
     return redirect("view_student_enrolled_courses", id=id)
 
-def view_courses(request):
+def view_courses(request, semester_id):
     user = CustomUser.objects.get(id=request.user.id)
+    semester = Semester.objects.get(id=semester_id)
+
     if user.user_type == "STA":
         courses = Course.objects.filter(instructor__id = user.id).order_by('code')
     else:
-        courses = Course.objects.all().order_by('code')
+        courses = Course.objects.filter(semester__id=semester_id).order_by('code')
     context = {
         "courses": courses,
-        "user":user
+        "user":user,
+        'semester':semester,
         }
     return render(request, "sis/admin_templates/view_courses.html", context)
 

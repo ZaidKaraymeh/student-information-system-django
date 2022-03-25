@@ -3,7 +3,7 @@ from email.policy import default
 from django import forms
 # from django.forms import ChoiceWidget
 
-from users.models import CustomUser, Course, Post, Assignment, AssignmentSubmission, Quiz, MultipleChoiceQuestion, AttendanceReport, Message, Reply, Grade, Fee, FeeReport, GradeWeight
+from users.models import CustomUser, Course, Post, Assignment, AssignmentSubmission, Quiz, MultipleChoiceQuestion, AttendanceReport, Message, Reply, Grade, Fee, FeeReport, GradeWeight, Semester
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.admin import widgets                                       
 
@@ -39,21 +39,41 @@ class AddCourseForm(forms.ModelForm):
         # Interacts with User model
         model = Course
         # What fields to show and in which order
-        fields = ["name", "code", "year", "section", "instructor"]
+        fields = ["name", "code", "section", "instructor"]
         
     def __init__(self, *args, **kwargs):
         super(AddCourseForm  , self).__init__(*args, **kwargs)
 
         self.fields['name'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['code'].widget.attrs['style'] = 'width:100%; height:40px;'
-        self.fields['year'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['section'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['instructor'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['name'].widget.attrs['class'] = 'form-control'
         self.fields['code'].widget.attrs['class'] = 'form-control'
-        self.fields['year'].widget.attrs['class'] = 'form-control'
         self.fields['section'].widget.attrs['class'] = 'form-control'
         self.fields['instructor'].widget.attrs['class'] = 'form-control'
+
+class SemesterForm(forms.ModelForm):
+    archive = forms.ChoiceField(choices=[
+        (False, "No"),
+        (True, "Yes"),
+    ], label="Archive")
+    class Meta:
+        # Interacts with User model
+        model = Semester
+        # What fields to show and in which order
+        fields = ["name", "year", "archive"]
+        
+    def __init__(self, *args, **kwargs):
+        super(SemesterForm  , self).__init__(*args, **kwargs)
+
+        self.fields['name'].widget.attrs['style'] = 'width:100%; height:40px;'
+        self.fields['year'].widget.attrs['style'] = 'width:100%; height:40px;'
+        self.fields['archive'].widget.attrs['style'] = 'width:100%; height:40px;'
+        self.fields['name'].widget.attrs['class'] = 'form-control'
+        self.fields['year'].widget.attrs['class'] = 'form-control'
+        self.fields['archive'].widget.attrs['class'] = 'form-control'
+
 def get_student_courses():
     COURSE_CHOICES = [
         (

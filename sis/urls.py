@@ -7,8 +7,12 @@ urlpatterns = [
     path("", views.home, name="home" ),
     path("sis/", views.home_sis, name="home_sis" ),
 
-    path("sis/add_course", admin_views.add_course, name="add_course" ),
-    path("sis/view_courses", admin_views.view_courses, name="view_courses"),
+    path("sis/add_course/<int:semester_id>", admin_views.add_course, name="add_course" ),
+
+    path("sis/view_semesters", admin_views.view_semesters, name="view_semesters"),
+    path("sis/add_semester", admin_views.add_semester, name="add_semester"),
+    path("sis/edit_semester/<int:semester_id>", admin_views.edit_semester, name="edit_semester"),
+    path("sis/view_courses/semester/<int:semester_id>", admin_views.view_courses, name="view_courses"),
     path("sis/edit_course/<int:id>", admin_views.edit_course, name="edit_course"),
     path("sis/delete_course/<int:id>", admin_views.delete_course, name="delete_course"),
     path("sis/export/courses", admin_views.export_courses, name="export_courses"),
