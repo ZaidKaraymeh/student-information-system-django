@@ -31,8 +31,7 @@ def view_semesters_courses(request):
 @is_admin
 def add_semester(request):
     user = CustomUser.objects.get(id=request.user.id)
-    last_semester_students = Semester.objects.last()
-    print(last_semester_students.students.all())
+    last_semester_students = Semester.objects.last() if Semester.objects.last() != type(None) else None
     if request.method == "POST":
         form = SemesterForm(request.POST)
         if form.is_valid():
@@ -44,9 +43,32 @@ def add_semester(request):
                     semester.save()
             
             f.save()
-            for student in last_semester_students.students.all():
-                f.students.add(student)
+            if last_semester_students != None:
+                for student in last_semester_students.students.all():
+                    f.students.add(student)
+                f.save()
+
+            fee = Fee.objects.create(
+                fee_year = f.year,
+                amount_needed=500,
+                note = "---",
+            )
+            fee.save()
+            f.fees.add(fee)
             f.save()
+            if last_semester_students != None:
+                for student in last_semester_students.students.all():
+                    report, created = FeeReport.objects.get_or_create(
+                    student = student,
+                    defaults={
+                        'note': "---",
+                        "amount_paid": 0,
+                        "paid_full":False,
+                        },
+                    )
+                    fee.student_fees.add(report)
+                    fee.save()
+            
             messages.success(request, f"Semester Added Successfully!")
             return redirect("dashboard")
     else:
@@ -215,6 +237,19 @@ def add_student(request, semester_id):
             f.username = f"{form.cleaned_data.get('first_name')} {form.cleaned_data.get('last_name')}"
             f.save()
             semester.students.add(f)
+            fee = semester.fees.last()
+            report, created = FeeReport.objects.get_or_create(
+            student = f,
+            defaults={
+                'note': "---",
+                "amount_paid": 0,
+                "paid_full":False,
+                },
+            )
+            if created:
+                fee.student_fees.add(report)
+            fee.save()
+
             messages.success(request, f"{form.cleaned_data.get('first_name')} {form.cleaned_data.get('last_name')} has been added successfully!")
             return redirect("view_students", semester_id=semester_id)
     else:
@@ -278,12 +313,12 @@ def export_students(request):
     return response
 
 
-def view_student_enrolled_courses(request, id):
+def view_student_enrolled_courses(request, id, semester_id):
     user = CustomUser.objects.get(id=request.user.id)
     courses_enrolled = Course.objects.filter(students__id = id)
     student = CustomUser.objects.get(id=id)
     user = CustomUser.objects.get(id=request.user.id)
-
+    semester = Semester.objects.get(id=semester_id)
     assigns = []
     for course in courses_enrolled:
         assigns = [
@@ -323,7 +358,15 @@ def view_student_enrolled_courses(request, id):
             return redirect("view_student_enrolled_courses", id=id)
             
     else:
-        form = AddStudentToCourseForm()
+        def get_student_courses(semester_id):
+            COURSE_CHOICES = [
+                (
+                    course.id ,
+                    f"{course.code} {course.name} Sec {course.section} {course.year}"
+                    ) for course in Course.objects.filter(semester__id=semester_id).order_by('code')
+            ]
+            return COURSE_CHOICES
+        form = AddStudentToCourseForm(choices=get_student_courses(semester_id))
 
 
     
@@ -334,6 +377,7 @@ def view_student_enrolled_courses(request, id):
         "form":form,
         "user":user,
         "assignments":assigns,
+        'semester':semester,
         }
     return render(request, "sis/admin_templates/view_student_enrolled_courses.html", context)
 

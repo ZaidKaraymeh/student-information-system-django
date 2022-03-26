@@ -46,7 +46,7 @@
                     <td> {{fee.amount_paid}} </td>
                     <td> {{fee.note}} </td>
                     <td class="" > <a class="btn btn-dark btn-block" href="{% url 'edit_fee_report' fee.id %}" > Edit Fee </a> </td>
-                    <td class="" > <a class="btn btn-primary btn-block" href="{% url 'fees_report' fee.student.id %}" > View Fee </a> </td>
+                    <td class="" > <a class="btn btn-primary btn-block" href="{% url 'fees_report' fee.student.id semester.id %}" > View Fee </a> </td>
                 </tr>
             {% endfor %}
         </tbody>

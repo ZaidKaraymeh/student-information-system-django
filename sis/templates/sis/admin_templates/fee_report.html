@@ -21,12 +21,12 @@
         <div class="col p-4 d-flex justify-content-end align-items-start" >
                 <a 
                     class="btn btn-dark mx-2" 
-                    href="{% url 'view_students'  %}" 
+                    href="{% url 'view_students' semester.id  %}" 
                     > Export
                 </a>
                 <a 
                     class="btn btn-primary" 
-                    href="{% url 'view_students' %}" 
+                    href="{% url 'view_students' semester.id %}" 
                     > Back
                 </a>
             </div>

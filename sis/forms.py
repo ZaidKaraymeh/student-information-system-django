@@ -84,6 +84,10 @@ def get_student_courses():
     return COURSE_CHOICES
 class AddStudentToCourseForm(forms.Form):
     courses = forms.ChoiceField(choices=get_student_courses, label="")
+    
+    def __init__(self, choices=[], *args, **kwargs):
+        super(AddStudentToCourseForm  , self).__init__(*args, **kwargs)
+        self.fields['courses'].choices = choices
     # class Meta:
     #     # Interacts with User model
     #     model = Course

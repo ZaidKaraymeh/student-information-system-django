@@ -440,3 +440,6 @@ class Semester(models.Model):
     fees = models.ManyToManyField(Fee)
     date_created = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
     archive = models.BooleanField(blank=True, default=False, null=True)
+
+    def is_archived(self):
+        return "Yes" if self.archive else "No"

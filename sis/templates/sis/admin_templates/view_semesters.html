@@ -94,6 +94,7 @@
             <th  scope="col">#</th>
             <th scope="col">Semester</th>
             <th scope="col">Year</th>
+            <th scope="col">Archive</th>
             <th scope="col">Edit Semester</th>
             </tr>
         </head>
@@ -103,6 +104,7 @@
                     <th  scope="row"> {{forloop.counter}} </th>
                     <td> {{semester.name}} </td>
                     <td> {{semester.year}} </td>
+                    <td> {{semester.is_archived}} </td>
                     <td class="" ><a class="btn btn-dark btn-block" href="{% url 'edit_semester' semester.id %}" >Edit </a></td>
                     
                 </tr>
@@ -113,6 +115,7 @@
             <th scope="col">#</th>
             <th scope="col">Semester</th>
             <th scope="col">Year</th>
+            <th scope="col">Archive</th>
             <th scope="col">Edit Semester</th>
             </tr>
         </head>
