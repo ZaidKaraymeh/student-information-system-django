@@ -115,7 +115,7 @@
                     <td> {{course.code}} </td>
                     <td> {{course.year}} </td>
                     <td> {{course.section}} </td>
-                    <td class="" ><a class="btn btn-dark btn-block" href="{% url 'edit_course' id=course.id %}" >Edit </a></td>
+                    <td class="" ><a class="btn btn-dark btn-block" href="{% url 'edit_course' course.id semester.id %}" >Edit </a></td>
                     <td class="" > <a class="btn btn-primary btn-block" href="{% url 'course_dashboard' id=course.id instructor_id=course.instructor.id  %}" > View Dashboard </a> </td>
                     
                 </tr>

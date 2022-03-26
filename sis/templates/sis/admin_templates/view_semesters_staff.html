@@ -1,6 +1,5 @@
 {% extends 'sis/admin_templates/base_new.html' %}
 
-{% load crispy_forms_tags %}
 {% block sidebar %}
 <!-- Sidebar -->
 			<nav class="sidebar mCustomScrollbar _mCS_1 mCS-autoHide mCS_no_scrollbar" style="overflow: visible;"><div id="mCSB_1" class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside" style="max-height: none;" tabindex="0"><div id="mCSB_1_container" class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y" style="position:relative; top:0; left:0;" dir="ltr">
@@ -66,66 +65,34 @@
 			<!-- End sidebar -->
 
 {% endblock sidebar %}
+
 {% block content %}
 <!-- open sidebar menu -->
 <a class="btn btn-primary btn-customized open-menu" href="#" role="button">
     <i class="fas fa-align-left"></i> <span>Menu</span>
 </a>
-    <div class="col-10 p-4 text-center" >
-        {% comment %} <form method="POST" class="p-4">
-            {% csrf_token %}
+<section class="border-bottom my-5 ">
+        <h1 class="font-weight-bold" > Manage Staff by Semester</h1>
+</section>
 
-            <fieldset class="form-group" > 
-                <legend> Enroll New Course </legend>
-                {{ form|crispy }}
-            </fieldset>
-            <div class="form-group">
-                <button type="submit" class="btn btn-dark"> Enroll </button>
-            </div>
-        </form> {% endcomment %}
-        <h2 class="p-2 text-center" > {% if instructor.first_name %} 
-                    {{instructor.first_name}} {{instructor.last_name}}'s Classes
-            {% else %} 
-                    {{instructor.username}}'s Classes
-            {% endif %} 
-        </h2>
-    </div>
-    <div class="col p-4  d-flex justify-content-end align-items-start gap-2" >
-        <a 
-            class="btn btn-dark mx-2" 
-            href="{% url 'export_staff_enrolled_course' id=instructor.id%}" 
-            > Export
-        </a>
-        <a 
-            class="btn btn-primary" 
-            href="{% url 'view_staff' semester.id %}" 
-            > Back
-        </a>
-    </div>
 
-<div class="table-responsive p-0 overflow-auto" style="height:100vh;" >
-    <table id="view_courses" class="table table-striped table-hover table-bordered text-center ">
+<div class="table-responsive p-0 overflow-auto" >
+    <table id="view_courses" class="table table-striped table-hover table-bordered text-center">
         <thead>
             <tr>
-            <th scope="col">#</th>
-            <th scope="col">Course</th>
-            <th scope="col">Instructor</th>
-            <th scope="col">Code</th>
-            <th scope="col">Section</th>
-            <th scope="col">Change Instructor</th>
-            <th scope="col">Personal Analysis</th>
+            <th  scope="col">#</th>
+            <th scope="col">Semester</th>
+            <th scope="col">Year</th>
+            <th scope="col">View Semester Staff</th>
             </tr>
         </head>
         <tbody>
-            {% for course in courses %}
+            {% for semester in semesters %}
                 <tr>
                     <th  scope="row"> {{forloop.counter}} </th>
-                    <td> {{course.name}} </td>
-                    <td> {{course.instructor.first_name}} {{course.instructor.last_name}} </td>
-                    <td> {{course.code}} </td>
-                    <td> {{course.section}} </td>
-                    <td class="" ><a class="btn btn-dark btn-block" href="{% url 'edit_course' course.id %}" >Change </a></td>
-                    <td class="" > <a class="btn btn-primary btn-block" href="#{{course.id}}_dashboard" > View Analysis </a> </td>
+                    <td> {{semester.name}} </td>
+                    <td> {{semester.year}} </td>
+                    <td class="" ><a class="btn btn-dark btn-block" href="{% url 'view_staff' semester.id %}" >View </a></td>
                     
                 </tr>
             {% endfor %}
@@ -133,12 +100,9 @@
         <thead>
             <tr>
             <th scope="col">#</th>
-            <th scope="col">Course</th>
-            <th scope="col">Instructor</th>
-            <th scope="col">Code</th>
-            <th scope="col">Section</th>
-            <th scope="col">Change INstructor</th>
-            <th scope="col">Personal Analysis</th>
+            <th scope="col">Semester</th>
+            <th scope="col">Year</th>
+            <th scope="col">View Semester Staff</th>
             </tr>
         </head>
     </table>

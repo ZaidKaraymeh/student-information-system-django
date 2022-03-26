@@ -76,13 +76,18 @@
 <div class="col p-4 d-flex justify-content-end align-items-start" >
     <a 
         class="btn btn-dark mx-2" 
-        href="{% url 'add_staff' %}" 
+        href="{% url 'add_staff' semester.id %}" 
         > Add Staff
     </a>
     <a 
-        class="btn btn-primary" 
+        class="btn btn-primary mr-2" 
         href="{% url 'export_courses' %}" 
         > Export
+    </a>
+    <a 
+        class="btn btn-dark" 
+        href="{% url 'view_semesters_staff' %}" 
+        > Back
     </a>
 </div>
 <div class="table-responsive p-0 overflow-auto" style="height:100vh;" >
@@ -94,7 +99,6 @@
             <th scope="col">Phone Number</th>
             <th scope="col">Address</th>
             <th scope="col">Intructor</th>
-            <th scope="col">Analysis</th>
             </tr>
         </head>
         <tbody>
@@ -113,8 +117,7 @@
                         <td> {{staff.phone_number}} </td>
                     {% endif %}
                     <td> {{staff.address}} </td>
-                    <td class="" ><a class="btn btn-dark btn-block" href="{% url 'view_instructor_enrolled_courses' id=staff.id %}" >View Courses </a></td>
-                    <td class="" > <a class="btn btn-primary btn-block" href="#{{staff.id}}_dashboard" > View Analysis </a> </td>
+                    <td class="" ><a class="btn btn-dark btn-block" href="{% url 'view_instructor_enrolled_courses' staff.id semester.id %}" >View Courses </a></td>
 
                     
                 </tr>
@@ -127,7 +130,6 @@
             <th scope="col">Phone Number</th>
             <th scope="col">Address</th>
             <th scope="col">Instructor</th>
-            <th scope="col">Analysis</th>
             </tr>
         </head>
     </table>

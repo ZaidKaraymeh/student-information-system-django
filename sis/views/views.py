@@ -84,7 +84,6 @@ def home_sis(request):
         except EmptyPage:
             items = paginator.page(paginator.num_pages)
 
-        # print(courses, user.username)
         context = {
             "user": user,
             "courses": courses,
@@ -281,7 +280,6 @@ def inbox_sent(request):
 
     sent_messages = Message.objects.filter(sender_id=user.id).order_by("-date_sent")
 
-    print(sent_messages)
 
     page = request.GET.get('page', 1)
     paginator = Paginator(sent_messages, 10)

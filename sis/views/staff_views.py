@@ -23,7 +23,6 @@ def gradebook_course(request, course_id):
 
     students = course.students.all()    
 
-    print(students)
 
 
     context = {
@@ -73,7 +72,6 @@ def gradebook_report_edit(request, course_id, student_id):
 
         if formset.is_valid():
             formset.save()
-            print("form is valid")
             messages.success(request, "Grades updated successfully!")
             return redirect("gradebook_report", course_id=course_id, student_id=student_id )
         else:

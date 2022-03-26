@@ -5,7 +5,6 @@ from users.models import CustomUser
 
 def is_admin(function):
     def new_function(request, *args, **kwargs):
-        print(request)
         user = CustomUser.objects.get(id=request.user.id)
         if user.user_type != "ADM":
             return HttpResponse("Access Denied")
@@ -14,7 +13,6 @@ def is_admin(function):
     return new_function
 def is_staff(function):
     def new_function(request, *args, **kwargs):
-        print(request)
         user = CustomUser.objects.get(id=request.user.id)
         if user.user_type != "STA" and user.user_type != "ADM":
             return HttpResponse("Access Denied")

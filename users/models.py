@@ -437,6 +437,7 @@ class Semester(models.Model):
     year = models.CharField(null = True, max_length=10)
     courses = models.ManyToManyField(Course)
     students = models.ManyToManyField(CustomUser)
+    staff = models.ManyToManyField(CustomUser, related_name="semester_staff")
     fees = models.ManyToManyField(Fee)
     date_created = models.DateTimeField(auto_now=False, auto_now_add=True, null=True)
     archive = models.BooleanField(blank=True, default=False, null=True)

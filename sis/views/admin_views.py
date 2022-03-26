@@ -86,7 +86,6 @@ def edit_semester(request, semester_id):
     semester = Semester.objects.get(id=semester_id)
     if request.method == "POST":
         form = SemesterForm(request.POST, instance=semester)
-        print(dict(form.fields))
         if form.is_valid():
             form.save()
             messages.success(request, f"Semester Editted Successfully!")
@@ -119,11 +118,11 @@ def add_course(request, semester_id):
             semester.courses.add(f)
             semester.save()
             messages.success(request, f"{form.cleaned_data.get('name')} has been added successfully!")
-            return redirect("view_courses")
+            return redirect("view_courses", semester_id=semester_id)
     else:
         form = AddCourseForm()
         weight_form = GradeWeightForm()
-        form.fields["instructor"].queryset = CustomUser.objects.filter(user_type = "STA")    
+        form.fields["instructor"].queryset = semester.staff.all()    
     context = {
         "form":form,
         "user":user,
@@ -187,10 +186,11 @@ def export_courses(request):
     return response
 
 @is_admin
-def edit_course(request, id):
+def edit_course(request, id, semester_id):
     course = Course.objects.get(id=id)
     weight = course.weight
     user = CustomUser.objects.get(id=request.user.id)
+    semester = Semester.objects.get(id=semester_id)
     if request.method == "POST":
         form = AddCourseForm(request.POST, instance=course)
         weight_form = GradeWeightForm(request.POST, instance=weight)
@@ -198,16 +198,17 @@ def edit_course(request, id):
             weight_form.save()
             form.save()
             messages.success(request, f"{form.cleaned_data.get('code')} Section {form.cleaned_data.get('section')} has been Edited successfully!")
-            return redirect("view_courses")
+            return redirect("view_courses", semester_id=semester_id)
     else:
         form = AddCourseForm(instance=course)
         weight_form = GradeWeightForm(instance=weight)
-        form.fields["instructor"].queryset = CustomUser.objects.filter(user_type = "STA")    
+        form.fields["instructor"].queryset = semester.staff.all()
     context = {
         "form":form, 
         "course":course,
         "user":user,
         "weight_form": weight_form,
+        'semester':semester,
         }
     return render(request, "sis/admin_templates/add_course.html", context)
 
@@ -270,6 +271,15 @@ def view_semesters_students(request):
         "user":user
         }
     return render(request, "sis/admin_templates/view_semesters_students.html", context)
+
+def view_semesters_staff(request):
+    user = CustomUser.objects.get(id=request.user.id)
+    semesters = Semester.objects.all()
+    context = {
+        "semesters": semesters,
+        "user":user
+        }
+    return render(request, "sis/admin_templates/view_semesters_staff.html", context)
 
 def view_students(request, semester_id):
     user = CustomUser.objects.get(id=request.user.id)
@@ -341,14 +351,12 @@ def view_student_enrolled_courses(request, id, semester_id):
             try:
                 assignments = Assignment.objects.filter(course=course)
                 for assignment in assignments:
-                    print(assignment)
                     grade = Grade.objects.create(
                         student=student,
                         course = course,
                         possible_points = assignment.possible_points,
                     )
                     grade.save()
-                    print(grade)
                     assignment.students_grades.add(grade)
                     assignment.save()
             except:
@@ -412,8 +420,9 @@ def view_student_enrolled_grades(request, student_id):
 
 
 @is_admin
-def add_staff(request):
+def add_staff(request, semester_id):
     user = CustomUser.objects.get(id=request.user.id)
+    semester = Semester.objects.get(id=semester_id)
     if request.method == "POST":
         form = AddStaffForm(request.POST)
         if form.is_valid():
@@ -421,37 +430,45 @@ def add_staff(request):
             f.username = f"{form.cleaned_data.get('first_name')} {form.cleaned_data.get('last_name')}"
             f.user_type = "STA"
             f.save()
+            semester.staff.add(f)
+            semester.save()
             messages.success(request, f"{form.cleaned_data.get('first_name')} {form.cleaned_data.get('last_name')} has been added successfully!")
-            return redirect("view_staff")
+            return redirect("view_staff", semester_id=semester_id)
     else:
         form = AddStaffForm()
           
     context = {
         "form":form,
-        "user":user
+        "user":user,
+        "semester":semester,
         }
     return render(request, "sis/admin_templates/add_staff.html", context)
 
 @is_admin
-def view_staff(request):
+def view_staff(request, semester_id):
     user = CustomUser.objects.get(id=request.user.id)
-    staffs = CustomUser.objects.filter(user_type = "STA")
+    semester = Semester.objects.get(id=semester_id)
+    staffs = semester.staff.all()
+
     context = {
         "staffs": staffs,
-        "user":user
+        "user":user,
+        "semester":semester,
         }
     return render(request, "sis/admin_templates/view_staff.html", context)
 
 
-def view_instructor_enrolled_courses(request, id):
+def view_instructor_enrolled_courses(request, id, semester_id):
     user = CustomUser.objects.get(id=request.user.id)
     courses_enrolled = Course.objects.filter(instructor__id = id)
     instructor = CustomUser.objects.get(id=id)
+    semester = Semester.objects.get(id=semester_id)
 
         
     context = {
         "courses": courses_enrolled, 
         "instructor":instructor,
+        "semester":semester,
         "user":user
         }
     return render(request, "sis/admin_templates/view_instructor_enrolled_courses.html", context)
@@ -613,10 +630,8 @@ def course_dashboard(request, id, instructor_id):
         if form.is_valid():
             f = form.save(commit= False)
             f.course = course
-            print("form course",  f.course)
             user = CustomUser.objects.get(id =request.user.id)
             f.user = CustomUser.objects.get(id=user.id)
-            print("form user",  f.user)
             f.save()
             messages.success(
                 request,
@@ -753,14 +768,12 @@ def course_assignment_build(request):
                 f.save()
             students = f.course.students.all()
             for student in students:
-                print(student)
                 grade = Grade.objects.create(
                     student=student,
                     course = course,
                     possible_points = f.possible_points,
                 )
                 grade.save()
-                print(grade)
                 f.students_grades.add(grade)
                 f.save()
             messages.success(request, "Assignment Posted Successfully!")
@@ -810,7 +823,6 @@ def course_assignment_edit(request, assignment_id):
     return render(request, 'sis/admin_templates/edit_assignment.html', context)
 
 def course_student_submission(request, course_id, assignment_id):
-    print("reacing submission")
     course = Course.object.get(id=course_id)
     instructor = course.instructor
     if request.method == "POST":
@@ -851,7 +863,6 @@ def view_attendance(request):
         "courses": courses,
         "user":user
     }
-    print("view attendance")
     # attendance = Attendance.objects.all()
     # context = {"attendance": attendance}
     return render(request, "sis/admin_templates/view_attendance.html", context)
@@ -859,7 +870,6 @@ def view_attendance(request):
 @is_staff
 def view_attendance_course(request, course_id):
     user = CustomUser.objects.get(id=request.user.id)
-    print("view_attendance_course")
 
     attendance = Attendance.objects.filter(course__id = course_id)
     course = Course.objects.get(id=course_id)
@@ -875,7 +885,6 @@ def view_attendance_course(request, course_id):
 def view_attendance_course_report(request, attendance_id, course_id):
     user = CustomUser.objects.get(id=request.user.id)
     attendance = AttendanceReport.objects.filter(attendance__id = attendance_id)
-    print(attendance)
     course = Course.objects.get(id=course_id)
     date = attendance.first().attendance_date
     context = {
@@ -932,14 +941,12 @@ def edit_attendance_course_report(request, course_id, attendance_id):
         )
 
     if request.method == "POST":
-        print("post")
         formset = AttendenceReportFormSet(
             request.POST, 
             queryset = attendance_reports
             )
         if formset.is_valid():
             formset.save()
-            print("form is valid")
             messages.success(request, "Attendance updated successfully!")
             return redirect("view_attendance_course_report", attendance_id=attendance_id, course_id=course_id )
     else:
