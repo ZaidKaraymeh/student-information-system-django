@@ -15,8 +15,7 @@ from ..decorators import is_admin, is_staff
 
 
 
-
-@is_admin
+@is_staff
 def view_semesters_courses(request):
     user = CustomUser.objects.get(id=request.user.id)
     semesters = Semester.objects.all().order_by('-date_created')
@@ -146,7 +145,7 @@ def view_courses(request, semester_id):
     semester = Semester.objects.get(id=semester_id)
 
     if user.user_type == "STA":
-        courses = Course.objects.filter(instructor__id = user.id).order_by('code')
+        courses = semester.courses.filter(instructor__id = user.id).order_by('code')
     else:
         courses = Course.objects.filter(semester__id=semester_id).order_by('code')
     context = {
@@ -963,7 +962,7 @@ def edit_attendance_course_report(request, course_id, attendance_id):
     }
     return render(request, 'sis/admin_templates/edit_attendance_course_report.html', context)
 
-@is_staff
+@is_admin
 def dashboard(request):
     user = CustomUser.objects.get(id=request.user.id)
     semesters = Semester.objects.all().order_by('-date_created')
