@@ -78,6 +78,7 @@ class Course(models.Model):
     students = models.ManyToManyField(CustomUser)
     year = models.CharField(null = True, max_length=10)
     weight = models.ForeignKey(GradeWeight, related_name="weight", on_delete=models.CASCADE, null=True)
+    assignments = models.ManyToManyField("users.Assignment", related_name="course_assignments")
     # assignments = models.ManyToManyField(Assignment)
     # year = models.ForeignKey(Year, on_delete=models.CASCADE)
     # twentyTwentyone = "2020/2021"

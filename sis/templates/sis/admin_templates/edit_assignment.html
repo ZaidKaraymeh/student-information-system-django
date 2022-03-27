@@ -15,20 +15,17 @@
 
         <fieldset class="form-group" > 
             <div class="row justify-content-center py-1">
-                <div class="col-6">
+                <div class="col-12">
                     {{ form.name|as_crispy_field }}
                 </div>
-                <div class="col-6">
-                    {{ form.possible_points|as_crispy_field }}
-                </div>
             </div>
-
+            
             <div class="row justify-content-center py-1">
                 <div class="col-6">
                     {{ form.category|as_crispy_field }}
                 </div>
                 <div class="col-6">
-                    {{ form.courses|as_crispy_field }}
+                    {{ form.possible_points|as_crispy_field }}
                 </div>
             </div>
             
@@ -55,10 +52,16 @@
         <div class="form-group d-flex justify-content-center">
             <button type="submit" class="btn btn-dark mx-2" > Edit Assignment </button>
 			<a 
-                class="btn btn-primary" 
-                href="{% url 'course_assignment_builder' %}" 
-                > Back
-             </a>
+            class="btn btn-primary mr-2" 
+            href="{% url 'course_assignment_builder' course.id %}" 
+            > Back
+        </a>
+        <a 
+            class="btn btn-danger" 
+            href="{% url 'course_assignment_delete' assignment.id %}" 
+            > 
+            Delete
+         </a>
         </div>
     </form>
 </div>

@@ -215,7 +215,7 @@
       <div class="container">
         {% if user.user_type == "STA" %}
           <div class="row">
-            <a class="btn btn-dark text-light" href="{% url 'course_assignment_build' %}" role="button">
+            <a class="btn btn-dark text-light" href="{% url 'course_assignment_build' course.id %}" role="button">
             <i class="fas fa-plus"></i> Create
             </a>
           </div>

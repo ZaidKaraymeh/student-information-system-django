@@ -264,7 +264,7 @@ def add_student(request, semester_id):
 
 def view_semesters_students(request):
     user = CustomUser.objects.get(id=request.user.id)
-    semesters = Semester.objects.all()
+    semesters = Semester.objects.all().order_by('-date_created')
     context = {
         "semesters": semesters,
         "user":user
@@ -273,7 +273,7 @@ def view_semesters_students(request):
 
 def view_semesters_staff(request):
     user = CustomUser.objects.get(id=request.user.id)
-    semesters = Semester.objects.all()
+    semesters = Semester.objects.all().order_by('-date_created')
     context = {
         "semesters": semesters,
         "user":user
@@ -321,9 +321,19 @@ def export_students(request):
     wb.save(response)
     return response
 
+def get_student_courses(semester_id):
+            COURSE_CHOICES = [
+                (
+                    course.id ,
+                    f"{course.code} {course.name} Sec {course.section} {course.year}"
+                    ) for course in Course.objects.filter(semester__id=semester_id).order_by('code')
+            ]
+            return COURSE_CHOICES
 
 def view_student_enrolled_courses(request, id, semester_id):
+
     user = CustomUser.objects.get(id=request.user.id)
+    choices = get_student_courses(semester_id)
     courses_enrolled = Course.objects.filter(students__id = id)
     student = CustomUser.objects.get(id=id)
     user = CustomUser.objects.get(id=request.user.id)
@@ -338,7 +348,7 @@ def view_student_enrolled_courses(request, id, semester_id):
         ]
     assigns = [*assigns]
     if request.method == "POST":
-        form = AddStudentToCourseForm(request.POST)
+        form = AddStudentToCourseForm(choices, request.POST)
         if form.is_valid():
             f = form
             course_form = f.cleaned_data["courses"]
@@ -362,17 +372,10 @@ def view_student_enrolled_courses(request, id, semester_id):
                 pass
 
             messages.success(request, f" {user.first_name} {user.last_name} has sucessfully enrolled in {course.code} Sec {course.section}!")
-            return redirect("view_student_enrolled_courses", id=id)
+            return redirect("view_student_enrolled_courses", id=id, semester_id=semester_id)
             
     else:
-        def get_student_courses(semester_id):
-            COURSE_CHOICES = [
-                (
-                    course.id ,
-                    f"{course.code} {course.name} Sec {course.section} {course.year}"
-                    ) for course in Course.objects.filter(semester__id=semester_id).order_by('code')
-            ]
-            return COURSE_CHOICES
+    
         form = AddStudentToCourseForm(choices=get_student_courses(semester_id))
 
 
@@ -711,35 +714,29 @@ def course_dashboard(request, id, instructor_id):
     return render(request, "sis/admin_templates/course_dashboard.html", context)
 
 @is_staff
-def course_assignment_builder(request):
+def course_assignment_builder(request, course_id):
 
     user = CustomUser.objects.get(id = request.user.id)
-
+    course = Course.objects.get(id=course_id)
     if user.user_type == "STA":
-        assignments = Assignment.objects.filter(instructor__id=user.id).order_by('-date_posted')
+        assignments = course.assignments.all()
     else:
         assignments = Assignment.objects.all().order_by('-date_posted')
 
-
-    if request.method == "POST":
-        add_test_form = AddTestForm(request.POST or None)
-        if add_test_form.is_valid():
-            f = add_test_form.save(commit=False)
-            f.save()
-    else:
-        add_test_form = AddTestForm()
-
+    semester = Semester.objects.filter(courses__id=course_id).first()
     context = {
-        'form':add_test_form,
         'assignments': assignments,
-        "user":user
+        "user":user,
+        'course':course,
+        'semester':semester
     }
 
     return render(request, 'sis/admin_templates/course_assignment_builder.html', context)
 
 @is_staff
-def course_assignment_build(request):
+def course_assignment_build(request, course_id):
     user = CustomUser.objects.get(id=request.user.id)
+    course = Course.objects.get(id=course_id)
     choices = [
         (
             course.id ,
@@ -753,7 +750,6 @@ def course_assignment_build(request):
         
         if add_assignment_form.is_valid():
             f = add_assignment_form.save(commit=False)
-            course = Course.objects.get(id=add_assignment_form.cleaned_data['courses'])
             f.instructor = course.instructor
             f.course = course
             f.save()
@@ -775,26 +771,36 @@ def course_assignment_build(request):
                 grade.save()
                 f.students_grades.add(grade)
                 f.save()
+            course.assignments.add(f)
+            course.save()
             messages.success(request, "Assignment Posted Successfully!")
-            return redirect('course_dashboard', id=course.id, instructor_id = course.instructor.id)
+            return redirect('course_assignment_builder', course.id)
     else:
         add_assignment_form = AssignmentForm(choices)
-        add_assignment_form.fields["courses"].queryset = Course.objects.filter(instructor__id = user.id)
         # courses = Course.objects.filter(instructor__id = user.id)
         # add_assignment_form.fields["courses"].filter(lambda x:x in courses, courses)
 
     context = {
         'form':add_assignment_form,
-        "user":user
+        "user":user,
+        'course':course,
     }
     return render(request, 'sis/admin_templates/add_assignment.html', context)
 
 @is_staff
 def course_assignment_edit(request, assignment_id):
     user = CustomUser.objects.get(id=request.user.id)
+    choices = [
+        (
+            course.id ,
+            f"{course.code} {course.name} Sec {course.section}"
+            ) for course in Course.objects.filter(instructor__id=user.id).order_by('code')
+    ]
     instance = Assignment.objects.get(id=assignment_id)
+    course = Course.objects.filter(assignments__id=assignment_id).first()
+    print(course)
     if request.method == "POST":
-        assignment_form = AssignmentForm(request.POST or None, request.FILES, instance=instance)
+        assignment_form = AssignmentForm(choices, request.POST or None, request.FILES, instance=instance)
         # file_form = AssignmentFileForm(request.POST, request.FILES)
         
         if assignment_form.is_valid():
@@ -811,15 +817,24 @@ def course_assignment_edit(request, assignment_id):
             messages.success(request, "Assignment editted successfully!")
             return redirect('course_assignment_builder')
     else:
-        assignment_form = AssignmentForm(instance = instance)
-        assignment_form.fields["courses"].queryset = Course.objects.filter(instructor__id = user.id)
+        assignment_form = AssignmentForm(choices, instance = instance)
     files = instance.files.all()
     context = {
         'form':assignment_form,
         'files':files,
-        "user":user
+        "user":user,
+        'course': course,
+        'assignment': instance,
     }
     return render(request, 'sis/admin_templates/edit_assignment.html', context)
+
+def course_assignment_delete(request, assignment_id):
+    assignment = Assignment.objects.get(id=assignment_id)
+    course = Course.objects.filter(assignments__id=assignment_id).first()
+    assignment.delete()
+    messages.success(request, "Assignment Deleted successfully!")
+    return redirect('course_assignment_builder', course_id=course.id)
+
 
 def course_student_submission(request, course_id, assignment_id):
     course = Course.object.get(id=course_id)

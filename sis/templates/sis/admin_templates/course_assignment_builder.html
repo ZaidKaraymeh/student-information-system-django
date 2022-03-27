@@ -77,17 +77,22 @@
 <div class="col p-4 d-flex justify-content-end align-items-start " >
 	<a 
 		class="btn btn-dark mx-2" 
-		href="{% url 'course_assignment_build' %}" 
+		href="{% url 'course_assignment_build' course.id %}" 
 		> Add Assignment
 	</a>
     <a 
-        class="btn btn-primary" 
+        class="btn btn-primary mr-2" 
         href="{% url 'export_courses' %}" 
         > Export
     </a>
+    <a 
+        class="btn btn-dark" 
+        href="{% url 'view_courses' semester.id %}" 
+        > Back
+    </a>
 </div>
 
-<div class="table-responsive p-0 overflow-auto" style="height:100vh;" >
+<div class="table-responsive p-0 overflow-auto" >
     <table id="view_courses" class="table table-striped table-hover table-bordered text-center">
         <thead>
             <tr>

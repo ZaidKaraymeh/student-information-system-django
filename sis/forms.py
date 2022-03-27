@@ -201,18 +201,18 @@ def get_courses():
 class AssignmentForm(forms.ModelForm):
     def __init__(self, choices=[], *args, **kwargs):
         super(AssignmentForm  , self).__init__(*args, **kwargs)
-        self.fields['courses'].choices = choices
+        # self.fields['courses'].choices = choices
 
 
         self.fields['name'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['description'].widget.attrs['style'] = 'width:100%; height:300px;'
         self.fields['category'].widget.attrs['style'] = 'width:100%; height:40px; font-weight: bold'
-        self.fields['courses'].widget.attrs['style'] = 'width:100%; height:40px;font-weight: bold'
+        # self.fields['courses'].widget.attrs['style'] = 'width:100%; height:40px;font-weight: bold'
         self.fields['possible_points'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['name'].widget.attrs['class'] = 'form-control'
         self.fields['description'].widget.attrs['class'] = 'form-control'
         self.fields['category'].widget.attrs['class'] = 'form-control'
-        self.fields['courses'].widget.attrs['class'] = 'form-control'
+        # self.fields['courses'].widget.attrs['class'] = 'form-control'
         self.fields['possible_points'].widget.attrs['class'] = 'form-control'
     # docfile = forms.FileField(
     #     label='Select a file',
@@ -220,7 +220,7 @@ class AssignmentForm(forms.ModelForm):
     # )
     
     # COURSE_CHOICES = Course.objects.all()
-    courses = forms.ChoiceField(choices=get_courses, label='Course')
+    # courses = forms.ChoiceField(choices=get_courses, label='Course')
     file = forms.FileField(
         label='Select a file',
         help_text='max. 42 megabytes',
@@ -230,7 +230,7 @@ class AssignmentForm(forms.ModelForm):
     class Meta:
         model = Assignment
 
-        fields = ['name', 'description', 'category', 'possible_points', 'courses', 'file', "due_date"]
+        fields = ['name', 'description', 'category', 'possible_points', 'file', "due_date"]
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}) ,
             'description': forms.Textarea(attrs={'class': 'form-control'}),
