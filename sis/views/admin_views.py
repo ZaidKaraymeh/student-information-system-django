@@ -654,6 +654,7 @@ def course_dashboard(request, id, instructor_id):
             # f.grade = grade
             f.save()
             for file in request.FILES.getlist('file'):
+                print(file)
                 obj = AssignmentSubmissionFile.objects.create(
                     file=file,
                     student = CustomUser.objects.get(id=request.user.id),
@@ -661,7 +662,7 @@ def course_dashboard(request, id, instructor_id):
                 obj.save()
                 f.files.add(obj)
                 f.save()
-
+            print(f.files.all())
             assignment = Assignment.objects.get(id=request.POST.get('assignment_id'))
             assignment.student_submissions.add(f)
             assignment.save()
@@ -753,7 +754,9 @@ def course_assignment_build(request, course_id):
             f.instructor = course.instructor
             f.course = course
             f.save()
-            for file in request.FILES.getlist('file'):
+            files = request.FILES.getlist('file')
+            print(files)
+            for file in files:
                 obj = AssignmentFile.objects.create(
                     file=file,
                     instructor = f.instructor,
@@ -800,6 +803,21 @@ def view_assignment_submissions(request, assignment_id):
 
     }
     return render(request, 'sis/admin_templates/view_students_assignment_submissions.html', context)
+@is_staff
+def view_assignment_submissions_files(request, submission_report_id):
+    user = CustomUser.objects.get(id=request.user.id)
+    submission = AssignmentSubmission.objects.get(id=submission_report_id)
+    assignment = Assignment.objects.filter(student_submissions__id=submission_report_id).first()
+    course = Course.objects.filter(assignments__id=assignment.id).first()
+    print(submission.files.all())
+    context = {
+        "user":user,
+        'course':course,
+        'assignment':assignment,
+        'submission':submission,
+
+    }
+    return render(request, 'sis/admin_templates/view_students_assignment_submissions_files.html', context)
 
 @is_staff
 def course_assignment_edit(request, assignment_id):

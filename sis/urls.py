@@ -44,6 +44,7 @@ urlpatterns = [
     path("sis/add_staff/<int:semester_id>", admin_views.add_staff, name="add_staff" ),
     path("sis/course_assignment_builder/<int:course_id>", admin_views.course_assignment_builder, name="course_assignment_builder" ),
     path("sis/course_assignment_builder/view_assignment_submissions/<int:assignment_id>", admin_views.view_assignment_submissions, name="view_assignment_submissions" ),
+    path("sis/course_assignment_builder/view_assignment_submissions/files/<int:submission_report_id>", admin_views.view_assignment_submissions_files, name="view_assignment_submissions_files" ),
     path("sis/course_assignment_builder/add_assignment/<int:course_id>", admin_views.course_assignment_build, name="course_assignment_build" ),
     path("sis/course_assignment_builder/edit_assignment/<int:assignment_id>", admin_views.course_assignment_edit, name="course_assignment_edit" ),
     path("sis/course_assignment_builder/delete_assignment/<int:assignment_id>", admin_views.course_assignment_delete, name="course_assignment_delete" ),

@@ -72,7 +72,7 @@
     <i class="fas fa-align-left"></i> <span>Menu</span>
 </a>
 <section class="border-bottom my-5  ">
-        <h1 class="font-weight-bold" > Assignment Builder</h1>
+        <h1 class="font-weight-bold" > {{submission.student}}'s Submission</h1>
 </section>
 <div class="col p-4 d-flex justify-content-end align-items-start " >
     <a 
@@ -82,43 +82,28 @@
     </a>
     <a 
         class="btn btn-dark" 
-        href="{% url 'course_assignment_builder' course.id %}" 
+        href="{% url 'view_assignment_submissions' assignment.id %}" 
         > Back
     </a>
 </div>
 
-<div class="table-responsive p-0 overflow-auto" >
-    <table id="view_courses" class="table table-striped table-hover table-bordered text-center">
-        <thead>
-            <tr>
-            <th  scope="col">#</th>
-            <th scope="col">Student</th>
-            <th scope="col">Submission Date</th>
-            <th scope="col">Submitted</th>
-            <th scope="col">View Files</th>
-            </tr>
-        </head>
-        <tbody>
-            {% for submission in assignment.student_submissions.all %}
-                <tr>
-                    <th  scope="row"> {{forloop.counter}} </th>
-                    <td> {{submission.student}} </td>
-                    <td> {{submission.submitted_at}} </td>
-                    <td> {% if submission.submitted %}Yes{% else %}No{% endif %} </td>
-                    <td class="" > <a class="btn btn-primary btn-block" href="{% url 'view_assignment_submissions_files' submission.id %}" > View Submissions </a> </td>
-                    
-                </tr>
+<div class="container">
+    <div class="row">
+        <ul style="list-style: none;">
+            {% for file in submission.files.all %}
+                <li >
+                    <a href="{{file.file.url}}" class="text-decoration: none !important;">
+                    <i class="fas fa-file mx-2"></i> {{file.filename}}
+                    </a>
+                </li>
             {% endfor %}
-        </tbody>
-        <thead>
-            <tr>
-            <th  scope="col">#</th>
-            <th scope="col">Student</th>
-            <th scope="col">Submission Date</th>
-            <th scope="col">Submitted</th>
-            <th scope="col">View</th>
-            </tr>
-        </head>
-    </table>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{submission.description}}
+        </div>
+    </div>
 </div>
+
 {%endblock content %}
