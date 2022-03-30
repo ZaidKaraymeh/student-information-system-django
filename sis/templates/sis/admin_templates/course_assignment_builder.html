@@ -72,7 +72,7 @@
     <i class="fas fa-align-left"></i> <span>Menu</span>
 </a>
 <section class="border-bottom my-5  ">
-        <h1 class="font-weight-bold" > Assignment Builder</h1>
+        <h1 class="font-weight-bold" > {{course.name}} {{course.code}} Section {{course.section}}'s Assignment Builder  </h1>
 </section>
 <div class="col p-4 d-flex justify-content-end align-items-start " >
 	<a 
@@ -104,7 +104,7 @@
             <th scope="col">Code</th>
             <th scope="col">Section</th>
             <th scope="col">Edit Assignment</th>
-            <th scope="col">Analysis</th>
+            <th scope="col">Submissions</th>
             </tr>
         </head>
         <tbody>
@@ -118,7 +118,7 @@
                     <td> {{assignment.course.code}} </td>
                     <td> {{assignment.course.section}} </td>
                     <td class="" ><a class="btn btn-dark btn-block" href="{% url 'course_assignment_edit' assignment.id %}" >Edit </a></td>
-                    <td class="" > <a class="btn btn-primary btn-block" href="#" > View Analysis </a> </td>
+                    <td class="" > <a class="btn btn-primary btn-block" href="{% url 'view_assignment_submissions' assignment.id %}" > View Submissions </a> </td>
                     
                 </tr>
             {% endfor %}
@@ -133,7 +133,7 @@
             <th scope="col">Code</th>
             <th scope="col">Section</th>
             <th scope="col">Edit Assignment</th>
-            <th scope="col">Analysis</th>
+            <th scope="col">Submissions</th>
             </tr>
         </head>
     </table>

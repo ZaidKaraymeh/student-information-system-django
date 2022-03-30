@@ -788,6 +788,20 @@ def course_assignment_build(request, course_id):
     return render(request, 'sis/admin_templates/add_assignment.html', context)
 
 @is_staff
+def view_assignment_submissions(request, assignment_id):
+    user = CustomUser.objects.get(id=request.user.id)
+    assignment = Assignment.objects.get(id=assignment_id)
+    course = Course.objects.filter(assignments__id=assignment_id).first()
+
+    context = {
+        "user":user,
+        'course':course,
+        'assignment':assignment,
+
+    }
+    return render(request, 'sis/admin_templates/view_students_assignment_submissions.html', context)
+
+@is_staff
 def course_assignment_edit(request, assignment_id):
     user = CustomUser.objects.get(id=request.user.id)
     choices = [
@@ -866,16 +880,28 @@ def course_student_submission(request, course_id, assignment_id):
 # Attendance
 
 @is_staff
-def view_attendance(request):
-    user = CustomUser.objects.get(id = request.user.id)
+def view_semesters_attendance(request):
+    user = CustomUser.objects.get(id=request.user.id)
+    semesters = Semester.objects.all().order_by('-date_created')
 
+    context = {
+        'user':user,
+        'semesters':semesters
+    }
+
+    return render(request, "sis/admin_templates/view_semesters_attendance.html", context)
+@is_staff
+def view_attendance(request, semester_id):
+    user = CustomUser.objects.get(id = request.user.id)
+    semester = Semester.objects.get(id=semester_id)
     if user.user_type == "STA":
-        courses = Course.objects.filter(instructor__id=user.id)
+        courses = semester.courses.filter(instructor__id=user.id)
     else:
-        courses = Course.objects.all()
+        courses = semester.courses.all()
     context = {
         "courses": courses,
-        "user":user
+        "user":user,
+        "semester":semester
     }
     # attendance = Attendance.objects.all()
     # context = {"attendance": attendance}
@@ -887,10 +913,12 @@ def view_attendance_course(request, course_id):
 
     attendance = Attendance.objects.filter(course__id = course_id)
     course = Course.objects.get(id=course_id)
+    semester = Semester.objects.filter(courses__id=course_id).first()
     context = {
         "attendance": attendance, 
         "course": course,
-        "user":user
+        "user":user,
+        "semester":semester,
         
     }
     return render(request, "sis/admin_templates/view_attendance_course.html", context)
