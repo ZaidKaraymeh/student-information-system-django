@@ -641,11 +641,15 @@ def course_dashboard(request, id, instructor_id):
             )
             return redirect("course_dashboard", id=id, instructor_id=instructor_id)
         if student_submission_form.is_valid():
-            f = student_submission_form.save(commit=False)
-            f.student = CustomUser.objects.get(id=request.user.id)
-            f.instructor = CustomUser.objects.get(id=instructor_id)
-            f.submitted = True
-            f.course = course
+            desc = student_submission_form.cleaned_data['description']
+            f = AssignmentSubmission.objects.create(
+                student = CustomUser.objects.get(id=request.user.id),
+                instructor = CustomUser.objects.get(id=instructor_id),
+                submitted = True,
+                course = course,
+                description= desc,
+            )
+
             # grade = Grade.objects.create(
             #     course=course,
             #     student = CustomUser.objects.get(id=request.user.id)
@@ -656,7 +660,7 @@ def course_dashboard(request, id, instructor_id):
             for file in request.FILES.getlist('file'):
                 print(file)
                 obj = AssignmentSubmissionFile.objects.create(
-                    file=file,
+                    files=file,
                     student = CustomUser.objects.get(id=request.user.id),
                 )
                 obj.save()
@@ -720,7 +724,7 @@ def course_assignment_builder(request, course_id):
     user = CustomUser.objects.get(id = request.user.id)
     course = Course.objects.get(id=course_id)
     if user.user_type == "STA":
-        assignments = course.assignments.all()
+        assignments = course.assignments.all().order_by('-date_posted')
     else:
         assignments = Assignment.objects.all().order_by('-date_posted')
 
@@ -807,6 +811,7 @@ def view_assignment_submissions(request, assignment_id):
 def view_assignment_submissions_files(request, submission_report_id):
     user = CustomUser.objects.get(id=request.user.id)
     submission = AssignmentSubmission.objects.get(id=submission_report_id)
+    print(submission_report_id)
     assignment = Assignment.objects.filter(student_submissions__id=submission_report_id).first()
     course = Course.objects.filter(assignments__id=assignment.id).first()
     print(submission.files.all())

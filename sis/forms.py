@@ -240,17 +240,15 @@ class AssignmentForm(forms.ModelForm):
             'due_date': 'Due Date'
         }
 
-class AssignmentSubmissionForm(forms.ModelForm):
+class AssignmentSubmissionForm(forms.Form):
     file = forms.FileField(
         label='Select a file',
         help_text='max. 42 megabytes',
         required=False,
         widget=forms.ClearableFileInput(attrs={'multiple': True})
     )
-    class Meta:
-        model = AssignmentSubmission
 
-        fields = ['file']
+    description = forms.CharField( widget=forms.Textarea(attrs={'class':'form-control'}), max_length=9000 )
         # widgets = {
         #     'name': forms.TextInput(attrs={'class': 'form-control'}) ,
         #     'description': forms.Textarea(attrs={'class': 'form-control'}),

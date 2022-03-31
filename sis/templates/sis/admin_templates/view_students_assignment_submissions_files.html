@@ -91,8 +91,8 @@
     <div class="row">
         <ul style="list-style: none;">
             {% for file in submission.files.all %}
-                <li >
-                    <a href="{{file.file.url}}" class="text-decoration: none !important;">
+                <li class="text-left" >
+                    <a href="{{file.files.url}}" class="text-decoration: none !important;">
                     <i class="fas fa-file mx-2"></i> {{file.filename}}
                     </a>
                 </li>
@@ -100,7 +100,7 @@
         </ul>
     </div>
     <div class="row">
-        <div class="col">
+        <div class="col text-left">
             {{submission.description}}
         </div>
     </div>

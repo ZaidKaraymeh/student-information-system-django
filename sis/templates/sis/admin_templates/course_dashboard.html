@@ -313,7 +313,16 @@
                                       <h3 class="my-3"> Submission due at {{assignment.due_date}}</h3>
                                       <form method="post" enctype="multipart/form-data" >
                                         {% csrf_token %}
-                                        {{student_submission_form|crispy}}
+                                        <div class="row justify-content-center py-1">
+                                            <div class="col-12">
+                                                {{student_submission_form.description|crispy}}
+                                            </div>
+                                        </div>
+                                        <div class="row justify-content-center py-1">
+                                            <div class="col-12">
+                                                {{student_submission_form.file|crispy}}
+                                            </div>
+                                        </div>
                                         <input type="hidden" name="assignment_id" value="{{assignment.id}}" />
                                         <button type="submit" class="btn btn-dark my-2">Attempt Submission</button>
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -460,13 +469,22 @@
                                   <h3> Assignment Submitted </h3>
                                 {% else %}
                                 <h3 class="my-3"> Submission </h3>
-                                <form method="post" >
-                                  {% csrf_token %}
-                                  {{student_submission_form|crispy}}
-                                  <input type="hidden" name="assignment_id" value="{{assignment.id}}" />
-                                  <button type="submit" class="btn btn-dark my-2">Attempt Submission</button>
-                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                </form>
+                                <form method="post" enctype="multipart/form-data" >
+                                    {% csrf_token %}
+                                    <div class="row justify-content-center py-1">
+                                        <div class="col-12">
+                                            {{student_submission_form.description}}
+                                        </div>
+                                    </div>
+                                    <div class="row justify-content-center py-1">
+                                        <div class="col-12">
+                                            {{student_submission_form.file}}
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="assignment_id" value="{{assignment.id}}" />
+                                    <button type="submit" class="btn btn-dark my-2">Attempt Submission</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  </form>
                                 {% endif %}
                               </section>
                             </div>

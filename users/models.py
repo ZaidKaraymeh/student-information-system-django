@@ -161,6 +161,8 @@ class AssignmentSubmissionFile(models.Model):
         on_delete=models.CASCADE,
         related_name='student_submission_files'
     )
+    def filename(self):
+        return os.path.basename(self.files.name)
 class AssignmentFile(models.Model):
     file = models.FileField(upload_to='documents/%Y/%m/%d', null = True)
     instructor = models.ForeignKey(
