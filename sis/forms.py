@@ -364,7 +364,7 @@ class MessageForm(forms.ModelForm):
         }
     def __init__(self, *args, **kwargs):
         super(MessageForm, self).__init__(*args, **kwargs) # Call to ModelForm constructor
-        self.fields['users'].choices = [("", "")] + [(user.id ,f"{user.username}" ) for user in CustomUser.objects.all()]
+        self.fields['users'].choices = [("", "")] + [(user.id ,f"{user.username}" ) for user in CustomUser.objects.all().order_by("username")]
         self.fields['title'].widget.attrs['style'] = 'width:100%; height:40px;'
         self.fields['title'].label = ""
         self.fields['content'].label = ""

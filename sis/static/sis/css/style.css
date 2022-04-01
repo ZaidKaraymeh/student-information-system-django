@@ -1,10 +1,87 @@
 
 body { font-family: 'Roboto', sans-serif; font-size: 16px; font-weight: 300; color: #888; line-height: 30px; text-align: center; margin: 0; padding: 0; }
 
+.border-bg-6 {
+	border: rgb(61, 61, 78) 1px solid !important;
+}
+
+.bg-6 {
+  background-color: rgb(61, 61, 78) !important;
+}
+.bg-5 {
+	background-color: rgb(9, 9, 20) !important;
+}
+.bg-4 {
+	background-color: rgb(21,21,30) !important;
+}
+.bg-3 {
+	background-color: rgb(30,30,39) !important;
+}
+.bg-2 {
+  background-color: rgb(40,40,48) !important;
+}
+/* mahmood khalil al hasry */
+.bg-1 {
+	background-color: rgb(46, 46, 64) !important;
+}
+.bg-base {
+	background-color: #15151E !important;
+}
+
+.sidebar-hover:hover {
+	background-color: rgb(61, 61, 78) !important;
+}
+
+.t-white {
+	color: white !important;
+}
+
+.border-none {
+	border-color:rgb(61, 61, 78) !important;
+}
+.border-none:focus, .border-none:active {
+	box-shadow:0 0 0 0.2rem rgb(52, 52, 77) !important;
+	/* border: 0 !important; */
+}
+
+.shadow-card-dark {
+    box-shadow: 0 .25rem 1rem rgb(35, 35, 46)!important;
+}
+
+.table-hover>tbody>tr:hover {
+	background-color: rgb(30,30,39) !important;
+	color: white !important;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background-color: rgb(61, 61, 78) !important;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background-color: rgb(30,30,39) !important;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
+
 strong { font-weight: 500; }
 
 a { color: #f35b3f; text-decoration: none; transition: all .3s; }
 a:hover, a:focus { color: #f35b3f; border: 0; text-decoration: none; }
+
+.dark-pills {color: white;background-color: #15151E !important; border:0 !important; border-bottom:1px solid #dee2e6 !important;text-decoration: none; transition: all .3s;}
+.dark-pills:focus {color: white;background-color: rgb(61, 61, 78) !important;text-decoration: none; transition: all .3s;}
+.dark-pills:hover {background-color: rgb(40,40,48) !important; text-decoration: none; transition: all .3s;}
+
 
 h1, h2 { margin-top: 10px; font-size: 38px; font-weight: 100; color: #555; line-height: 50px; }
 h3 { font-size: 22px; font-weight: 300; color: #555; line-height: 30px; }
@@ -483,9 +560,10 @@ footer { padding: 40px 0; }
 }
 @keyframes card {
 	0%   { transform: translateY(0); }
-	50%  { transform: translateY(-10px); }
+	50%  { transform: translateY(-3px); }
 	100% { transform: translateY(0); }
 }
+
 
 
 .inbox-card {
@@ -517,6 +595,7 @@ footer { padding: 40px 0; }
 } */
 
 .card-shadow:hover{box-shadow:0 .5rem 1.25rem rgba(76, 144, 92,.35)!important}
+.card-shadow-dark:hover{box-shadow:0 .5rem 1.25rem  rgb(61, 61, 78) !important;}
 
 
 .message-form {

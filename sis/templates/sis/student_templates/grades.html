@@ -3,25 +3,22 @@
 {% block content %}
 {% load tags %}
 <div class="container">
-    <a class="btn btn-primary btn-customized open-menu" href="#" role="button">
-      <i class="fas fa-align-left"></i> <span>Menu</span>
-    </a>
+    {{block.super}}
     <section class="border-bottom my-5  ">
-        <h1 class="font-weight-bold" >My Grades</h1>
+        <h1 class="font-weight-bold {% if request.user.id|is_dark_mode %} text-white{% endif %}" >My Grades</h1>
     </section>
     <section>
         <div class="row" >
     
             {% for course in courses %}
-            <div class="col-4 link ">
+            <div class="col-12 link ">
                 <a class="link" href="{% url 'course_dashboard' course.id course.instructor.id %}" data-toggle="modal" data-target=".bd-example-modal-lg-{{course.id}}" >
 
-                    <div class="card mb-3 shadow course-card card-shadow">
-                        <img class=" course-img " src="https://picsum.photos/id/104{{course|course_id_modulus}}/500/300" alt="Card image cap">
+                    <div class="card mb-3 shadow  card-shadow {% if request.user.id|is_dark_mode %} bg-2 text-white shadow-card-dark card-shadow-dark{% endif %}">
                         
                         <div class="card-body">
                             <h5 class="card-title"> {{course.code}} {{course.name}}</h5>
-                            <p class="card-text text-success view-grades">
+                            <p class="card-text  view-grades {% if request.user.id|is_dark_mode %} text-white {% endif %}">
                                 View Grades
                             </p>
                         </div>
@@ -30,67 +27,61 @@
             </div>
             <div class="modal fade bd-example-modal-lg-{{course.id}}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
+                    <div class="modal-content {% if request.user.id|is_dark_mode %} bg-2 text-white shadow-card-dark{% endif %}">
                         <div class="modal-header">
                             <h5 class="modal-title">
-                                <a class="" href="{% url 'course_dashboard' id=course.id instructor_id=course.instructor.id  %}" >
+                                <a class="{% if request.user.id|is_dark_mode %} text-white {% endif %}" href="{% url 'course_dashboard' id=course.id instructor_id=course.instructor.id  %}" >
 
                                     {{course.code}} {{course.name}} Section {{course.section}} 
                                 </a>
                                 
                                 <small> instructed by {{course.instructor.username}}</small></h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <button type="button" class="close " data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div class="modal-body text-left py-0">
+                        <div class="modal-body text-left py-0 ">
                             <div class="row">
                                 <div class="col-12 p-0">
                                     <div class="table-responsive p-0 overflow-auto"  >
-                                        <table id="view_courses" class="table table-striped table-hover table-bordered text-center">
+                                        <table id="view_courses" class="table table-striped table-hover table-bordered text-center {% if request.user.id|is_dark_mode %} text-white{% endif %}">
                                         {% if not assignment %}
 
-                                            <thead>
+                                            <thead class="{% if request.user.id|is_dark_mode %} bg-6{% endif %}" >
                                                 <tr>
-                                                <th  scope="col">#</th>
-                                                <th scope="col">Course</th>
-                                                <th scope="col">Grade</th>
+                                                <th scope="col">#</th>
                                                 <th scope="col">Assignment</th>
+                                                <th scope="col">Grade</th>
                                                 <th scope="col">Submission</th>
                                                 <th scope="col">Due Date</th>
                                                 <th scope="col">Submitted At</th>
-                                                <th scope="col">Course</th>
                                                 </tr>
                                             </head>
                                             <tbody>
                                                     {% for assignment in course|assignments_course %}
                                                     <tr>
                                                     <th scope="row"> {{forloop.counter}} </th>
-                                                        <td> {{course.name}} {{course.code}} {{course.section}}  </td>
+                                                    <td> {{assignment.name}} </td>
                                                         <td> {{assignment|assignment_grade:user}}/{{assignment.possible_points}} </td>
-                                                        <td> {{assignment.name}} </td>
                                                         {% if assignment|is_submitted:user %} 
-                                                            <td style="color:green" >Submitted </td>
+                                                            <td>Submitted </td>
                                                         {% else %}
-                                                            <td style="color:red" > Not Submitted </td>
+                                                            <td > Not Submitted </td>
                                                         {% endif %}
                                                         <td> {{assignment.due_date}} </td>
                                                         <td> {{assignment|date_submitted:user}} </td>
-                                                        <td class="" > <a class="btn btn-primary btn-block" href="{% url 'course_dashboard' id=course.id instructor_id=course.instructor.id  %}" > View </a> </td>
                                                         
                                                     </tr>
                                                         {% endfor %}
                                             </tbody>
-                                            <thead>
+                                            <thead class="{% if request.user.id|is_dark_mode %} bg-6{% endif %}" >
                                                 <tr>
                                                 <th scope="col">#</th>
-                                                <th scope="col">Course</th>
-                                                <th scope="col">Grade</th>
                                                 <th scope="col">Assignment</th>
+                                                <th scope="col">Grade</th>
                                                 <th scope="col">Submission</th>
                                                 <th scope="col">Due Date</th>
                                                 <th scope="col">Submitted At</th>
-                                                <th scope="col">Course</th>
                                                 </tr>
                                             </head>
                                             {% else %}

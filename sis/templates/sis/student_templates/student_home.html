@@ -1,31 +1,29 @@
 {% extends 'sis/admin_templates/base_new.html' %}
-
+{% load tags %}
 {% block content %}
 <div class="container">
-    <a class="btn btn-primary btn-customized open-menu" href="#" role="button">
-      <i class="fas fa-align-left"></i> <span>Menu</span>
-    </a>
+    {{block.super}}
     <section class="my-5 border-bottom text-left">
-        <h1 class="p-2"><strong>Activity Stream </strong></h1>
+        <h1 class="p-2 {% if request.user.id|is_dark_mode %} text-white{% endif %}"><strong>Activity Stream </strong></h1>
     </section>
     <section class="container text-left">
-        <h2 class="ml-5" >Recent</h2>
+        <h2 class="ml-5 {% if request.user.id|is_dark_mode %} text-white{% endif %}" >Recent</h2>
             {% for post in items %}
-                <ul class="recent-feed">
+                <ul class="recent-feed  ">
                     <a class="recent-link" href="{% url 'course_dashboard' post.course.id post.course.instructor.id %}" >  
-                        <div class="card border-0 recent-card">
+                        <div class="card border-0 recent-card {% if request.user.id|is_dark_mode %}bg-2 text-white{% endif %}">
                             <div class="card-body">
                                 <div class="row" >
                                     <div class="col-2 border-right" >
                                         {{post.date_posted}}
                                     </div>
                                     <div class="col-10" >
-                                        <li>
-                                            <h5> {{post.course.code}} {{post.course.name}} #{{post.course.section}} </h5>
-                                            <h5 class="card-title">
+                                        <li class="{% if request.user.id|is_dark_mode %} text-white{% endif %}">
+                                            <h5 class="{% if request.user.id|is_dark_mode %} text-white{% endif %}" > {{post.course.code}} {{post.course.name}} #{{post.course.section}} </h5>
+                                            <h5 class="card-title {% if request.user.id|is_dark_mode %} text-white{% endif %}">
                                                 {{post.name}} {{post.title}} 
                                             </h5>
-                                            <p>
+                                            <p class="{% if request.user.id|is_dark_mode %} text-white{% endif %}" >
                                                 {{post.content}} {{post.description}}
                                             </p>
                                         </li>

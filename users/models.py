@@ -50,6 +50,7 @@ class CustomUser(User):
         default=STUDENT,
 
     )
+    dark_mode = models.BooleanField(default=False)
 
 
 

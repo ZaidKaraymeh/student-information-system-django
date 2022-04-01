@@ -3586,13 +3586,13 @@
 </style><link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700" rel="stylesheet"><link href="https://fonts.googleapis.com/css?family=Montserrat:600" rel="stylesheet"><link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet">
 </head>
 
-<body data-new-gr-c-s-check-loaded="14.1042.0" data-gr-ext-installed="" style="overflow-x:hidden;">
+<body class="{% if request.user.id|is_dark_mode %}bg-base{% endif %}" data-new-gr-c-s-check-loaded="14.1042.0" data-gr-ext-installed="" style="overflow-x:hidden;">
 		<!-- Wrapper -->
     	<div class="">
             <!-- Sidebar -->
 
             {% if user.user_type == "STU" %}
-            <nav class="sidebar mCustomScrollbar _mCS_1 mCS-autoHide mCS_no_scrollbar" style="overflow: visible;"><div id="mCSB_1" class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside" style="max-height: none;" tabindex="0"><div id="mCSB_1_container" class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y" style="position:relative; top:0; left:0;" dir="ltr">
+            <nav class="sidebar mCustomScrollbar _mCS_1 mCS-autoHide mCS_no_scrollbar {% if request.user.id|is_dark_mode %}bg-3{% endif %} " style="overflow: visible;"><div id="mCSB_1" class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside" style="max-height: none;" tabindex="0"><div id="mCSB_1_container" class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y" style="position:relative; top:0; left:0;" dir="ltr">
                 
                 <!-- close sidebar menu -->
 				<div class="dismiss">
@@ -3606,19 +3606,19 @@
                     
                     
                     <li class="">
-                        <a class="" href="{% url 'account' %}"><i class="fas fa-user"></i>Account</a>
+                        <a class="{% if request.user.id|is_dark_mode %}sidebar-hover{% endif %}" href="{% url 'account' %}"><i class="fas fa-user"></i>Account</a>
 					</li>
                     <li class="">
-                        <a class="" href="{% url 'home_sis' %}"><i class="fas fa-home"></i>Activity Stream</a>
+                        <a class="{% if request.user.id|is_dark_mode %}sidebar-hover{% endif %}" href="{% url 'home_sis' %}"><i class="fas fa-home"></i>Activity Stream</a>
 					</li>
 					<li class="">
-                        <a class="" href="{% url 'my_courses' %}"><i class="fas fa-book"></i>Courses</a>
+                        <a class="{% if request.user.id|is_dark_mode %}sidebar-hover{% endif %}" href="{% url 'my_courses' %}"><i class="fas fa-book"></i>Courses</a>
 					</li>
                     <li class="">
-                        <a class="" href="{% url 'grades' %}"><i class="fas fa-pencil-alt"></i>Grades </a>
+                        <a class="{% if request.user.id|is_dark_mode %}sidebar-hover{% endif %}" href="{% url 'grades' %}"><i class="fas fa-pencil-alt"></i>Grades </a>
 
                         <li class="">
-                            <a class="" href="{% url 'inbox' %}">
+                            <a class="{% if request.user.id|is_dark_mode %}sidebar-hover{% endif %}" href="{% url 'inbox' %}">
                                 <i class="fas fa-envelope"></i></i> Inbox {% if user|unread_notif %} <span class="badge badge-info">{% notifications_unread %}</span> {% endif %}
                             </a>
                         </li>
@@ -3626,7 +3626,7 @@
                         {% if request.user.is_authenticated %}
                         <li>
                             <a 
-                            class="" 
+                            class="{% if request.user.id|is_dark_mode %}sidebar-hover{% endif %}" 
                             href="{% url 'logout' %}">
                             <i class="fas fa-sign-in-alt"></i> Logout
                         </a>
@@ -3634,7 +3634,7 @@
                     {% else %}
                     <li>
                         <a 
-                        class="" 
+                        class="{% if request.user.id|is_dark_mode %}sidebar-hover t-white{% endif %}" 
                         href="{% url 'login' %}">
                         <i class="fas fa-sign-in-alt"></i> Login
                     </a>
@@ -3867,9 +3867,14 @@
                     </div>
                 {% endfor %} 
             {% endif %}
-            {% block content %}
-            
-            {% endblock content %}
+            <div class="container-fluid" style="">
+                {% block content %}
+                    <a class="btn btn-primary btn-customized open-menu {% if request.user.id|is_dark_mode %} text-white bg-6 border-none{% endif %}" href="#" role="button">
+                        <i class="fas fa-align-left"></i> <span>Menu</span>
+                    </a>
+                
+                {% endblock content %}
+            </div>
         </div>
         <!-- End wrapper -->
 

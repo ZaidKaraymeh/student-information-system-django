@@ -70,9 +70,7 @@
 {% endblock sidebar %}
 {% block content %}
 <!-- open sidebar menu -->
-<a class="btn btn-primary btn-customized open-menu" href="#" role="button">
-    <i class="fas fa-align-left"></i> <span>Menu</span>
-</a>
+{{block.super}}
 
 <div class="table-responsive p-0 overflow-auto my-4 " style="" >
     <h2 class="p-2 border-bottom font-weight-bold" > {% if student.first_name %} 

@@ -69,18 +69,16 @@
 {% endblock sidebar %}
 {% block content %}
 <!-- open sidebar menu -->
-  <a class="btn btn-primary btn-customized open-menu" href="#" role="button">
-      <i class="fas fa-align-left"></i> <span>Menu</span>
-  </a>
+  {{block.super}}
   <ul class="nav nav-tabs mb-3 justify-content-center" id="pills-tab" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" id="pills-stream-tab" data-toggle="pill" href="#pills-stream" role="tab" aria-controls="pills-stream" aria-selected="true">Feed</a>
+      <a class="nav-link active {% if request.user.id|is_dark_mode %} dark-pills text-white{% endif %}" id="pills-stream-tab" data-toggle="pill" href="#pills-stream" role="tab" aria-controls="pills-stream" aria-selected="true">Feed</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" id="pills-classwork-tab" data-toggle="pill" href="#pills-classwork" role="tab" aria-controls="pills-classwork" aria-selected="false">Assignments</a>
+      <a class="nav-link {% if request.user.id|is_dark_mode %} dark-pills text-white{% endif %}" id="pills-classwork-tab" data-toggle="pill" href="#pills-classwork" role="tab" aria-controls="pills-classwork" aria-selected="false">Assignments</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" id="pills-people-tab" data-toggle="pill" href="#pills-people" role="tab" aria-controls="pills-people" aria-selected="false">Class</a>
+      <a class="nav-link {% if request.user.id|is_dark_mode %} dark-pills text-white{% endif %}" id="pills-people-tab" data-toggle="pill" href="#pills-people" role="tab" aria-controls="pills-people" aria-selected="false">Class</a>
     </li>
 
     {% if user.user_type == "STA" or user.user_type == "ADM" %}
@@ -89,13 +87,13 @@
       <a class="nav-link" id="pills-marks-tab" data-toggle="pill" href="#pills-marks" role="tab" aria-controls="pills-marks" aria-selected="false">Grades</a>
     </li> {% endcomment %}
     <li class="nav-item">
-      <a class="nav-link"  href="{% url 'gradebook' %}"   aria-selected="false">Grades</a>
+      <a class="nav-link {% if request.user.id|is_dark_mode %} dark-pills text-white{% endif %}"  href="{% url 'gradebook' %}"   aria-selected="false">Grades</a>
     </li>
     
     {% else %}
     
     <li class="nav-item">
-      <a class="nav-link"  href="{% url 'grades' %}"   aria-selected="false">Grades</a>
+      <a class="nav-link {% if request.user.id|is_dark_mode %} dark-pills text-white{% endif %}"  href="{% url 'grades' %}"   aria-selected="false">Grades</a>
     </li>
     {% endif %}
   </ul>
@@ -104,21 +102,20 @@
     {% comment %} Stream Tab {% endcomment %}
     <div class="tab-pane fade show active" id="pills-stream" role="tabpanel" aria-labelledby="pills-stream-tab">
         <div class="container">
-          <div class="card shadow-sm rounded text-left bg-dark text-white" style="height:200px;">
-            <img class="card-img" style="min-width:100%;min-height:100%;" src="{% static 'sis/img/backgrounds/waves2.png' %}" alt="Card image">
-            <div class="card-img-overlay d-flex justify-content-end flex-column">
+          <div class="card shadow-sm rounded text-left bg-dark text-white mb-2 bg-dark {% if request.user.id|is_dark_mode %} bg-2{% endif %} ">
+            <div class="card-body d-flex justify-content-end flex-column">
               <h5 class="card-title">{{course.code}} Section {{course.section}}</h5>
               <p class="card-text">{{course.name}} | {{course.instructor.username}}</p>
             </div>
           </div>
           <div class="row">
-            <div class="col-2 py-2" >
-                <div class="card rounded shadow-sm">
+            <div class="col-3 py-2" >
+                <div class="card rounded shadow-sm {% if request.user.id|is_dark_mode %} bg-2 {% endif %}">
                   <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted border-bottom py-2">Upcoming Tasks and Due Dates</h6>
+                    <h6 class=" mb-2  border-bottom py-2  {% if request.user.id|is_dark_mode %} text-white {% endif %}">Due Dates</h6>
                     {% for assignment in assignments %}
                       {% if not assignment|is_submitted:user %}
-                      <p class="text-left border-bottom">
+                      <p class="text-left border-bottom {% if request.user.id|is_dark_mode %} text-white {% endif %}">
                         <strong>
                           {{assignment.name}} -
                         </strong>
@@ -131,11 +128,11 @@
                   </div>
                 </div>
             </div>
-            <div class="col-10" >
+            <div class="col-9" >
               <div class="row">
                   <div class="col-12 py-2" >
                     <button 
-                        class="btn btn-info col-12" 
+                        class="btn btn-info col-12 {% if request.user.id|is_dark_mode %} bg-6 border-none {% endif %}" 
                         type="button" data-toggle="collapse"
                         data-target="#collapseExample" 
                         aria-expanded="false" 
@@ -143,8 +140,8 @@
                         onClick="d-none">
                         Announce something to the class...
                     </button>
-                    <div class="collapse" id="collapseExample">
-                      <div class="card card-body">
+                    <div class="collapse pt-3" id="collapseExample">
+                      <div class="card card-body {% if request.user.id|is_dark_mode %} bg-2 {% endif %}">
                           <form method="POST" class="">
                             {% csrf_token %}
 
@@ -168,9 +165,9 @@
                                 </div>
                             </fieldset>
                             <div class="form-group d-flex justify-content-start" >
-                                <button type="submit" class="btn btn-dark load"> Submit
+                                <button type="submit" class="btn btn-dark load {% if request.user.id|is_dark_mode %} bg-6 {% endif %}"> Submit
                                 </button>
-                                <button class="btn btn-dark loader" onClick="onClickLoader" style="display:none;" type="button" disabled>
+                                <button class="btn btn-dark loader " onClick="onClickLoader" style="display:none;" type="button" disabled>
                                   <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                   <span class="sr-only">Loading...</span>
                                 </button>
@@ -187,7 +184,7 @@
                   </div>
                 {% for post in posts %}
                   <div class="col-12 py-2" >
-                    <div class="card rounded shadow-md">
+                    <div class="card rounded shadow-md {% if request.user.id|is_dark_mode %} bg-2 text-white shadow-card-dark{% endif %}">
                       <div class="card-body text-left">
                         <h5 class="card-title py-2 border-bottom"> {{post.title}}  <small> posted by {{post.user.username}} at {{post.date_posted}}</small>  </h5>
                         <p class="card-text">{{post.content|linebreaksbr}}</p>
@@ -198,10 +195,10 @@
               </div>
               <div class="row d-flex justify-content-center pb-5 mb-5 pt-2">
                   {% if posts.has_previous %}
-                      <a class="btn btn-dark infinite-more-link mx-2" href="?page={{ posts.previous_page_number }}">Previous</a>
+                      <a class="btn btn-dark infinite-more-link mx-2 {% if request.user.id|is_dark_mode %} bg-6 border-none {% endif %} " href="?page={{ posts.previous_page_number }}">Previous</a>
                   {% endif %}
                   {% if posts.has_next %}
-                      <a class="btn btn-dark infinite-more-link" href="?page={{ posts.next_page_number }}">Next</a>
+                      <a class="btn btn-dark infinite-more-link {% if request.user.id|is_dark_mode %} bg-6 border-none {% endif %}" href="?page={{ posts.next_page_number }}">Next</a>
                   {% endif %}
               </div>
             </div>
@@ -215,7 +212,7 @@
       <div class="container">
         {% if user.user_type == "STA" %}
           <div class="row">
-            <a class="btn btn-dark text-light" href="{% url 'course_assignment_build' course.id %}" role="button">
+            <a class="btn btn-dark text-light {% if request.user.id|is_dark_mode %} bg-6 border-none {% endif %}" href="{% url 'course_assignment_build' course.id %}" role="button">
             <i class="fas fa-plus"></i> Create
             </a>
           </div>
@@ -226,7 +223,7 @@
                 <div class="col-12 py-2" >
 
                   <a href="#{{assignment.id}}" class=" text-dark" data-toggle="modal" data-target=".assignment-{{assignment.id}}" >
-                    <div class="card rounded shadow-sm">
+                    <div class="card rounded shadow-sm {% if request.user.id|is_dark_mode %} bg-2 text-white shadow-card-dark{% endif %}">
                       <div class="card-body d-flex">
                         <div class="col-3 d-flex align-items-start flex-column">
                           <h5>
@@ -264,9 +261,9 @@
                     </div>
                   </a>
                   {% comment %} Modal {% endcomment %}
-                  <div class="modal fade assignment-{{assignment.id}} " tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-xl ">
-                      <div class="modal-content">
+                  <div class="modal fade assignment-{{assignment.id}}  " tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl  ">
+                      <div class="modal-content {% if request.user.id|is_dark_mode %} bg-2 text-white{% endif %}">
                         <div class="modal-header">
                           <h5 class="modal-title"><strong>{{assignment.name}}</strong> <small>posted by {{assignment.instructor.username}} at {{assignment.date_posted}}</small></h5>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -308,7 +305,7 @@
                                   </section>
                                   <section>
                                     {% if assignment|is_submitted:user %}
-                                      <h3> Assignment Submitted </h3>
+                                      <h3 class="{% if request.user.id|is_dark_mode %}text-white{% endif %}" > Assignment Submitted </h3>
                                     {% else %}
                                       <h3 class="my-3"> Submission due at {{assignment.due_date}}</h3>
                                       <form method="post" enctype="multipart/form-data" >
@@ -464,9 +461,9 @@
                                 {% endfor %}
                                 </ul>
                               </section>
-                              <section class="text-left border-top">
+                              <section class="text-left border-top {% if request.user.id|is_dark_mode %} text-white {% endif %}">
                                 {% if assignment|is_submitted:user %}
-                                  <h3> Assignment Submitted </h3>
+                                  <h3 class="{% if request.user.id|is_dark_mode %} text-white {% endif %}" > Assignment Submitted </h3>
                                 {% else %}
                                 <h3 class="my-3"> Submission </h3>
                                 <form method="post" enctype="multipart/form-data" >
@@ -511,20 +508,20 @@
     <div class="tab-pane fade" id="pills-people" role="tabpanel" aria-labelledby="pills-people-tab">
       <div class="container">
         <div class="row justify-content-center pb-3 ">
-          <div class="col-8 d-flex align-items-start border-bottom border-secondary">
-            <h2> Instructors </h2>
+          <div class="col-8 d-flex align-items-start border-bottom border-secondary ">
+            <h2 class="{% if request.user.id|is_dark_mode %} text-white {% endif %}" > Instructors </h2>
           </div>
         </div>
         <div class="row justify-content-center">
           <div class="col-8">
-            <div class="card rounded shadow-sm border-0">
+            <div class="card rounded shadow-sm border-0 {% if request.user.id|is_dark_mode %} bg-2 text-white shadow-card-dark{% endif %} ">
                 <div class="card-body d-flex">
                   <div class="col-9 d-flex">
                     <h5 class="card-title "><i class="pr-5 fas fa-thumbtack"></i>  
                       {{instructor.username}}</h5>
                   </div>
                   <div class="col-3">
-                    <a type="button" href="#" class="btn btn-dark text-light text-decoration-none" ><span class="align-items-end" > <i class="far fa-envelope"></i> Send Email </span></a>
+                    <a type="button" href="#" class="btn btn-dark text-light text-decoration-none {% if request.user.id|is_dark_mode %} bg-6 text-white border-none{% endif %}" ><span class="align-items-end" > <i class="far fa-envelope"></i> Send Email </span></a>
                   </div>
                 </div>
             </div>
@@ -533,13 +530,13 @@
         </div>
         <div class="row justify-content-center py-3 pt-5">
           <div class="col-8 d-flex align-items-start border-bottom border-secondary">
-            <h2> Students </h2>
+            <h2 class="{% if request.user.id|is_dark_mode %} text-white{% endif %}" > Students </h2>
           </div>
         </div>
         <div class="row justify-content-center">
           {% for student in students %}
               <div class="col-8 py-2">
-                <div class="card rounded shadow-sm border-0">
+                <div class="card rounded shadow-sm border-0 {% if request.user.id|is_dark_mode %} bg-2 text-white shadow-card-dark{% endif %}">
                   <div class="card-body d-flex">
                     <div class="col-9 d-flex">
                       <h5 class="card-title ">
@@ -552,7 +549,7 @@
                       </h5>
                     </div>
                     <div class="col-3">
-                      <a type="button" href="#" class="btn btn-dark text-light text-decoration-none" >
+                      <a type="button" href="#" class="btn btn-dark text-light text-decoration-none {% if request.user.id|is_dark_mode %} bg-6 text-white border-none{% endif %}" >
                         <span class="align-items-end" > <i class="far fa-envelope"></i> Send Email </span>
                       </a>
                     </div>

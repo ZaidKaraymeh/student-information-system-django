@@ -68,9 +68,7 @@
 {% endblock sidebar %}
 {% block content %}
 <!-- open sidebar menu -->
-<a class="btn btn-primary btn-customized open-menu" href="#" role="button">
-    <i class="fas fa-align-left"></i> <span>Menu</span>
-</a>
+{{block.super}}
 <section class="border-bottom my-5  ">
         <h1 class="font-weight-bold" > {{course.name}} {{course.code}} Section {{course.section}}'s Assignment Builder  </h1>
 </section>

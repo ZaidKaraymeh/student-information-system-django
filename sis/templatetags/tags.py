@@ -1,6 +1,6 @@
 from time import time
 from django import template
-from users.models import AssignmentSubmission, Assignment, Grade, AttendanceReport, Fee, FeeReport
+from users.models import AssignmentSubmission, Assignment, Grade, AttendanceReport, Fee, FeeReport, CustomUser
 import html
 from django.utils import timezone
 register = template.Library()
@@ -187,6 +187,13 @@ def get_assignment_is_submitted(grade):
     except:
         pass
 
+def is_dark_mode(user_id):
+    try:
+        user = CustomUser.objects.get(id=user_id)
+        return user.dark_mode
+    except:
+        return False
+
 register.filter('is_submitted', is_submitted)
 register.filter('is_submitted_late', is_submitted_late)
 register.filter('date_submitted', date_submitted)
@@ -208,4 +215,5 @@ register.filter('get_assignment_category', get_assignment_category)
 register.filter('get_assignment_possible_points', get_assignment_possible_points)
 register.filter('get_assignment_due_date', get_assignment_due_date)
 register.filter('get_assignment_is_submitted', get_assignment_is_submitted)
+register.filter('is_dark_mode', is_dark_mode)
 # register.filter('all_submitted', all_submitted)
