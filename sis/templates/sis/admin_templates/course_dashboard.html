@@ -154,6 +154,7 @@
                                       <label> <strong>Title:</strong> </label>
                                       
                                       {{form.title|as_crispy_field}}
+                                      {{form}}
                                       
                                     </div>
                                   </div>
@@ -312,12 +313,12 @@
                                         {% csrf_token %}
                                         <div class="row justify-content-center py-1">
                                             <div class="col-12">
-                                                {{student_submission_form.description|crispy}}
+                                                {{student_submission_form.description|as_crispy_field}}
                                             </div>
                                         </div>
                                         <div class="row justify-content-center py-1">
                                             <div class="col-12">
-                                                {{student_submission_form.file|crispy}}
+                                                {{student_submission_form.file|as_crispy_field}}
                                             </div>
                                         </div>
                                         <input type="hidden" name="assignment_id" value="{{assignment.id}}" />

@@ -1,7 +1,8 @@
 {% extends 'sis/admin_templates/base_new.html' %}
 {% load crispy_forms_tags %}
+{% load tags %}
 {% block content %}
-<div class="d-flex flex-column align-items-center justify-content-center" style="min-height:90vh;" >
+<div class="d-flex flex-column align-items-center justify-content-center {% if request.user.id|is_dark_mode %} text-white bg-2{% endif %} "  style="min-height:90vh;" >
 
     <form action="/login/" method="POST">
         {% csrf_token %}

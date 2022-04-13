@@ -1,5 +1,5 @@
 {% extends 'sis/admin_templates/base_new.html' %}
-
+{% load tags %}
 {% block sidebar %}
 <!-- Sidebar -->
 			<nav class="sidebar mCustomScrollbar _mCS_1 mCS-autoHide mCS_no_scrollbar" style="overflow: visible;"><div id="mCSB_1" class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside" style="max-height: none;" tabindex="0"><div id="mCSB_1_container" class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y" style="position:relative; top:0; left:0;" dir="ltr">
@@ -70,7 +70,7 @@
 <!-- open sidebar menu -->
 {{block.super}}
 <section class="border-bottom my-5 ">
-        <h1 class="font-weight-bold" > Manage Courses</h1>
+        <h1 class="font-weight-bold {% if request.user.id|is_dark_mode %} text-white b {% endif %}" > Manage Courses</h1>
 </section>
 <div class="col p-4 d-flex justify-content-end align-items-start" >
     {% if user.user_type == "ADM" %}
@@ -93,7 +93,7 @@
 </div>
 
 <div class="table-responsive p-0 overflow-auto" >
-    <table id="view_courses" class="table table-striped table-hover table-bordered text-center">
+    <table id="view_courses" class="table table-striped table-hover table-bordered text-center {% if request.user.id|is_dark_mode %} text-white bg-2 table-hover-custom {% endif %}">
         <thead>
             <tr>
             <th  scope="col">#</th>
@@ -122,9 +122,9 @@
                 {% if user.user_type == "ADM" %}
                 <td class="" ><a class="btn btn-dark btn-block" href="{% url 'edit_course' course.id semester.id %}" >Edit </a></td>
                 {% else %}
-            <td class="" ><a class="btn btn-dark btn-block" href="{% url 'course_assignment_builder' course.id  %}" >View      Assignments </a></td>
+            <td class="" ><a class="btn btn-dark btn-block {% if request.user.id|is_dark_mode %} bg-6 {% endif %}" href="{% url 'course_assignment_builder' course.id  %}" >View      Assignments </a></td>
             {% endif %}
-            <td class="" > <a class="btn btn-primary btn-block" href="{% url 'course_dashboard' id=course.id instructor_id=course.instructor.id  %}" > View Dashboard </a> </td>
+            <td class="" > <a class="btn btn-primary btn-block {% if request.user.id|is_dark_mode %} bg-1 border-none {% endif %}" href="{% url 'course_dashboard' id=course.id instructor_id=course.instructor.id  %}" > View Dashboard </a> </td>
             
         </tr>
         {% endfor %}

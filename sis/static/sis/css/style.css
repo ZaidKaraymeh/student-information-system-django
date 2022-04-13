@@ -48,7 +48,7 @@ body { font-family: 'Roboto', sans-serif; font-size: 16px; font-weight: 300; col
     box-shadow: 0 .25rem 1rem rgb(35, 35, 46)!important;
 }
 
-.table-hover>tbody>tr:hover {
+.table-hover-custom>tbody>tr:hover {
 	background-color: rgb(30,30,39) !important;
 	color: white !important;
 }
